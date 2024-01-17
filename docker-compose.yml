@@ -18,3 +18,12 @@ services:
       - postgres
     env_file:
       - .env
+  javascript:
+    container_name: javascript
+    build: frontend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - django
+    env_file:
+      - .env
