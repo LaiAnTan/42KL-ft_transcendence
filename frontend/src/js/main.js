@@ -2,7 +2,7 @@ import home from "./home.js";
 import test from "./test.js";
 
 const routes = {
-    "/": { title: "Home", render: home },
+    "/": { title: "ft_transcendence", render: home },
     "/test": { title: "Test", render: test },
 };
 
