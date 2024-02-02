@@ -1,4 +1,4 @@
-all: re
+all: stop build
 
 re: stop fclean build
 

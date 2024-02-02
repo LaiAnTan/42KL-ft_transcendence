@@ -19,8 +19,8 @@ class User(models.Model):
 
     username = models.CharField(max_length=30)
     date_created = models.DateTimeField(auto_now_add=True)
-    versus_history = ArrayField(models.IntegerField())
-    tournament_history = ArrayField(models.IntegerField())
+    versus_history = ArrayField(models.IntegerField(), blank=True)
+    tournament_history = ArrayField(models.IntegerField(), blank=True)
 
 
 class Matchup(models.Model):
