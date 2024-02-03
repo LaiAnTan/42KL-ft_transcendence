@@ -1,10 +1,21 @@
 import home from "./home.js";
-import test from "./test.js";
+import login from "./login.js";
+import menu from "./menu.js";
 
 const routes = {
     "/": { title: "ft_transcendence", render: home },
-    "/test": { title: "Test", render: test },
+    "/login": { title: "Login with 42", render: login },
+    "/menu": { title: "Menu", render: menu }
 };
+
+export function navigate(path) {
+    if (window.location.pathname === path) {
+        return;
+    }
+
+    history.pushState({}, "", path);
+    router();
+}
 
 function router() {
     let view = routes[location.pathname];
