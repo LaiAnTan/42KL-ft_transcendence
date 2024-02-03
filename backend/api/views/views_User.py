@@ -39,6 +39,20 @@ parameters '},
 @api_view(['POST'])
 def addUser(request):
 
+    """
+    API endpoint that adds a user to the database.
+
+    JSON Format:
+    {
+    "username": "user",
+    "versus_history": [],
+    "tournament_history": []
+    }
+
+    versus_history, tournament_history are optional fields, if not specified
+    a default will be used.
+    """
+
     try:
         username = request.data['username']
     except KeyError:

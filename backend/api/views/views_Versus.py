@@ -9,7 +9,11 @@ from api.serializer import VersusSerializer, MatchupSerializer
 
 
 @api_view(['GET'])
-def getAllVersus(request):
+def getAllVersus(_request):
+
+    """
+    Not really used, for testing only.
+    """
 
     all_versus = Versus.objects.all()
 
@@ -20,6 +24,12 @@ def getAllVersus(request):
 
 @api_view(['GET'])
 def getVersus(request):
+
+    """
+    API endpoint that returns data of a versus match, queried from the
+    database.
+    Data regarding matchup is also returned together.
+    """
 
     versus_id = request.query_params.get('id')
 
@@ -54,6 +64,19 @@ parameters '},
 # User entries to ease usage / debug process
 @api_view(['POST'])
 def addVersus(request):
+
+    """
+    API endpoint that adds a versus (1v1) entry to the database.
+    Also adds a Matchup entry and updates both players' entries.
+
+    JSON Format:
+    {
+    "player_1_id": "1",
+    "player_2_id": "2",
+    "player_1_score": "2",
+    "player_2_score": "3"
+    }
+    """
 
     # test: all fields are present in request body
     if all(key in request.data for key in ("player_1_id", "player_2_id",

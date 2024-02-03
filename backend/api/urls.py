@@ -11,4 +11,7 @@ urlpatterns = [
     path('addVersus/', views_Versus.addVersus),
     path('getVersus/', views_Versus.getVersus),
     path('allVersus/', views_Versus.getAllVersus),
+    path('addTournament/', views_Tournament.addTournament),
+    path('getTournament/', views_Tournament.getTournament),
+    path('allTournaments/', views_Tournament.getAllTournament),
 ]
