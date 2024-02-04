@@ -1,11 +1,13 @@
 import home from "./home.js";
 import login from "./login.js";
 import menu from "./menu.js";
+import vsai from "./vs-ai.js";
 
 const routes = {
-	"/": { title: "ft_transcendence", render: home },
+	"/": { title: "Ding Dong", render: home },
 	"/login": { title: "Login with 42", render: login },
-	"/menu": { title: "Menu", render: menu }
+	"/menu": { title: "Menu", render: menu },
+	"/menu/vs-ai": { title: "VS AI", render: vsai },
 };
 
 export function navigate(path) {

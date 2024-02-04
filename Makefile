@@ -12,7 +12,7 @@ fclean: stop
 re: fclean build
 
 ps:
-	docker-compose -f ./srcs/docker-compose.yml ps
+	docker ps
 
 # docker system prune -a
 # docker volume prune -f
