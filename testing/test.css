@@ -1,4 +1,10 @@
+body {
+	background-color: black;
+	font-family: 'Roboto', sans-serif;
+}
+
 .menu-header {
+	border-bottom: 2px solid white;
 	position: relative;
 	display: inline-block;
 }
@@ -6,7 +12,7 @@
 .menu-header::after {
 	content: '';
     position: absolute;
-    bottom: -4px; /* Adjust this value based on your shadow preference */
+    bottom: -6px; /* Adjust this value based on your shadow preference */
     left: 0;
     height: 5px; /* Adjust this value based on your shadow thickness preference */
 	width: 100vw;
@@ -40,7 +46,7 @@
     border: 4px solid white;
 	border-radius: 10px;
     color: white;
-	transition: transform 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
+	transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 	box-shadow: white 0 0 15px;
 }
 
