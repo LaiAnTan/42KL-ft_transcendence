@@ -1,5 +1,8 @@
 .menu-header {
-	border-bottom: 1px solid white;
+	border-bottom: 2px solid white;
+	box-shadow: 0px 15px 20px #85EBE9;
+	width: 120%;
+	margin-left: -10%;
 }
 
 .menu-header h1 {
@@ -9,4 +12,69 @@
 	color: white;
 	font-weight: 700;
 	text-shadow: 0 0 25px #85EBE9;
+}
+
+.menu-content {
+	top: 55%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	position: absolute;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 103px;
+
+}
+
+.menu-component {
+    width: 902px;
+    height: 133px;
+    display: flex;
+    justify-content: space-between;
+    border: 2px solid white;
+    align-items: center;
+    color: white;
+    box-shadow: 0 0 25px white;
+}
+
+.menu-component-title {
+    font-size: 50px;
+    font-weight: 500;
+    font-family: 'Ubuntu', sans-serif; 
+    padding-left: 50px;
+    color: white; /* Setting white color for the title */
+}
+
+.menu-component-description {
+    font-size: 15px;
+    font-family: 'Aldrich', sans-serif;
+    padding-right: 90px;
+	width: 300px;
+}
+
+.vs-player .menu-component-title {
+    text-shadow: 0 0 25px #98EB4C;
+	-webkit-text-stroke: 1px #98EB4C;
+}
+
+.vs-player .menu-component-description {
+    color: #98EB4C;
+}
+
+.vs-ai .menu-component-title {
+    text-shadow: 0 0 25px #FAE84D;
+	-webkit-text-stroke: 1px #FAE84D;
+}
+
+.vs-ai .menu-component-description {
+    color: #FAE84D;
+}
+
+.tournament .menu-component-title {
+    text-shadow: 0 0 25px #D934F6;
+	-webkit-text-stroke: 1px #D934F6;
+}
+
+.tournament .menu-component-description {
+    color: #D934F6;
 }
