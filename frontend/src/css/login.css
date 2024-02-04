@@ -8,6 +8,7 @@
 	font-family: 'Ubuntu', sans-serif;
 	font-weight: 700;
 	background: linear-gradient(to right, #1224F5, #D934F6, #FAE84D, #9AEB4C, #85EBE9);
+	background-clip: text;
 	-webkit-background-clip: text;
 	-webkit-text-stroke: 7px transparent;
 	color: white;
@@ -18,6 +19,7 @@
 	font-size: 65px;
 	font-family: 'Ubuntu', sans-serif;
 	background: linear-gradient(to right, #1224F5, #D934F6, #FAE84D, #9AEB4C, #85EBE9);
+	background-clip: text;
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
 	filter: blur(25px);
