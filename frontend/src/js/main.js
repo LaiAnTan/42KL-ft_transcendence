@@ -2,12 +2,14 @@ import home from "./home.js";
 import login from "./login.js";
 import menu from "./menu.js";
 import vsai from "./vs-ai.js";
+import vsplayer from "./vs-player.js";
 
 const routes = {
 	"/": { title: "Ding Dong", render: home },
 	"/login": { title: "Login with 42", render: login },
 	"/menu": { title: "Menu", render: menu },
 	"/menu/vs-ai": { title: "VS AI", render: vsai },
+	"/menu/vs-player": { title: "VS Player", render: vsplayer},
 };
 
 export function navigate(path) {

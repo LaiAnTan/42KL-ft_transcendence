@@ -102,7 +102,7 @@ input[type="range"]:hover::-webkit-slider-thumb {
 }
 
 .menu-component:hover img {
-	content: url('../frontend/assets/star.png');
+	content: url('../assets/star.png');
 }
 
 .w-45 {

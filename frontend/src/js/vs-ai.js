@@ -23,7 +23,7 @@ export default () => {
 				<div class="cursor-pointer menu-component" style="min-width: 300px; width: 100%;">
 					<div class="d-flex flex-row justify-content-between align-items-center mx-2 my-2">
 						<div class="d-flex flex-row align-items-center">
-							<img src="../frontend/assets/star-empty.png" alt="Classic" style="height: 65px; width: 65px; object-fit: cover; object-position: center;">
+							<img src="../assets/star-empty.png" alt="Classic" style="height: 65px; width: 65px; object-fit: cover; object-position: center;">
 							<p class="important-label pl-2" style="font-size: 40px">CLASSIC</p>
 						</div>
 						<p class="description px-3">KEEP IT CLASSIC</p>
@@ -32,7 +32,7 @@ export default () => {
 				<div class="cursor-pointer menu-component" style="min-width: 300px; width: 100%;">
 					<div class="d-flex flex-row justify-content-between align-items-center mx-2 my-2">
 						<div class="d-flex flex-row align-items-center">
-							<img src="../frontend/assets/star-empty.png" alt="Dong" style="height: 65px; width: 65px; object-fit: cover; object-position: center;">
+							<img src="../assets/star-empty.png" alt="Dong" style="height: 65px; width: 65px; object-fit: cover; object-position: center;">
 							<p class="important-label pl-2" style="font-size: 40px">DONG</p>
 						</div>
 						<p class="description px-3">DODGE THE BALLS</p>
@@ -41,7 +41,7 @@ export default () => {
 				<div class="cursor-pointer menu-component" style="min-width: 300px; width: 100%;">
 					<div class="d-flex flex-row justify-content-between align-items-center mx-2 my-2">
 						<div class="d-flex flex-row align-items-center">
-							<img src="../frontend/assets/star-empty.png" alt="Bong" style="height: 65px; width: 65px; object-fit: cover; object-position: center;">
+							<img src="../assets/star-empty.png" alt="Bong" style="height: 65px; width: 65px; object-fit: cover; object-position: center;">
 							<p class="important-label pl-2" style="font-size: 40px">BONG</p>
 						</div>
 						<p class="description px-3">BRICK BREAKER EDITION</p>

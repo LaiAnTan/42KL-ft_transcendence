@@ -1,6 +1,19 @@
 import { navigate } from "./main.js";
 
 export default () => {
+
+	document.addEventListener("click", (event) => {
+		if (event.target && event.target.id === "vs-player") {
+		  navigate("/menu/vs-player");
+		}
+		else if (event.target && event.target.id === "vs-ai") {
+		  navigate("/menu/vs-ai");
+		}
+		else if (event.target && event.target.id === "tourney") {
+		  navigate("/");
+		}
+	  });
+
 	return `
 	<div class="menu-header unselectable" style="height: 8vh">
 		<p class="h-100 m-0 text-center pt-2 menu-header-title">MAIN MENU</p>
@@ -21,8 +34,3 @@ export default () => {
 	</div>
 	`;
 };
-
-document.getElementById('vs-ai').addEventListener('click', () => {
-	navigate('/menu/vs-ai')
-	removeEventListener('click', () => {});
-});
