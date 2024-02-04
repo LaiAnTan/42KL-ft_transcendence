@@ -1,5 +1,4 @@
 export default () => {
-<<<<<<< HEAD
   return `
     <div class="menu-header">
       <h1>MAIN MENU</h1>
@@ -20,16 +19,3 @@ export default () => {
     </div>
   `;
 };
-=======
-	let img = document.createElement('img');
-	img.src = "../assets/settings.svg";
-	document.body.appendChild(img);
-
-	return `
-		<div class="menu-header">
-		<h1>MAIN MENU</h1>
-		<img src="./../assets/settings.svg" alt="Setting">
-		</div>
-	`;
-};
->>>>>>> 5458dc22d0a1589823ec34b8ec6c996d09200169
