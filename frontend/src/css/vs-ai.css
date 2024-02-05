@@ -27,7 +27,8 @@
 }
 
 .important-label {
-	margin: 0;
+	margin: 0 !important;
+	padding: 0 !important;
 	font-size: 45px;
 	font-weight: 500;
 	font-family: 'Ubuntu', sans-serif; 
@@ -89,20 +90,24 @@ input[type="range"]:hover::-webkit-slider-thumb {
 	box-shadow: 0 0 15px var(--vs-ai-color);
 }
 
-.menu-component {
+.scale-up {
 	transition: transform 0.1s ease-in-out;
 }
 
-.menu-component img {
+.scale-up img {
 	transition: transform 0.1s ease-in-out;
 }
 
-.menu-component:hover {
+.scale-up:hover {
 	transform: scale(1.05);
 }
 
-.menu-component:hover img {
+.scale-up:hover img {
 	content: url('../assets/star.png');
+}
+
+.header h1, p {
+	width: auto;
 }
 
 .w-45 {

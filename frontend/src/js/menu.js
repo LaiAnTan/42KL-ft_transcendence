@@ -4,15 +4,15 @@ export default () => {
 
 	document.addEventListener("click", (event) => {
 		if (event.target && event.target.id === "vs-player") {
-		  navigate("/menu/vs-player");
+			navigate("/menu/vs-player");
 		}
 		else if (event.target && event.target.id === "vs-ai") {
-		  navigate("/menu/vs-ai");
+			navigate("/menu/vs-ai");
 		}
 		else if (event.target && event.target.id === "tourney") {
-		  navigate("/");
+			navigate("/");
 		}
-	  });
+	});
 
 	return `
 	<div class="menu-header unselectable" style="height: 8vh">

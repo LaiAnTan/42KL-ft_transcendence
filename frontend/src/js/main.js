@@ -12,6 +12,8 @@ const routes = {
 	"/menu/vs-player": { title: "VS Player", render: vsplayer},
 };
 
+const app = document.getElementById("app");
+
 export function navigate(path) {
 	if (window.location.pathname === path) {
 		return;
