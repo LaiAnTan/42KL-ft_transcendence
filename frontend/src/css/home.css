@@ -14,9 +14,8 @@
 
 .title {
 	width: 100%;
-	font-size: 128px;
-	font-family: 'Ubuntu', sans-serif;
-	font-weight: 700;
+	font-size: 150px;
+	font-family: 'Neon Lights', sans-serif;
 	background: linear-gradient(45deg, #ff0000, #FF7400, #FAE84D, #9AEB4C, #85EBE9, #0059FF, #8800FF, #FF00A5);
 	animation: animate 10s linear infinite;
     background-size: 400%;
@@ -28,8 +27,8 @@
 
 .title-bg {
 	width: 100%;
-	font-size: 128px;
-	font-family: 'Ubuntu', sans-serif;
+	font-size: 150px;
+	font-family: 'Neon Lights', sans-serif;
 	background: linear-gradient(45deg, #ff0000, #FF7400, #FAE84D, #9AEB4C, #85EBE9, #0059FF, #8800FF, #FF00A5);
 	animation: animate 10s linear infinite;
     background-size: 400%;

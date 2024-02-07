@@ -21,16 +21,13 @@
 	font-family: 'Ubuntu', sans-serif;
 	font-size: 40px;
 	color: white;
-	font-weight: 700;
 	text-shadow: 0 0 25px var(--vs-ai-color);
 	width: 100vw;
 }
 
 .important-label {
-	margin: 0 !important;
-	padding: 0 !important;
-	font-size: 45px;
-	font-weight: 500;
+	margin: 0;
+	font-size: 40px;
 	font-family: 'Ubuntu', sans-serif; 
 	color: white;
 	text-shadow: 0 0 25px var(--vs-ai-color);

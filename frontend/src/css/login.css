@@ -4,9 +4,9 @@
 
 .login-title {
 	width: fit-content;
-	font-size: 65px;
-	font-family: 'Ubuntu', sans-serif;
-	font-weight: 700;
+	font-size: 80px;
+	padding-left: 40px;
+	font-family: 'Neon Lights', sans-serif;
 	background: linear-gradient(to right, #1224F5, #D934F6, #FAE84D, #9AEB4C, #85EBE9);
 	background-clip: text;
 	-webkit-background-clip: text;
@@ -16,8 +16,8 @@
 
 .login-title-bg {
 	width: fit-content;
-	font-size: 65px;
-	font-family: 'Ubuntu', sans-serif;
+	font-size: 80px;
+	font-family: 'Neon Lights', sans-serif;
 	background: linear-gradient(to right, #1224F5, #D934F6, #FAE84D, #9AEB4C, #85EBE9);
 	background-clip: text;
 	-webkit-background-clip: text;
@@ -55,8 +55,7 @@
 .header h1 {
 	font-family: 'Ubuntu', sans-serif;
 	color: white;
-	font-size: 40px;
-	font-weight: 700;
+	font-size: 60px;
 	margin-bottom: -20px;
 }
 
@@ -81,7 +80,7 @@
 
 .signin {
 	font-family: 'Ubuntu', sans-serif;
-	font-size: 41px;
+	font-size: 40px;
 	font-weight: 700;
 	background-color: #85EBE9;
 	border-top: 1px solid white;

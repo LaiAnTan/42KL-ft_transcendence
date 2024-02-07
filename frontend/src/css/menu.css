@@ -15,9 +15,8 @@
 
 .menu-header-title {
 	font-family: 'Ubuntu', sans-serif;
-	font-size: 40px;
+	font-size: 50px;
 	color: white;
-	font-weight: 700;
 	text-shadow: 0 0 25px #85EBE9;
 	width: 100vw;
 }
@@ -71,13 +70,12 @@
 
 .menu-component-title {
     font-size: 50px;
-    font-weight: 500;
     font-family: 'Ubuntu', sans-serif; 
     color: white;
 }
 
 .menu-component-description {
-    font-size: 15px;
+    font-size: 20px;
     font-family: 'Aldrich', sans-serif;
 }
 
