@@ -1,5 +1,64 @@
+:root {
+	--vs-player-color: #98EB4C;
+	--vs-ai-color: #FAE84D;
+	--tourney-color: #D934F6;
+	--settings-color: #7c3eee;
+}
+
 body {
 	background-color: black;
 	font-family: 'Roboto', sans-serif;
 	overflow: hidden;
+}
+
+body::-webkit-scrollbar {
+    background-color: #fff;
+    width: 16px;
+}
+
+body::-webkit-scrollbar-track {
+    background-color: #fff;
+}
+
+body::-webkit-scrollbar-thumb {
+    background-color: #babac0;
+    border-radius: 16px;
+    border: 4px solid #fff;
+}
+
+body::-webkit-scrollbar-button {
+    display:none;
+}
+
+input[type="range"] {
+	display: block;
+	appearance: none;
+	-webkit-appearance: none;
+	background-color: #bdc3c7;
+	width: 300px;
+	height: 5px;
+	border-radius: 5px;
+	margin: 0 auto;
+	outline: 0;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	background-color: var(--settings-color);
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	border: 2px solid white;
+	cursor: pointer;
+	transition: .3s ease-in-out;
+}
+​
+input[type="range"]::-webkit-slider-thumb:hover {
+	background-color: white;
+	transform: scale(1.1);
+	border: 2px solid var(--settings-color);
+}
+
+input[type="range"]::-webkit-slider-thumb:active {
+	transform: scale(1.4);
 }

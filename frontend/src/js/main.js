@@ -14,11 +14,18 @@ const routes = {
 
 const app = document.getElementById("app");
 
+function removeAllEventListeners(element) {
+	if (element && element.nodeType === Node.ELEMENT_NODE) {
+		element.replaceWith(element.cloneNode(true));
+	}
+}
+
 export function navigate(path) {
 	if (window.location.pathname === path) {
 		return;
 	}
 
+	removeAllEventListeners(app);
 	history.pushState({}, "", path);
 	router();
 }
