@@ -8,9 +8,9 @@
 body {
 	background-color: black;
 	font-family: 'Roboto', sans-serif;
-	overflow: hidden;
 }
 
+/* scrollbar */
 *::-webkit-scrollbar {
     background-color: #fff;
     width: 16px;
@@ -30,6 +30,32 @@ body {
     display:none;
 }
 
+/* menu header */
+.menu-header {
+	position: relative;
+	display: inline-block;
+}
+
+.menu-header::after {
+	content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    height: 5px;
+	width: 100vw;
+    background: linear-gradient(to bottom, var(--settings-color), transparent);
+}
+
+.menu-header-title {
+	font-family: 'Ubuntu', sans-serif;
+	font-size: 40px;
+	color: white;
+	font-weight: 700;
+	text-shadow: 0 0 25px var(--settings-color);
+	width: 100vw;
+}
+
+/* slider bar */
 input[type="range"] {
 	display: block;
 	appearance: none;
@@ -63,6 +89,7 @@ input[type="range"]::-webkit-slider-thumb:active {
 	transform: scale(1.4);
 }
 
+/* commonly used customs */
 .important-label {
 	margin: 0 !important;
 	padding: 0 !important;
@@ -94,6 +121,7 @@ input[type="range"]::-webkit-slider-thumb:active {
 	transform: scale(1.05);
 }
 
+/* miscellaneous missing bootstrap addons */
 .w-45 {
 	width: 45%;
 }
