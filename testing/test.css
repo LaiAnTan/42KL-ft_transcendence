@@ -133,16 +133,8 @@ input[type="range"]::-webkit-slider-thumb:active {
 	transition: transform 0.1s ease-in-out;
 }
 
-.scale-up img {
-	transition: transform 0.1s ease-in-out;
-}
-
 .scale-up:hover {
 	transform: scale(1.05);
-}
-
-.scale-up:hover img {
-	content: url('../src/frontend/assets/star.png');
 }
 
 .header h1, p {
