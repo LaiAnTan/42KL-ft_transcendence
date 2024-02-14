@@ -1,0 +1,40 @@
+
+/addUser
+{
+"username": "test1",
+"versus_history": [],
+"tournament_history": []
+}
+
+/addVersus
+{
+"player_1_id": "1",
+"player_2_id": "2",
+"player_1_score": "2",
+"player_2_score": "3"
+}
+
+/addTournament
+{
+	"player_ids": [1, 2, 3, 4],
+	"matchups": [
+		{
+			"player_1_id": "1",
+			"player_2_id": "2",
+			"player_1_score": "2",
+			"player_2_score": "3"
+		},
+		{
+			"player_1_id": "3",
+			"player_2_id": "4",
+			"player_1_score": "5",
+			"player_2_score": "2"
+		},
+		{
+			"player_1_id": "2",
+			"player_2_id": "3",
+			"player_1_score": "3",
+			"player_2_score": "2"
+		}
+	]
+}

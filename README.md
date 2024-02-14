@@ -5,4 +5,5 @@ A pong website.
 
 Todo:
 
-Django - define postgresql models
+- define models
+- define api views
