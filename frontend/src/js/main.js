@@ -25,7 +25,7 @@ export function navigate(path) {
 		return;
 	}
 
-	removeAllEventListeners(app);
+	// removeAllEventListeners(app);
 	history.pushState({}, "", path);
 	router();
 }

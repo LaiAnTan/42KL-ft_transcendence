@@ -6,8 +6,6 @@ COPY package*.json ./
 
 RUN npm install
 
-COPY ./src ./
-
 RUN npm install -g http-server
 
 EXPOSE 8080

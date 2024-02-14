@@ -18,6 +18,8 @@ services:
       - postgres
     env_file:
       - .env
+    volumes:
+      - ./backend:/app
   javascript:
     container_name: javascript
     build: frontend
@@ -27,3 +29,5 @@ services:
       - django
     env_file:
       - .env
+    volumes:
+      - ./frontend:/app 
