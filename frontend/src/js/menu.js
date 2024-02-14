@@ -2,12 +2,41 @@ import { navigate } from "./main.js";
 
 export default () => {
 
+	let queryString = new URLSearchParams(document.location.search);
+	const code = queryString.get('code')
+
+	const postCode = async () => {
+		try {
+			const response = await fetch("http://localhost:8000/api/postCode/", {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ "code": code }),
+			});
+			if (response.ok) {
+				const data = await response.json();
+				console.log('data', data);
+				console.log('displayname: ', data.displayname);
+				console.log('email: ', data.email);
+			} else {
+				console.error('Failed to send code to the backend.');
+			}
+		} catch (error) {
+		  console.error('Error sending code:', error);
+		}
+	};
+
+	if (code) {
+		postCode();
+	};
+	
 	document.addEventListener("click", (event) => {
 		if (event.target && event.target.id === "vs-player") {
-			navigate("/menu/vs-player");
+			navigate("/vs-player");
 		}
 		else if (event.target && event.target.id === "vs-ai") {
-			navigate("/menu/vs-ai");
+			navigate("vs-ai");
 		}
 		else if (event.target && event.target.id === "tourney") {
 			navigate("/");

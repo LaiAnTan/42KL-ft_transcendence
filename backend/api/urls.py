@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import views_User, views_Matchup, views_Versus, views_Tournament
+from .views import views_User, views_Matchup, views_Versus, views_Tournament, authentication
 
 urlpatterns = [
     path('addUser/', views_User.addUser),
@@ -14,4 +14,6 @@ urlpatterns = [
     path('addTournament/', views_Tournament.addTournament),
     path('getTournament/', views_Tournament.getTournament),
     path('allTournaments/', views_Tournament.getAllTournament),
+    path('authConfig/', authentication.get_auth_config),
+	path('postCode/', authentication.postCode),
 ]

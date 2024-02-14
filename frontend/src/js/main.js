@@ -8,8 +8,8 @@ const routes = {
 	"/": { title: "Ding Dong", render: home },
 	"/login": { title: "Login with 42", render: login },
 	"/menu": { title: "Menu", render: menu },
-	"/menu/vs-ai": { title: "VS AI", render: vsai },
-	"/menu/vs-player": { title: "VS Player", render: vsplayer},
+	"/vs-ai": { title: "VS AI", render: vsai },
+	"/vs-player": { title: "VS Player", render: vsplayer},
 };
 
 const app = document.getElementById("app");
