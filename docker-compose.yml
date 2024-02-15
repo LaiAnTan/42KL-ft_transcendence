@@ -11,10 +11,22 @@ services:
   django:
     container_name: django
     build: backend
-    command: ["./wait-for-it.sh", "postgres:5432", "--", "python", "manage.py", "runserver", "0.0.0.0:8000"]
     ports:
       - "8000:8000"
     depends_on:
       - postgres
     env_file:
       - .env
+    volumes:
+      - ./backend:/app
+  javascript:
+    container_name: javascript
+    build: frontend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - django
+    env_file:
+      - .env
+    volumes:
+      - ./frontend:/app 

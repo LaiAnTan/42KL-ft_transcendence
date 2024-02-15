@@ -1,0 +1,63 @@
+.container {
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	position: absolute;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+}
+
+.title-container {
+    position: relative;
+}
+
+.title {
+	width: 100%;
+	font-size: 150px;
+	font-family: 'Neon Lights', sans-serif;
+	background: linear-gradient(45deg, #ff0000, #FF7400, #FAE84D, #9AEB4C, #85EBE9, #0059FF, #8800FF, #FF00A5);
+	animation: animate 10s linear infinite;
+    background-size: 400%;
+	background-clip: text;
+	-webkit-background-clip: text;
+	-webkit-text-stroke: 7px transparent;
+	color: white;
+}
+
+.title-bg {
+	width: 100%;
+	font-size: 150px;
+	font-family: 'Neon Lights', sans-serif;
+	background: linear-gradient(45deg, #ff0000, #FF7400, #FAE84D, #9AEB4C, #85EBE9, #0059FF, #8800FF, #FF00A5);
+	animation: animate 10s linear infinite;
+    background-size: 400%;
+	background-clip: text;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	filter: blur(25px);
+	opacity: 0.5;
+	position: absolute;
+	top: 0%;
+	z-index: -1;
+}
+
+@keyframes animate {
+    0% {
+        background-position: 0%;
+    }
+
+    100% {
+        background-position: 400%;
+    }
+}
+
+.container p {
+	color: rgba(255, 255, 255, 0.50);
+
+	font-family: 'Aldrich', sans-serif;
+	font-size: 40px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+}
