@@ -3,6 +3,7 @@ import login from "./login.js";
 import menu from "./menu.js";
 import vsai from "./vs-ai.js";
 import vsplayer from "./vs-player.js";
+import game from "./game.js";
 
 const routes = {
 	"/": { title: "Ding Dong", render: home },
@@ -10,6 +11,7 @@ const routes = {
 	"/menu": { title: "Menu", render: menu },
 	"/vs-ai": { title: "VS AI", render: vsai },
 	"/vs-player": { title: "VS Player", render: vsplayer},
+	"/game": { title: "Game", render: game }
 };
 
 const app = document.getElementById("app");
