@@ -4,6 +4,7 @@ import menu from "./menu.js";
 import vsai from "./vs-ai.js";
 import vsplayer from "./vs-player.js";
 import game from "./game.js";
+import test from "./test.js";
 
 const routes = {
 	"/": { title: "Ding Dong", render: home },
@@ -11,7 +12,8 @@ const routes = {
 	"/menu": { title: "Menu", render: menu },
 	"/vs-ai": { title: "VS AI", render: vsai },
 	"/vs-player": { title: "VS Player", render: vsplayer},
-	"/game": { title: "Game", render: game }
+	"/game": { title: "Game", render: game },
+	"/test" : { title: "Test", render: test}
 };
 
 const app = document.getElementById("app");
