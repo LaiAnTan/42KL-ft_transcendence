@@ -40,8 +40,15 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'base',
     'rest_framework',
+	'rest_framework_simplejwt',
 	'corsheaders',
 ]
+
+REST_FRAMEWORK = {
+	'DEFAULT_AUTHENTICATION_CLASSES': [
+		'rest_framework_simplejwt.authentication.JWTAuthentication',
+	],
+}
 
 MIDDLEWARE = [
 	'corsheaders.middleware.CorsMiddleware',

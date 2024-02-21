@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import views_User, views_Matchup, views_Versus, views_Tournament, authentication
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
     path('addUser/', views_User.addUser),
