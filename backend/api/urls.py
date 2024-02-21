@@ -17,4 +17,6 @@ urlpatterns = [
     path('allTournaments/', views_Tournament.getAllTournament),
     path('authConfig/', authentication.get_auth_config),
 	path('postCode/', authentication.postCode),
+	path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+	path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]

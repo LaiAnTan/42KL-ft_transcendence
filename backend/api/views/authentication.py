@@ -1,6 +1,5 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from rest_framework_simplejwt.tokens import RefreshToken
 import requests
 import os
 
@@ -27,6 +26,7 @@ def postCode(request):
 			access_token = access_token_data.get("access_token")
 			ft_me = requests.get("https://api.intra.42.fr/v2/me", headers={"Authorization": "Bearer "+ft_access_token.json()["access_token"]})
 			ft_me_json = ft_me.json()
+			
 			return Response(ft_me_json, status=200)
 		else:
 			# If the request failed, return an error response
