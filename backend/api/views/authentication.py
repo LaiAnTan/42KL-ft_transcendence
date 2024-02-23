@@ -33,9 +33,12 @@ def postCode(request):
 			user, created = USER.objects.get_or_create(id=ft_me_json["id"])
 			jwt_refresh = RefreshToken.for_user(user)
 			jwt_token = str(jwt_refresh.access_token)
-			print("JWT Token: ", jwt_token)
 
-			return Response(ft_me_json, status=200)
+			response = Response(ft_me_json, status=200)
+			response.set_cookie('jwt', jwt_token, httponly=True)
+
+			return response
+			# return Response(ft_me_json, status=200)
 		else:
 			# If the request failed, return an error response
 			return Response({"Error": "Failed to retrieve access token"}, status=ft_access_token.status_code)
