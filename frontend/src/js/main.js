@@ -6,6 +6,7 @@ import vsplayer from "./vs-player.js";
 import game from "./game.js";
 import settings from "./settings.js";
 
+const app = document.getElementById("app");
 const routes = {
 	"/": { title: "Ding Dong", render: home },
 	"/login": { title: "Login with 42", render: login },
@@ -15,8 +16,6 @@ const routes = {
 	"/game": { title: "Game", render: game },
 	"/settings": { title: "Settings", render: settings }
 };
-
-const app = document.getElementById("app");
 
 export function loadCSS(href) {
 	const link = document.createElement("link");
@@ -48,9 +47,11 @@ function router() {
 
 // Handle navigation
 window.addEventListener("click", e => {
+	console.log(e.target);
 	if (e.target.matches("[data-link]")) {
+		console.log(e.target.getAttribute("data-link"));
 		e.preventDefault();
-		history.pushState("", "", e.target.href);
+		history.pushState("", "", e.target.getAttribute("data-link"));
 		router();
 	}
 });
