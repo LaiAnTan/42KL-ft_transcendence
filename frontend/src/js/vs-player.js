@@ -1,6 +1,7 @@
-import { navigate } from "./main.js";
+import { navigate, loadCSS } from "./main.js";
 
 export default () => {
+	loadCSS("src/css/vs-player.css");
 
 	document.addEventListener("click", (event) => {
 		const roomID = document.getElementById("room-id").value;

@@ -1,8 +1,10 @@
-import { navigate } from "./main.js";
+import { navigate, loadCSS } from "./main.js";
 
 let keydownHandler = null;
 
 export default () => {
+	loadCSS("src/css/home.css");
+	
 	if (!keydownHandler) {
 		keydownHandler = (event) => {
 			navigate('/login');

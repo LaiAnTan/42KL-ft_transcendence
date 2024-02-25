@@ -1,0 +1,53 @@
+.menu-header {
+	position: relative;
+	display: inline-block;
+}
+
+.menu-header::after {
+	content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    height: 5px;
+	width: 100vw;
+    background: linear-gradient(to bottom, var(--settings-color), transparent);
+}
+
+.menu-header-title {
+	font-family: 'Ubuntu', sans-serif;
+	font-size: 40px;
+	color: white;
+	font-weight: 700;
+	text-shadow: 0 0 25px var(--settings-color);
+	width: 100vw;
+}
+
+.visually-hidden {
+	position: absolute;
+	clip: rect(0 0 0 0);
+	overflow: hidden;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	border: 0;
+}
+
+.button-like {
+	display: inline-block;
+	padding: 10px 20px;
+	width: 100px;
+}
+
+.button-like:hover {
+	background-color: #cb8aff;
+}
+
+.visually-hidden:checked + .button-like {
+	background-color: var(--settings-color);
+	transform: scale(1.1);
+}
+
+.header h1, p {
+	width: auto;
+}

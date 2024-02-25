@@ -4,6 +4,7 @@ import menu from "./menu.js";
 import vsai from "./vs-ai.js";
 import vsplayer from "./vs-player.js";
 import game from "./game.js";
+import settings from "./settings.js";
 
 const routes = {
 	"/": { title: "Ding Dong", render: home },
@@ -11,15 +12,17 @@ const routes = {
 	"/menu": { title: "Menu", render: menu },
 	"/vs-ai": { title: "VS AI", render: vsai },
 	"/vs-player": { title: "VS Player", render: vsplayer},
-	"/game": { title: "Game", render: game }
+	"/game": { title: "Game", render: game },
+	"/settings": { title: "Settings", render: settings }
 };
 
 const app = document.getElementById("app");
 
-function removeAllEventListeners(element) {
-	if (element && element.nodeType === Node.ELEMENT_NODE) {
-		element.replaceWith(element.cloneNode(true));
-	}
+export function loadCSS(href) {
+	const link = document.createElement("link");
+	link.rel = "stylesheet";
+	link.href = href;
+	document.head.appendChild(link);
 }
 
 export function navigate(path) {
@@ -27,7 +30,6 @@ export function navigate(path) {
 		return;
 	}
 
-	// removeAllEventListeners(app);
 	history.pushState({}, "", path);
 	router();
 }
