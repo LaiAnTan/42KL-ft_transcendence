@@ -24,6 +24,15 @@ export function loadCSS(href) {
 	document.head.appendChild(link);
 }
 
+export function initRedirClicks(e) {
+	const parent = e.target.closest("[data-link]");
+	if (parent) {
+		e.preventDefault();
+		history.pushState("", "", parent.getAttribute("data-link"));
+		router();
+	}
+}
+
 export function navigate(path) {
 	if (window.location.pathname === path) {
 		return;
@@ -45,17 +54,6 @@ function router() {
 	}
 };
 
-// Handle navigation
-window.addEventListener("click", e => {
-	console.log(e.target);
-	if (e.target.matches("[data-link]")) {
-		console.log(e.target.getAttribute("data-link"));
-		e.preventDefault();
-		history.pushState("", "", e.target.getAttribute("data-link"));
-		router();
-	}
-});
-
-// Update router
+window.addEventListener("click", initRedirClicks);
 window.addEventListener("popstate", router);
 window.addEventListener("DOMContentLoaded", router);
