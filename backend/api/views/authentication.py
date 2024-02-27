@@ -1,14 +1,19 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from django.contrib.auth import get_user_model
+# from django.db import IntegrityError
+# from django.core.exceptions import ObjectDoesNotExist
 import requests
 import os
+import logging
 
 UID = os.getenv("UID")
 SECRET = os.getenv("SECRET")
 REDIR_URI = os.getenv("REDIRECT_URI")
 USER = get_user_model()
+
+log = logging.getLogger(__name__)
 
 @api_view(['GET'])
 def get_auth_config(request):
@@ -30,9 +35,19 @@ def postCode(request):
 			ft_me = requests.get("https://api.intra.42.fr/v2/me", headers={"Authorization": "Bearer "+ft_access_token.json()["access_token"]})
 			ft_me_json = ft_me.json()
 			
-			user, created = USER.objects.get_or_create(id=ft_me_json["id"])
+
+			user, created = USER.objects.get_or_create(id=ft_me_json["id"], username=ft_me_json["login"])
+			log.info('id from api: %s' % ft_me_json["id"])
 			jwt_refresh = RefreshToken.for_user(user)
 			jwt_token = str(jwt_refresh.access_token)
+			log.info('jwt token: %s' % jwt_token)
+
+			try:
+				decoded = AccessToken(jwt_token)
+				payload = decoded.payload
+				log.debug('payload: %s' % payload)
+			except Exception as e:
+				log.error('error: %s' % str(e))
 
 			response = Response(ft_me_json, status=200)
 			response.set_cookie('jwt', jwt_token, httponly=True)
