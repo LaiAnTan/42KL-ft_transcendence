@@ -45,3 +45,21 @@
 	background-color: red;
 	position: absolute;
 }
+
+#paddle_left {
+	width: 2%;
+	height: 25%;
+	background-color: #333;
+	top: 37.5%;
+	left: 5%;
+	position: absolute;
+}
+
+#paddle_right {
+	width: 2%;
+	height: 25%;
+	background-color: #333;
+	top: 37.5%;
+	left: 95%;
+	position: absolute;
+}
