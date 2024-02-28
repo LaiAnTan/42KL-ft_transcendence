@@ -3,7 +3,7 @@ export default () => {
 
     document.addEventListener("click", (event) => {
         if (event.target && event.target.id === "start") {
-            socket = new WebSocket("ws://localhost:8000/practice/");
+            socket = new WebSocket("ws://localhost:8000/dong/" ); // add + id at end
             // Set up WebSocket event listeners
             socket.onopen = function(event) {
                 console.log("WebSocket connection opened");
@@ -50,6 +50,25 @@ export default () => {
             }
         }
     });
+
+    document.addEventListener("keydown", (event) => {
+        if (event.keyCode === 87) {
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send("RUN");
+            } else {
+                console.error("WebSocket connection not established or closed");
+            }
+        }
+        if (event.keyCode === 83) {
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send("CHANGE");
+            } else {
+                console.error("WebSocket connection not established or closed");
+            }
+        }
+        // do something
+      });
+
 
     return `
         <h1>WebSocket Test</h1>
