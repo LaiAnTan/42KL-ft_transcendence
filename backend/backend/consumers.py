@@ -2,11 +2,12 @@ from channels.generic.websocket import AsyncJsonWebsocketConsumer
 import asyncio
 import json
 import uuid
-
+import random
 
 class Ball:
     def __init__(self, size, x, y, dx, dy):
         self.size = size
+        self.width_or_height = size / 2
         self.x = x
         self.y = y
         self.dx = dx  # Velocity in the x-direction
@@ -16,12 +17,13 @@ class Dong(AsyncJsonWebsocketConsumer):
 
     count = 0
     
-    game_width = 1000
-    game_height = 750
-    paddle_padding = 100
+    game_width = 100
+    game_height = 99
+    paddle_padding = 5
 
-    ball_start_dist = 20
-    ball_speed = 10
+    ball_start_dist = 5
+    ball_speed = 1.5
+    ball_rampup = 0.05
 
     ball = None
     # incrementing = false
@@ -64,21 +66,30 @@ class Dong(AsyncJsonWebsocketConsumer):
         self.ball.x = self.ball.x + self.ball.dx
         self.ball.y = self.ball.y + self.ball.dy
 
-        if self.ball.y > self.game_height:
-            self.ball.y = self.game_height
+        if self.ball.y > self.game_height - self.ball.width_or_height:
+            self.ball.y = self.game_height - self.ball.width_or_height
             self.ball.dy *= -1
 
         if self.ball.y < 0:
             self.ball.y = 0
             self.ball.dy *= -1
 
-        if self.ball.x > self.game_width:
-            self.ball.x = self.game_width
-            self.ball.dx *= -1
+        if self.ball.x > self.game_width - self.ball.width_or_height:
+            self.ball.x = self.game_width - self.ball.width_or_height
+            self.ball.dx = (abs(self.ball.dx) + self.ball_rampup) * -1
+            if self.ball.dy >= 0:
+                self.ball.dy += self.ball_rampup + random.uniform(-0.799, 0.801)
+            if self.ball.dy < 0:
+                self.ball.dy -= self.ball_rampup + random.uniform(-0.799, 0.801)
 
         if self.ball.x < 0:
             self.ball.x = 0
-            self.ball.dx *= -1
+            self.ball.dx = (abs(self.ball.dx) + self.ball_rampup)
+            if self.ball.dy >= 0:
+                self.ball.dy += self.ball_rampup + random.uniform(-0.799, 0.801)
+            if self.ball.dy < 0:
+                self.ball.dy -= self.ball_rampup + random.uniform(-0.799, 0.801)
+
 
     async def wall_collision(self):
         return
@@ -91,7 +102,7 @@ class Dong(AsyncJsonWebsocketConsumer):
 
     async def run(self):
         # print(self.scope)
-        self.ball = Ball(size = 20, y = self.game_height / 2, x = self.paddle_padding + self.ball_start_dist, dx = self.ball_speed, dy = self.ball_speed * -1)
+        self.ball = Ball(size = 3, y = self.game_height / 2, x = self.paddle_padding + self.ball_start_dist, dx = self.ball_speed, dy = self.ball_speed * -1)
         while (1):
             # print ('AAA')
             await asyncio.sleep(1/60)
