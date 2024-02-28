@@ -11,6 +11,17 @@ export default () => {
     
             socket.onmessage = function(event) {
                 console.log("Received message:", event.data);
+                let endElement = document.getElementById("end");
+                let eventData = JSON.parse(event.data);
+                if (endElement !== null) {
+                    endElement.style.left = eventData.ball_x + "px";
+                    endElement.style.top = eventData.ball_y + "px";
+                    console.log(eventData.ball_x, eventData.ball_y);
+                    endElement.style.color = "blue";
+
+                } else {
+                    console.error("Element with id 'end' not found.");
+                }
             };
     
             socket.onclose = function(event) {
@@ -69,6 +80,17 @@ export default () => {
         // do something
       });
 
+    // document.addEventListener("DOMContentLoaded", (event) => {
+    //     console.log("DOM fully loaded and parsed");
+    //     let endElement = document.getElementById("end");
+    //     if (endElement !== null) {
+    //     // Access the style property and set the color to red
+    //         console.log("endElement", endElement);
+    //         endElement.style.color = "blue";
+    //     } else {
+    //         console.error("Element with id 'end' not found.");
+    //     }
+    // });
 
     return `
         <h1>WebSocket Test</h1>
