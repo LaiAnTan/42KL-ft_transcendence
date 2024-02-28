@@ -36,7 +36,7 @@ def postCode(request):
 			ft_me_json = ft_me.json()
 			
 
-			user, created = USER.objects.get_or_create(id=ft_me_json["id"], username=ft_me_json["login"])
+			user, created = USER.objects.get_or_create(id=ft_me_json["id"], defaults={'username': ft_me_json["login"], 'email': ft_me_json["email"]})
 			log.info('id from api: %s' % ft_me_json["id"])
 			jwt_refresh = RefreshToken.for_user(user)
 			jwt_token = str(jwt_refresh.access_token)
