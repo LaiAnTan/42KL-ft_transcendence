@@ -4,21 +4,32 @@ import menu from "./menu.js";
 import vsai from "./vs-ai.js";
 import vsplayer from "./vs-player.js";
 import game from "./game.js";
+import settings from "./settings.js";
 
+const app = document.getElementById("app");
 const routes = {
 	"/": { title: "Ding Dong", render: home },
 	"/login": { title: "Login with 42", render: login },
 	"/menu": { title: "Menu", render: menu },
 	"/vs-ai": { title: "VS AI", render: vsai },
 	"/vs-player": { title: "VS Player", render: vsplayer},
-	"/game": { title: "Game", render: game }
+	"/game": { title: "Game", render: game },
+	"/settings": { title: "Settings", render: settings }
 };
 
-const app = document.getElementById("app");
+export function loadCSS(href) {
+	const link = document.createElement("link");
+	link.rel = "stylesheet";
+	link.href = href;
+	document.head.appendChild(link);
+}
 
-function removeAllEventListeners(element) {
-	if (element && element.nodeType === Node.ELEMENT_NODE) {
-		element.replaceWith(element.cloneNode(true));
+export function initRedirClicks(e) {
+	const parent = e.target.closest("[data-link]");
+	if (parent) {
+		e.preventDefault();
+		history.pushState("", "", parent.getAttribute("data-link"));
+		router();
 	}
 }
 
@@ -27,7 +38,6 @@ export function navigate(path) {
 		return;
 	}
 
-	// removeAllEventListeners(app);
 	history.pushState({}, "", path);
 	router();
 }
@@ -44,15 +54,6 @@ function router() {
 	}
 };
 
-// Handle navigation
-window.addEventListener("click", e => {
-	if (e.target.matches("[data-link]")) {
-		e.preventDefault();
-		history.pushState("", "", e.target.href);
-		router();
-	}
-});
-
-// Update router
+window.addEventListener("click", initRedirClicks);
 window.addEventListener("popstate", router);
 window.addEventListener("DOMContentLoaded", router);
