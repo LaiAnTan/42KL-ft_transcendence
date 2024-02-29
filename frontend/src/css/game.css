@@ -37,8 +37,8 @@
 }
 
 #dongball {
-	width: 20px;
-	height: 20px;
+	width: 2%;
+	height: 4%;
 	left: 0%;
 	top: 0%;
 	border-radius: 50%;
@@ -51,7 +51,7 @@
 	height: 25%;
 	background-color: #333;
 	top: 37.5%;
-	left: 5%;
+	left: 3%;
 	position: absolute;
 }
 

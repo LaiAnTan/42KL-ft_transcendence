@@ -1,29 +1,29 @@
 import { navigate } from "./main.js";
-
 function game()
 {
 
-  let player_1_score = 3;
+  let player_1_score = 0;
   let player_2_score = 0;
   let player_1_username = "sealw4ll";
   let player_2_username = "lwilliam";
   let is_animating = false;
-
   var socket;
+//   let id = toString(Math.floor(Math.random() * (1 - 1000000 + 1) + 1));
+  let id = "1"
 
   let isLeftPaddleAnimating = false;
   let isRightPaddleAnimating = false;
   
   function tweenPaddlePosition(element, targetY, duration) {
       let isAnimating = element.classList.contains('paddle-left') ? isLeftPaddleAnimating : isRightPaddleAnimating;
-  
+      
       if (isAnimating) {
           return; // Don't start a new animation if one is already in progress
-      }
-  
-      isAnimating = true;
-  
-      const start = { y: parseFloat(element.style.top) || 0 };
+        }
+        
+        isAnimating = true;
+        
+        const start = { y: parseFloat(element.style.top) || 0 };
       const change = { y: targetY - start.y };
       const startTime = performance.now();
   
@@ -83,34 +83,91 @@ function game()
 }
 
 
+function playWallSound() {
+
+    // AUDIO HOW
+
+    // Create an Audio element
+    // const audio = new Audio();
+
+    // // Set the source of the audio file
+    // audio.src = 'https://www.myinstants.com/en/instant/osu-hit-sound-29289/?utm_source=copy&utm_medium=share';
+
+    // // Load the audio (asynchronously)
+    // audio.load();
+
+    // // Play the audio when loading is complete
+    // audio.addEventListener('loadeddata', function() {
+    //     audio.play();
+    // });
+
+    // // Handle errors
+    // audio.addEventListener('error', function(e) {
+    //     console.error('Error loading or playing the MP3 audio:', e);
+    // });
+}
+
+function isJSON(str) {
+    try {
+        JSON.parse(str);
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+
     document.addEventListener("click", (event) => {
         if (event.target && event.target.id === "start") {
             socket = new WebSocket("ws://localhost:8000/dong/" ); // add + id at end
             // Set up WebSocket event listeners
             socket.onopen = function(event) {
+                // socket.send(JSON.stringify({
+                //     id: id,
+                // }));
+                // socket.send(JSON.stringify({
+                //     id: "HAHAHAHAHHA",
+                // }));
                 console.log("WebSocket connection opened");
             };
     
             socket.onmessage = function(event) {
                 // console.log("Received message:", event.data);
-                let endElement = document.getElementById("dongball");
-                if (event.data == "HIT LEFT")
+                if (isJSON(event.data))
                 {
-                    console.log("HIT LEFT");
-                    return ;
+                    let endElement = document.getElementById("dongball");
+                    let eventData = JSON.parse(event.data);
+                    if (endElement !== null) {
+                        tweenBallPosition(endElement, eventData.ball_x, eventData.ball_y, 1);
+                        tweenPaddlePosition(document.getElementById('paddle_left'), eventData.paddle_left_y, 2);
+                        tweenPaddlePosition(document.getElementById('paddle_right'), eventData.paddle_right_y, 2);
+                        return ;
+                    } else {
+                        console.error("Element with id 'end' not found.");
+                    }
                 }
-                if (event.data == "HIT RIGHT")
+                else
                 {
-                    console.log("HIT RIGHT");
-                    return ;
-                }
-                let eventData = JSON.parse(event.data);
-                if (endElement !== null) {
-                    tweenBallPosition(endElement, eventData.ball_x, eventData.ball_y, 1);
-                    tweenPaddlePosition(document.getElementById('paddle_left'), eventData.paddle_left_y, 5);
-                    tweenPaddlePosition(document.getElementById('paddle_right'), eventData.paddle_right_y, 5);
-                } else {
-                    console.error("Element with id 'end' not found.");
+                    if (event.data == "HIT WALL")
+                    {
+                        console.log("SOUNDDDD");
+                        playWallSound();
+                        return ;
+                    }
+                    if (event.data == "HIT LEFT")
+                    {
+                        player_2_score += 1;
+                        document.getElementById('player2score').textContent = player_2_score.toString();
+                        console.log("HIT LEFT");
+                        return ;
+                    }
+                    if (event.data == "HIT RIGHT")
+                    {
+                        player_1_score += 1;
+                        document.getElementById('player1score').textContent = player_1_score.toString();
+                        console.log("HIT RIGHT");
+                        return ;
+                    }
                 }
             };
     
@@ -154,73 +211,182 @@ function game()
 
     
     const pressedKeys = new Set();
-    
-    document.addEventListener("keydown", (event) => {
-        // Add the pressed key to the Set
-        pressedKeys.add(event.key);
-        
-        // Handle the keys based on the Set
-        handleKeys();
-    });
 
-    document.addEventListener("keyup", (event) => {
-        // Remove the released key from the Set
-        pressedKeys.delete(event.key);
-        
-        // Handle the keys based on the Set
-        handleKeys();
+    document.addEventListener("keydown", (event) => {
+        if (event.key === 'w' || event.key === 's') {
+            pressedKeys.add(event.key);
+    
+            // Determine the direction based on pressed keys
+            let direction;
+            if (pressedKeys.has('w') && pressedKeys.has('s')) {
+                // If both keys are pressed, cancel out the movement
+                direction = "PADDLE_STOP";
+            } else if (pressedKeys.has('w')) {
+                direction = "PADDLE_UP";
+            } else if (pressedKeys.has('s')) {
+                direction = "PADDLE_DOWN";
+            }
+    
+            if (direction) {
+                const message = {
+                    id: id,
+                    direction: direction
+                };
+    
+                // Send the WebSocket message
+                socket.send(JSON.stringify(message));
+            }
+        }
+
+        if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+            pressedKeys.add(event.key);
+    
+            // Determine the direction based on pressed keys
+            let direction;
+            if (pressedKeys.has('ArrowUp') && pressedKeys.has('ArrowDown')) {
+                // If both keys are pressed, cancel out the movement
+                direction = "PADDLE_STOP";
+            } else if (pressedKeys.has('ArrowUp')) {
+                direction = "PADDLE_UP";
+            } else if (pressedKeys.has('ArrowDown')) {
+                direction = "PADDLE_DOWN";
+            }
+    
+            if (direction) {
+                const message = {
+                    id: "2",
+                    direction: direction
+                };
+    
+                // Send the WebSocket message
+                socket.send(JSON.stringify(message));
+            }
+        }
+
     });
     
-    function handleKeys() {
-        // Check if 'w' is in the pressed keys
-        if (pressedKeys.has('w')) {
-            if (socket && socket.readyState === WebSocket.OPEN) {
-            socket.send("PADDLE_LEFT_UP");
-        } else {
-            console.error("WebSocket connection not established or closed");
-        }
-    }
+    // Keyup event listener
+    document.addEventListener("keyup", (event) => {
+        if (event.key === 'w' || event.key === 's') {
+            pressedKeys.delete(event.key);
     
-    // Check if 's' is in the pressed keys
-    if (pressedKeys.has('s')) {
-        if (socket && socket.readyState === WebSocket.OPEN) {
-            socket.send("PADDLE_LEFT_DOWN");
-        } else {
-            console.error("WebSocket connection not established or closed");
+            // Determine the direction based on remaining pressed keys
+            let direction;
+            if (pressedKeys.has('w')) {
+                direction = "PADDLE_UP";
+            } else if (pressedKeys.has('s')) {
+                direction = "PADDLE_DOWN";
+            } else {
+                direction = "PADDLE_STOP";
+            }
+    
+            const message = {
+                id: id,
+                direction: direction
+            };
+    
+            // Send the WebSocket message
+            socket.send(JSON.stringify(message));
         }
-    }
+
+        if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+            pressedKeys.delete(event.key);
+    
+            // Determine the direction based on remaining pressed keys
+            let direction;
+            if (pressedKeys.has('ArrowUp')) {
+                direction = "PADDLE_UP";
+            } else if (pressedKeys.has('ArrowDown')) {
+                direction = "PADDLE_DOWN";
+            } else {
+                direction = "PADDLE_STOP";
+            }
+    
+            const message = {
+                id: "2",
+                direction: direction
+            };
+    
+            // Send the WebSocket message
+            socket.send(JSON.stringify(message));
+        }
+
+    });
+    
+    // document.addEventListener("keydown", (event) => {
+    //     // Add the pressed key to the Set
+    //     pressedKeys.add(event.key);
+        
+    //     // Handle the keys based on the Set
+    //     handleKeys();
+    // });
+
+    // document.addEventListener("keyup", (event) => {
+    //     // Remove the released key from the Set
+    //     pressedKeys.delete(event.key);
+        
+    //     // Handle the keys based on the Set
+    //     handleKeys();
+    // });
+    
+    // function handleKeys() {
+    //     // Check if 'w' is in the pressed keys
+    //     if (pressedKeys.has('w')) {
+    //         if (socket && socket.readyState === WebSocket.OPEN) {
+    //         // socket.send("PADDLE_LEFT_UP");
+    //         socket.send(JSON.stringify({
+    //             direction: "PADDLE_UP",
+    //             id: id,
+    //         }));
+    //     } else {
+    //         console.error("WebSocket connection not established or closed");
+    //     }
+    // }
+    
+    // // Check if 's' is in the pressed keys
+    // if (pressedKeys.has('s')) {
+    //     if (socket && socket.readyState === WebSocket.OPEN) {
+    //         // socket.send("PADDLE_LEFT_DOWN");
+    //         socket.send(JSON.stringify({
+    //             direction: "PADDLE_DOWN",
+    //             id: id,
+    //         }));
+    //     } else {
+    //         console.error("WebSocket connection not established or closed");
+    //     }
+    // }
 
     // Check if 'ArrowUp' is in the pressed keys
-    if (pressedKeys.has('ArrowUp')) {
-        if (socket && socket.readyState === WebSocket.OPEN) {
-            socket.send("PADDLE_RIGHT_UP");
-        } else {
-            console.error("WebSocket connection not established or closed");
-        }
-    }
+    // if (pressedKeys.has('ArrowUp')) {
+    //     if (socket && socket.readyState === WebSocket.OPEN) {
+    //         socket.send("PADDLE_RIGHT_UP");
+    //     } else {
+    //         console.error("WebSocket connection not established or closed");
+    //     }
+    // }
     
-    // Check if 'ArrowDown' is in the pressed keys
-    if (pressedKeys.has('ArrowDown')) {
-        if (socket && socket.readyState === WebSocket.OPEN) {
-            socket.send("PADDLE_RIGHT_DOWN");
-        } else {
-            console.error("WebSocket connection not established or closed");
-        }
-    }
+    // // Check if 'ArrowDown' is in the pressed keys
+    // if (pressedKeys.has('ArrowDown')) {
+    //     if (socket && socket.readyState === WebSocket.OPEN) {
+    //         socket.send("PADDLE_RIGHT_DOWN");
+    //     } else {
+    //         console.error("WebSocket connection not established or closed");
+    //     }
+    // }
     
     // Continue handling other keys as needed
-}
+// }
 
 return (`
 <div class="w-100 p-5 game-background">
 <div class="d-flex justify-content-between w-80 mx-auto pb-3">
         <div class="d-flex flex-row player-text player-1-text-color justify-content-end align-items-end">
-        <div class="player-score-text-size pr-2">${player_1_score.toString()}</div>
-          <div class="player-username-text-size pb-2">${player_1_username}</div>
+        <div id=player1score class="player-score-text-size pr-2">${player_1_score.toString()}</div>
+          <div id=player1name class="player-username-text-size pb-2">${player_1_username}</div>
         </div>
         <div class="d-flex flex-row player-text player-2-text-color justify-content-end align-items-end">
-          <div class="player-username-text-size pb-2">${player_2_username}</div>
-          <div class="player-score-text-size pl-2">${player_2_score.toString()}</div>
+          <div id=player2name class="player-username-text-size pb-2">${player_2_username}</div>
+          <div id=player2score class="player-score-text-size pl-2">${player_2_score.toString()}</div>
           </div>
           </div>
           <div class="position-relative d-flex align-items-center justify-content-center game-box w-80 mx-auto">
