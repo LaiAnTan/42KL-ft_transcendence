@@ -1,6 +1,7 @@
 version: '3.9'
 
 services:
+
   postgres:
     container_name: postgres
     image: postgres:14-alpine
@@ -39,10 +40,10 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./config:/config
+      - ./setup/prometheus:/config/prometheus
       - prometheus-data:/prometheus
     command:
-      - "--config.file=/config/prometheus.yml"
+      - "--config.file=/config/prometheus/prometheus.yml"
     
   grafana:
     image: grafana/grafana:latest
@@ -57,8 +58,35 @@ services:
     container_name: postgres-exporter
     ports:
       - 9187:9187
+    depends_on:
+      - postgres
     env_file:
       - .env
+
+  # logstash:
+
+  elasticsearch: # node-01
+
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.1
+    container_name: elasticsearch
+    ports:
+      - "9200:9200"
+    env_file:
+      - .env
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+    command: /bin/bash ./setup/elasticsearch/elasticsearch.sh
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.12.1
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    env_file:
+      - .env
+
 
 volumes:
 
