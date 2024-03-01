@@ -1,11 +1,12 @@
-import { navigate } from "./main.js";
-function game()
-{
+import { navigate, loadCSS } from "./main.js";
 
-  let player_1_score = 0;
-  let player_2_score = 0;
-  let player_1_username = "sealw4ll";
-  let player_2_username = "lwilliam";
+function game() {
+	loadCSS("src/css/game.css");
+
+	let player_1_score = 0;
+	let player_2_score = 0;
+	let player_1_username = "sealw4ll";
+	let player_2_username = "lwilliam";
   let is_animating = false;
   var socket;
 //   let id = toString(Math.floor(Math.random() * (1 - 1000000 + 1) + 1));
