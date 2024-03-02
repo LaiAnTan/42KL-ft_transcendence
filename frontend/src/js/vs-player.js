@@ -1,20 +1,33 @@
 import { navigate } from "./main.js";
 
-export default () => {
-
-	document.addEventListener("click", (event) => {
-		const roomID = document.getElementById("room-id").value;
-		if (event.target) {
-			if (event.target.id === "matchmaking") {
-				console.log("Matchmaking ", roomID);
-				// navigate("/matchmaking");
-			}
-			else if (event.target.id === "custom") {
-				console.log("Custom ", roomID);
-				// navigate("/custom");
-			}
+const handleClick = (event) => {
+	const roomIDInput = document.getElementById("room-id");
+	if (!roomIDInput) return; // Check if the element exists
+	
+	const roomID = roomIDInput.value;
+	if (event.target) {
+		if (event.target.id === "matchmaking") {
+			fetch("http://localhost:8000/api/matchmaking", {
+				method: "GET"
+			})
+			.then(response => response.json())
+			.then(data => {
+				navigate("/game?roomID=" + data.roomID);
+			})
+			.catch(error => {
+				console.error("Error: ", error);
+			});
 		}
-	});
+		else if (event.target.id === "custom") {
+			console.log("Custom ", roomID);
+			// navigate("/custom");
+		}
+	}
+};
+
+export default () => {
+	document.removeEventListener("click", handleClick);
+	document.addEventListener("click", handleClick);
 
 	return `
 		<div class="menu-header unselectable" style="height: 8vh">
