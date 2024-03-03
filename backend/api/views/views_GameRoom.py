@@ -4,33 +4,44 @@ import requests
 import os
 import random
 
-rooms = []
+rooms = {}
+MAX_CLIENTS_PER_ROOM = 2
 
 def generateRoomCode():
-	room_code = ''.join(random.choices('0123456789', k=6))
-	while room_code in rooms:
-		room_code = ''.join(random.choices('0123456789', k=6))
-	rooms.append(room_code)
-	return room_code
+    room_code = ''.join(random.choices('0123456789', k=6))
+    while room_code in rooms:
+        room_code = ''.join(random.choices('0123456789', k=6))
+    rooms[room_code] = []
+    return room_code
 
-# get room code for matchmaking, if no room available, create a new one
 @api_view(['GET'])
 def matchmaking(request):
-	if len(rooms) == 0:
-		room_code = generateRoomCode()
-	else:
-		room_code = rooms[0]
-	return Response({'roomID': room_code})
+    client_id = request.GET.get('clientID')
+    for room_code, clients in rooms.items():
+        if len(clients) < MAX_CLIENTS_PER_ROOM:
+            clients.append(client_id)
+            return Response({'roomID': room_code})
+
+    # If no available room, create a new one
+    room_code = generateRoomCode()
+    rooms[room_code].append(client_id)
+    return Response({'roomID': room_code})
 
 # close room when game is full (2 player)
-@api_view(['POST'])
+@api_view(['DELETE'])
 def closeRoom(request):
-	room_code = request.GET.get('room_code')
-	if room_code in rooms:
-		rooms.remove(room_code)
-		return Response({'message': 'Room closed'})
-	else:
-		return Response({'message': 'Room not found'}, status=404)
+    room_code = request.GET.get('room_code')
+    if room_code in rooms:
+        del rooms[room_code]  # Remove the room code from the rooms dictionary
+        return Response({'message': 'Room closed'})
+    else:
+        return Response({'message': 'Room not found'}, status=404)
+
+# close all rooms
+@api_view(['DELETE'])
+def closeAllRooms(request):
+    rooms.clear()
+    return Response({'message': 'All rooms closed'})
 
 # join room to make sure the room is exist
 @api_view(['GET'])

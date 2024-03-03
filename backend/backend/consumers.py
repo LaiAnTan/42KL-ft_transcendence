@@ -1,4 +1,5 @@
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
+import urllib.parse
 import asyncio
 import json
 import uuid
@@ -38,7 +39,11 @@ class Dong(AsyncJsonWebsocketConsumer):
     rooms = {}
 
     async def connect(self):
-        self.room_id = self.scope['query_string'].decode('utf-8').split('=')[1]
+        query_string = self.scope.get("query_string", b"").decode("utf-8")
+        query_parameters = urllib.parse.parse_qs(query_string)
+
+        self.room_id = query_parameters.get('roomID', [''])[0]
+        self.client_id = query_parameters.get('clientID', [''])[0]
         self.room_group_name = f"room_{self.room_id}"
 
         await self.channel_layer.group_add(
@@ -50,23 +55,28 @@ class Dong(AsyncJsonWebsocketConsumer):
             # Initialize the room with game-related variables
             self.rooms[self.room_id] = {
                 'game_started': False,
-                'paddle_left': Paddle(height=25, width=2, x=self.paddle_padding, y=50),  # Example initialization
-                'paddle_right': Paddle(height=25, width=2, x=self.game_width - self.paddle_padding, y=50),  # Example initialization
-                'number_in_room': 0,
-                'ball': Ball(size=2, x=self.game_width / 2, y=self.game_height / 2, dx=1.0, dy=random.randint(-4, 4))  # Example initialization
+                'paddle_left': Paddle(height=25, width=2, x=self.paddle_padding, y=50),
+                'paddle_right': Paddle(height=25, width=2, x=self.game_width - self.paddle_padding, y=50),
+                'player_in_room': 0,
+                'players': [],
             }
 
-        self.rooms[self.room_id]['number_in_room'] += 1
+        self.rooms[self.room_id]['player_in_room'] += 1
+        self.rooms[self.room_id]['players'].append(self.client_id)
 
-        if self.rooms[self.room_id]['number_in_room'] == 2:
-            asyncio.create_task(self.run())
-    
+        if self.rooms[self.room_id]['player_in_room'] > 2:
+            await self.send_json({'message': 'ROOM FULL'})
+            self.rooms[self.room_id]['player_in_room'] -= 1
+            await self.close()
+            return
+
         await self.accept()
 
     async def disconnect(self, close_code):
-        self.rooms[self.room_id]['number_in_room'] -= 1
+        self.rooms[self.room_id]['player_in_room'] -= 1
         self.rooms[self.room_id]['game_started'] = False
-        if self.rooms[self.room_id]['number_in_room'] == 0:
+        self.rooms[self.room_id]['players'].remove(self.client_id)
+        if self.rooms[self.room_id]['player_in_room'] == 0:
             del self.rooms[self.room_id]
 
         await self.channel_layer.group_discard(
@@ -75,8 +85,11 @@ class Dong(AsyncJsonWebsocketConsumer):
         )
 
     async def receive(self, text_data=None, bytes_data=None, **kwargs):
-        if text_data == 'PING':
-            await self.send_json({'message': 'PONG'})
+        if text_data == 'START_GAME':
+            if self.rooms[self.room_id]['player_in_room'] == 2:
+                asyncio.create_task(self.run())
+            else:
+                await self.send_json({'console': 'WAITING FOR PLAYER TO JOIN'})
         elif text_data == 'USERS':
             await self.send_json({'message': self.rooms[self.room_id], 'room_id': self.room_id})
         elif text_data == 'PADDLE_LEFT_UP':
@@ -126,10 +139,14 @@ class Dong(AsyncJsonWebsocketConsumer):
             'ball_y': room['ball'].y if room['ball'] else None,
             'paddle_left_y': room['paddle_left'].y,    
             'paddle_right_y': room['paddle_right'].y,
+            'room_id': self.room_id,
+            'players': room['players'],
         }
 
     async def run(self):
         room = self.rooms[self.room_id]
+        room['ball'] = Ball(size=3, y=self.game_height / 2, x=room['paddle_left'].x + self.ball_start_dist,
+            dx=self.ball_speed, dy=random.randint(-6, 6))
         room['game_started'] = True
 
         while room['game_started']:
@@ -138,20 +155,10 @@ class Dong(AsyncJsonWebsocketConsumer):
             await self.update()
             await self.channel_layer.group_send(
                 self.room_group_name, {
-                    'type': 'game_data',
+                    'type': 'send_game_data',
                     'message': await self.get_game_data()
                 }
             )
-
-    async def game_data(self, event):
-        message = event['message']
-        await self.channel_layer.group_send(
-            self.room_group_name,
-            {
-                'type': 'send_game_data',
-                'message': message
-            }
-        )
 
     async def send_game_data(self, event):
         message = event['message']

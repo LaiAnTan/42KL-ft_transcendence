@@ -7,16 +7,17 @@ const handleClick = (event) => {
 	const roomID = roomIDInput.value;
 	if (event.target) {
 		if (event.target.id === "matchmaking") {
-			fetch("http://localhost:8000/api/matchmaking", {
-				method: "GET"
-			})
-			.then(response => response.json())
-			.then(data => {
-				navigate("/game?roomID=" + data.roomID);
-			})
-			.catch(error => {
-				console.error("Error: ", error);
-			});
+			// fetch("http://localhost:8000/api/matchmaking", {
+			// 	method: "GET"
+			// })
+			// .then(response => response.json())
+			// .then(data => {
+			// 	navigate("/game?roomID=" + data.roomID);
+			// })
+			// .catch(error => {
+			// 	console.error("Error: ", error);
+			// });
+			navigate("/game");
 		}
 		else if (event.target.id === "custom") {
 			console.log("Custom ", roomID);

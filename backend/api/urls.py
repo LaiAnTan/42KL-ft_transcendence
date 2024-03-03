@@ -20,4 +20,5 @@ urlpatterns = [
 	path('closeRoom', views_GameRoom.closeRoom),
 	path('joinRoom/<str:room_code>/', views_GameRoom.joinRoom),
 	path('allRooms/', views_GameRoom.allRooms),
+	path('closeAllRooms/', views_GameRoom.closeAllRooms),
 ]

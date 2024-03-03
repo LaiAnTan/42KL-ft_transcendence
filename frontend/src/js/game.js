@@ -2,130 +2,144 @@ import { navigate } from "./main.js";
 
 function game()
 {
+    let player_1_score = 3;
+    let player_2_score = 0;
+    let player_1_username = "sealw4ll";
+    let player_2_username = "lwilliam";
+    let is_animating = false;
 
-  const urlParams = new URLSearchParams(window.location.search);
-  let player_1_score = 3;
-  let player_2_score = 0;
-  let player_1_username = "sealw4ll";
-  let player_2_username = "lwilliam";
-  let is_animating = false;
+    var socket;
+    var roomID;
+    var clientID = 123;
 
-  var socket;
+    let isLeftPaddleAnimating = false;
+    let isRightPaddleAnimating = false;
 
-  let isLeftPaddleAnimating = false;
-  let isRightPaddleAnimating = false;
-  
-  function tweenPaddlePosition(element, targetY, duration) {
-    let isAnimating = element.classList.contains('paddle-left') ? isLeftPaddleAnimating : isRightPaddleAnimating;
-
-    if (isAnimating) {
-        return; // Don't start a new animation if one is already in progress
-    }
-
-    isAnimating = true;
-
-    const start = { y: parseFloat(element.style.top) || 0 };
-    const change = { y: targetY - start.y };
-    const startTime = performance.now();
-
-    function updateTween() {
-        const elapsed = performance.now() - startTime;
-        const progress = Math.min(1, elapsed / duration);
-
-        const newY = start.y + change.y * progress;
-
-        element.style.top = newY + "%";
-
-        if (progress < 1) {
-            requestAnimationFrame(updateTween);
-        } else {
-            isAnimating = false; // Animation completed, reset the flag
-            if (element.classList.contains('paddle-left')) {
-                isLeftPaddleAnimating = false;
+    fetch("http://localhost:8000/api/matchmaking?clientID=" + clientID, {
+        method: "GET"
+    })
+    .then(response => response.json())
+    .then(data => {
+        roomID = data.roomID;
+        socket = new WebSocket(`ws://localhost:8000/dong?roomID=${roomID}&clientID=${clientID}`);
+        // Set up WebSocket event listeners
+        socket.onopen = function(event) {
+            console.log("WebSocket connection opened");
+            console.log("client", clientID, "joined room", roomID);
+        };
+        socket.onmessage = function(event) {
+            // console.log( "Received message:", event.data);
+            let endElement = document.getElementById("dongball");
+            if (event.data == "HIT LEFT") {
+                console.log("HIT LEFT");
+                return ;
+            }
+            if (event.data == "HIT RIGHT") {
+                console.log("HIT RIGHT");
+                return ;
+            }
+            let eventData = JSON.parse(event.data);
+            if (endElement !== null) {
+                tweenBallPosition(endElement, eventData.ball_x, eventData.ball_y, 1);
+                tweenPaddlePosition(document.getElementById('paddle_left'), eventData.paddle_left_y, 5);
+                tweenPaddlePosition(document.getElementById('paddle_right'), eventData.paddle_right_y, 5);
             } else {
-                isRightPaddleAnimating = false;
+                console.error("Element with id 'end' not found.");
+            }
+            if (eventData.console)
+                console.log(eventData.console);
+        };
+        socket.onclose = function(event) {
+            console.log("WebSocket connection closed");
+        };
+        socket.onerror = function(event) {
+            console.error("WebSocket error:", event);
+            console.error("WebSocket connection closed due to room already have 2 players or room not found");
+        };
+    })
+    .catch(error => {
+        console.error("Error: ", error);
+    });
+
+    function tweenPaddlePosition(element, targetY, duration) {
+        let isAnimating = element.classList.contains('paddle-left') ? isLeftPaddleAnimating : isRightPaddleAnimating;
+
+        if (isAnimating) {
+            return; // Don't start a new animation if one is already in progress
+        }
+
+        isAnimating = true;
+
+        const start = { y: parseFloat(element.style.top) || 0 };
+        const change = { y: targetY - start.y };
+        const startTime = performance.now();
+
+        function updateTween() {
+            const elapsed = performance.now() - startTime;
+            const progress = Math.min(1, elapsed / duration);
+
+            const newY = start.y + change.y * progress;
+
+            element.style.top = newY + "%";
+
+            if (progress < 1) {
+                requestAnimationFrame(updateTween);
+            } else {
+                isAnimating = false; // Animation completed, reset the flag
+                if (element.classList.contains('paddle-left')) {
+                    isLeftPaddleAnimating = false;
+                } else {
+                    isRightPaddleAnimating = false;
+                }
             }
         }
+        requestAnimationFrame(updateTween);
     }
 
-    requestAnimationFrame(updateTween);
-  }
-
-  function tweenBallPosition(element, targetX, targetY, duration) {
-    
-    if (is_animating) {
-      return; // Don't start a new animation if one is already in progress
-    }
-
-    is_animating = true;
-
-    const start = { x: parseFloat(element.style.left) || 0, y: parseFloat(element.style.top) || 0 };
-    const change = { x: targetX - start.x, y: targetY - start.y };
-    const startTime = performance.now();
-
-    function updateTween() {
-        const elapsed = performance.now() - startTime;
-        const progress = Math.min(1, elapsed / duration);
-
-        const newX = start.x + change.x * progress;
-        const newY = start.y + change.y * progress;
-
-        element.style.left = newX + "%";
-        element.style.top = newY + "%";
-
-        if (progress < 1) {
-            requestAnimationFrame(updateTween);
-        } else {
-          is_animating = false; // Animation completed, reset the flag
+    function tweenBallPosition(element, targetX, targetY, duration) {
+        if (is_animating) {
+        return; // Don't start a new animation if one is already in progress
         }
-    }
 
-    requestAnimationFrame(updateTween);
-}
+        is_animating = true;
+
+        const start = { x: parseFloat(element.style.left) || 0, y: parseFloat(element.style.top) || 0 };
+        const change = { x: targetX - start.x, y: targetY - start.y };
+        const startTime = performance.now();
+
+        function updateTween() {
+            const elapsed = performance.now() - startTime;
+            const progress = Math.min(1, elapsed / duration);
+
+            const newX = start.x + change.x * progress;
+            const newY = start.y + change.y * progress;
+
+            element.style.left = newX + "%";
+            element.style.top = newY + "%";
+
+            if (progress < 1) {
+                requestAnimationFrame(updateTween);
+            } else {
+            is_animating = false; // Animation completed, reset the flag
+            }
+        }
+        requestAnimationFrame(updateTween);
+    }
 
 
     document.addEventListener("click", (event) => {
-        if (event.target && event.target.id === "start") {
-            socket = new WebSocket("ws://localhost:8000/dong?roomID=" + urlParams.get('roomID')); // add + id at end
-            // Set up WebSocket event listeners
-            socket.onopen = function(event) {
-                console.log("WebSocket connection opened");
-            };
-    
-            socket.onmessage = function(event) {
-                // console.log("Received message:", event.data);
-                let endElement = document.getElementById("dongball");
-                if (event.data == "HIT LEFT")
-                {
-                    console.log("HIT LEFT");
-                    return ;
-                }
-                if (event.data == "HIT RIGHT")
-                {
-                    console.log("HIT RIGHT");
-                    return ;
-                }
-                let eventData = JSON.parse(event.data);
-                if (endElement !== null) {
-                    tweenBallPosition(endElement, eventData.ball_x, eventData.ball_y, 1);
-                    tweenPaddlePosition(document.getElementById('paddle_left'), eventData.paddle_left_y, 5);
-                    tweenPaddlePosition(document.getElementById('paddle_right'), eventData.paddle_right_y, 5);
-                } else {
-                    console.error("Element with id 'end' not found.");
-                }
-            };
-    
-            socket.onclose = function(event) {
-                console.log("WebSocket connection closed");
-            };
-    
-            socket.onerror = function(event) {
-                console.error("WebSocket error:", event);
-            };
-        }
+        // if (event.target && event.target.id === "start") {
+        // }
         if (event.target && event.target.id === "end") {
             if (socket && socket.readyState === WebSocket.OPEN) {
                 socket.close();
+            } else {
+                console.error("WebSocket connection not established or closed");
+            }
+        }
+        if (event.target && event.target.id === "game") {
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send("START_GAME");
             } else {
                 console.error("WebSocket connection not established or closed");
             }
@@ -199,6 +213,7 @@ function game()
                 <div id="paddle_left"></div>
                 <div id="paddle_right"></div>
                 <button id="start">Start Websocket</button>
+                <button id="game">Start Game</button>
                 <button id="end">End Websocket</button>
             </div>
             <div>
