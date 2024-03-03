@@ -378,39 +378,38 @@ function isJSON(str) {
     // Continue handling other keys as needed
 // }
 
-return (`
-<div class="w-100 p-5 game-background">
-<div class="d-flex justify-content-between w-80 mx-auto pb-3">
-        <div class="d-flex flex-row player-text player-1-text-color justify-content-end align-items-end">
-        <div id=player1score class="player-score-text-size pr-2">${player_1_score.toString()}</div>
-          <div id=player1name class="player-username-text-size pb-2">${player_1_username}</div>
-        </div>
-        <div class="d-flex flex-row player-text player-2-text-color justify-content-end align-items-end">
-          <div id=player2name class="player-username-text-size pb-2">${player_2_username}</div>
-          <div id=player2score class="player-score-text-size pl-2">${player_2_score.toString()}</div>
-          </div>
-          </div>
-          <div class="position-relative d-flex align-items-center justify-content-center game-box w-80 mx-auto">
-          Game goes here
-          <h1>WebSocket Test</h1>
-          <p>Open the console to see the WebSocket messages</p>
-          <div id="dongball"></div>
-          <div id="paddle_left"></div>
-          <div id="paddle_right"></div>
-          <button id="start">Start Websocket</button>
-          <button id="ping">Ping</button>
-          <button id="RUN">Increment</button>
-          <button id="change">Decrement</button>
-          <button id="end">End Websocket</button>
-          </div>
-          <div>
-          
-          </div>
-          </div>
-          `)
-        }
+	return `
+<div class="vw-100 vh-100 p-5">
+	<div class="d-flex justify-content-between w-80 mx-auto pb-3">
+		<div class="d-flex flex-row player-text player-1-text-color justify-content-end align-items-end">
+			<div id=player1score class="player-score-text-size pr-2">${player_1_score.toString()}</div>
+			<div id=player1name class="player-username-text-size pb-2">${player_1_username}</div>
+		</div>
+		<div class="d-flex flex-row player-text player-2-text-color justify-content-end align-items-end">
+			<div id=player2name class="player-username-text-size pb-2">${player_2_username}</div>
+			<div id=player2score class="player-score-text-size pl-2">${player_2_score.toString()}</div>
+		</div>
+	</div>
+	<div class="game-container mx-auto">
+		<div class="game-box mx-auto">
+			Game goes here
+			<h1>WebSocket Test</h1>
+			<p>Open the console to see the WebSocket messages</p>
+			<div id="dongball"></div>
+			<div id="paddle_left"></div>
+			<div id="paddle_right"></div>
+			<button id="start">Start Websocket</button>
+			<button id="ping">Ping</button>
+			<button id="RUN">Increment</button>
+			<button id="change">Decrement</button>
+			<button id="end">End Websocket</button>
+		</div>
+	</div>
+</div>
+	`;
+}
 
-        export default game;
+export default game;
 
     // document.addEventListener("keydown", (event) => {
     //     if (event.key === 'w') {

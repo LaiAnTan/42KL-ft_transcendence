@@ -22,18 +22,19 @@
 	font-size: 25px;
 }
 
-.game-background {
-	background: linear-gradient(to right, #750000, black, #12034f);
-	width: 100vw;
-	height: 100vh;
+.game-container {
+	display: flex;
+	justify-content: center;
+	aspect-ratio: 16/9;
+	max-width: 1300px;
 }
 
 .game-box {
-	height: 75vh;
-	flex-shrink: 0;
-	border-radius: 1.5625rem;
-	background: rgba(0, 0, 0, 0.58);
-	box-shadow: 0px 0px 25px 0px rgba(255, 255, 255, 0.46);
+	position: relative;
+	aspect-ratio: 16/9;
+	max-width: 1300px;
+	border: 2px solid white;
+	box-shadow: #fff 0 0 25px;
 }
 
 #dongball {
