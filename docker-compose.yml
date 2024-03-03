@@ -40,10 +40,10 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./setup/prometheus:/config/prometheus
+      - ./setup/prometheus:/setup/prometheus
       - prometheus-data:/prometheus
     command:
-      - "--config.file=/config/prometheus/prometheus.yml"
+      - "--config.file=/setup/prometheus/prometheus.yml"
     
   grafana:
     image: grafana/grafana:latest
@@ -63,27 +63,44 @@ services:
     env_file:
       - .env
 
-  # logstash:
+  elasticsearch: # single node cluster
 
-  elasticsearch: # node-01
-
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.1
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.2
     container_name: elasticsearch
     ports:
       - "9200:9200"
-    env_file:
-      - .env
+      - "9300:9300"
     deploy:
       resources:
         limits:
           memory: 1G
-    command: /bin/bash ./setup/elasticsearch/elasticsearch.sh
+    env_file:
+      - .env
+    volumes:
+      - ./setup/elasticsearch:/setup/elasticsearch
+      - elastic-data:/usr/share/elasticsearch/data/
+    # command: /bin/sh ./setup/elasticsearch/elasticsearch.sh
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.12.2
+    container_name: logstash
+    ports:
+      - '9600:9600'
+    depends_on:
+      - elasticsearch
+    env_file:
+      - .env
+    volumes:
+      - ./setup/logstash:/setup/logstash
+    command: logstash -f /setup/logstash/logstash.conf
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:8.12.1
+    image: docker.elastic.co/kibana/kibana:8.12.2
     container_name: kibana
     ports:
       - "5601:5601"
+    depends_on:
+      - elasticsearch
     env_file:
       - .env
 
@@ -94,4 +111,7 @@ volumes:
     driver: local
 
   grafana-data:
+    driver: local
+
+  elastic-data:
     driver: local
