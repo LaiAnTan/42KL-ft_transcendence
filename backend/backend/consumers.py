@@ -4,23 +4,8 @@ import asyncio
 import json
 import uuid
 import random
-
-class Ball:
-    def __init__(self, size, x, y, dx, dy):
-        self.size = size
-        self.width_or_height = size / 2
-        self.x = x
-        self.y = y
-        self.dx = dx  # Velocity in the x-direction
-        self.dy = dy  # Velocity in the y-direction
-
-class Paddle:
-    def __init__(self, height, width, x, y):
-        self.height = height
-        self.width = width
-        self.x = x
-        self.y = y - (height / 2)
-        self.count = 0
+from .game_utils import Ball
+from .game_utils import Paddle
 
 class Dong(AsyncJsonWebsocketConsumer):
 
@@ -55,8 +40,8 @@ class Dong(AsyncJsonWebsocketConsumer):
             # Initialize the room with game-related variables
             self.rooms[self.room_id] = {
                 'game_started': False,
-                'paddle_left': Paddle(height=25, width=2, x=self.paddle_padding, y=50),
-                'paddle_right': Paddle(height=25, width=2, x=self.game_width - self.paddle_padding, y=50),
+                'paddle_left': Paddle("1", height=25, width=2, x=self.paddle_padding, y=50),
+                'paddle_right': Paddle("2", height=25, width=2, x=self.game_width - self.paddle_padding, y=50),
                 'player_in_room': 0,
                 'players': [],
             }
@@ -85,34 +70,34 @@ class Dong(AsyncJsonWebsocketConsumer):
         )
 
     async def receive(self, text_data=None, bytes_data=None, **kwargs):
-        if text_data == 'START_GAME':
-            if self.rooms[self.room_id]['player_in_room'] == 2:
-                asyncio.create_task(self.run())
+        data = json.loads(text_data)
+
+        if 'command' in data:
+            if data['command'] == 'START_GAME':
+                if self.rooms[self.room_id]['player_in_room'] == 2:
+                    asyncio.create_task(self.run())
+                else:
+                    await self.send_json({'console': 'WAITING FOR PLAYER TO JOIN'})
+            elif data['command'] == 'USERS':
+                await self.send_json({'message': self.rooms[self.room_id], 'room_id': self.room_id})
+
+        elif (data['id'] == self.rooms[self.room_id]["paddle_left"].id):
+            if (data['direction'] == "PADDLE_UP"):
+                self.rooms[self.room_id]["paddle_left"].count = 1
+            elif (data['direction'] == "PADDLE_DOWN"):
+                self.rooms[self.room_id]["paddle_left"].count = -1
             else:
-                await self.send_json({'console': 'WAITING FOR PLAYER TO JOIN'})
-        elif text_data == 'USERS':
-            await self.send_json({'message': self.rooms[self.room_id], 'room_id': self.room_id})
-        elif text_data == 'PADDLE_LEFT_UP':
-            await self.increment('LEFT')
-        elif text_data == 'PADDLE_LEFT_DOWN':
-            await self.decrement('LEFT')
-        elif text_data == 'PADDLE_RIGHT_UP':
-            await self.increment('RIGHT')
-        elif text_data == 'PADDLE_RIGHT_DOWN':
-            await self.decrement('RIGHT')
-
-    async def increment(self, paddle):
-        await self.send_json({'message': 'increment'})
-        if paddle == 'LEFT':
-            self.rooms[self.room_id]['paddle_left'].count = 1
-        else:
-            self.rooms[self.room_id]['paddle_right'].count = 1
-
-    async def decrement(self, paddle):
-        if paddle == 'LEFT':
-            self.rooms[self.room_id]['paddle_left'].count = -1
-        else:
-            self.rooms[self.room_id]['paddle_right'].count = -1
+                self.rooms[self.room_id]["paddle_left"].count = 0
+            return
+        
+        elif (data['id'] == self.rooms[self.room_id]["paddle_right"].id):
+            if (data['direction'] == "PADDLE_UP"):
+                self.rooms[self.room_id]["paddle_right"].count = 1
+            elif (data['direction'] == "PADDLE_DOWN"):
+                self.rooms[self.room_id]["paddle_right"].count = -1
+            else:
+                self.rooms[self.room_id]["paddle_right"].count = 0
+            return
     
     async def resetball(self, side):
 
@@ -132,17 +117,6 @@ class Dong(AsyncJsonWebsocketConsumer):
 
         await asyncio.sleep(1)
 
-    async def get_game_data(self):
-        room = self.rooms[self.room_id]
-        return {
-            'ball_x': room['ball'].x if room['ball'] else None,
-            'ball_y': room['ball'].y if room['ball'] else None,
-            'paddle_left_y': room['paddle_left'].y,    
-            'paddle_right_y': room['paddle_right'].y,
-            'room_id': self.room_id,
-            'players': room['players'],
-        }
-
     async def run(self):
         room = self.rooms[self.room_id]
         room['ball'] = Ball(size=3, y=self.game_height / 2, x=room['paddle_left'].x + self.ball_start_dist,
@@ -160,6 +134,25 @@ class Dong(AsyncJsonWebsocketConsumer):
                 }
             )
 
+    async def get_game_data(self):
+        room = self.rooms[self.room_id]
+        return {
+            'ball_x': room['ball'].x if room['ball'] else None,
+            'ball_y': room['ball'].y if room['ball'] else None,
+            'paddle_left_y': room['paddle_left'].y,    
+            'paddle_right_y': room['paddle_right'].y,
+            'room_id': self.room_id,
+            'players': room['players'],
+        }
+
+    async def wall_hit(self):
+        await self.channel_layer.group_send(
+        self.room_group_name, {
+            'type': 'send_game_data',
+            'message': {'hit': 'HIT WALL'}
+        }
+    )
+
     async def send_game_data(self, event):
         message = event['message']
         await self.send_json(message)
@@ -172,40 +165,54 @@ class Dong(AsyncJsonWebsocketConsumer):
         if room['ball'].y > self.game_height - self.ball_height_offset:
             room['ball'].y = self.game_height - self.ball_height_offset
             room['ball'].dy *= -1
+            await self.wall_hit()
 
         if room['ball'].y < 0:
             room['ball'].y = 0
             room['ball'].dy *= -1
+            await self.wall_hit()
 
         if (room['ball'].x  < self.paddle_padding and 
             room['ball'].x > self.paddle_padding - self.paddle_width and 
             room['ball'].y > room['paddle_left'].y and 
             room['ball'].y < room['paddle_left'].y + self.paddle_height):
-            await self.send("HIT LEFT")
+            await self.channel_layer.group_send(
+                self.room_group_name, {
+                    'type': 'send_game_data',
+                    'message': {'hit': 'HIT LEFT'}
+                }
+            )
             await self.resetball("LEFT")
 
         if (room['ball'].x  > self.game_width - self.paddle_padding - self.paddle_width and 
             room['ball'].x < self.game_width - self.paddle_padding + self.paddle_width and 
             room['ball'].y > room['paddle_right'].y and 
             room['ball'].y < room['paddle_right'].y + self.paddle_height):
-            await self.send("HIT RIGHT")
+            await self.channel_layer.group_send(
+                self.room_group_name, {
+                    'type': 'send_game_data',
+                    'message': {'hit': 'HIT RIGHT'}
+                }
+            )
             await self.resetball("RIGHT")
 
         if room['ball'].x > self.game_width - room['ball'].width_or_height - self.ball_width_offset:
             room['ball'].x = self.game_width - room['ball'].width_or_height
             room['ball'].dx = (abs(room['ball'].dx) + self.ball_rampup) * -1
-            if room['ball'].dy >= 0:
-                room['ball'].dy += self.ball_rampup + random.uniform(-0.499, 0.501)
+            self.wall_hit()
             if room['ball'].dy < 0:
                 room['ball'].dy -= self.ball_rampup + random.uniform(-0.499, 0.501)
+                await self.wall_hit()
 
         if room['ball'].x < 0:
             room['ball'].x = 0
             room['ball'].dx = (abs(room['ball'].dx) + self.ball_rampup)
             if room['ball'].dy >= 0:
                 room['ball'].dy += self.ball_rampup + random.uniform(-0.499, 0.501)
+                await self.wall_hit()
             if room['ball'].dy < 0:
                 room['ball'].dy -= self.ball_rampup + random.uniform(-0.499, 0.501)
+                await self.wall_hit()
 
     async def update(self):
 

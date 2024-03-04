@@ -18,76 +18,30 @@
 		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 
-		<div class="d-flex position-absolute align-items-center unselectable ml-4" style="height: 8vh; z-index: 1">
-			<p class="description scale-up cursor-pointer">GO BACK</p>
-		</div>
-		<div class="menu-header unselectable" style="height: 8vh; z-index: 0">
-			<p class="text-center menu-header-title h-100 m-0 pt-2">SETTINGS</p>
-		</div>
-		<div class="unselectable" style="height: 92vh;">
-			<div class="d-flex align-items-center justify-content-center h-100">
-				<div class="d-flex flex-column align-items-center justify-content-center mx-4 w-100" style="min-width: 800px; max-width: 1300px; height: 700px">
-					<!-- graphics settings -->
-					<div class="border-left border-right h-100 w-50 p-4">
-						<p class="important-label">GRAPHICS</p>
-						<p class="description">Changes the particle effects</p>
-						<div class="px-3 py-1">
-							<div class="d-flex flex-row justify-content-space-evenly pt-1">
-								<div class="px-1">
-									<input type="radio" id="off" name="options" class="visually-hidden" />
-									<label for="off" class="button-like description scale-up rounded-border cursor-pointer">OFF</label>
-								</div>
-								<div class="px-1">
-									<input type="radio" id="low" name="options" class="visually-hidden" />
-									<label for="low" class="button-like description scale-up rounded-border cursor-pointer">LOW</label>
-								</div>
-								<div class="px-1">
-									<input type="radio" id="high" name="options" class="visually-hidden" />
-									<label for="high" class="button-like description scale-up rounded-border cursor-pointer">HIGH</label>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div class="border-left border-right h-100 w-50 p-4">
-						<p class="important-label">AUDIO</p>
-						<p class="description">Adjust sound volumes</p>
-						<div class="px-3 py-1">
-							<div class="pt-1">
-								<p class="description pb-4">Master</p>
-								<input type="range" id="master" name="master" min="0" max="100" value="100" class="mx-auto w-100" style="min-width: 300px; max-width: 400px" />
-							</div>
-							<div class="pt-4">
-								<p class="description pb-4">Game</p>
-								<input type="range" id="game" name="game" min="0" max="100" value="100" class="mx-auto w-100" style="min-width: 300px; max-width: 400px" />
-							</div>
-							<div class="pt-4">
-								<p class="description pb-4">Effects</p>
-								<input type="range" id="effects" name="effects" min="0" max="100" value="100" class="mx-auto w-100" style="min-width: 300px; max-width: 400px" />
-							</div>
-						</div>
-					</div>
-
-					<div class="border-left border-right h-100 w-50 p-4">
-						<p class="important-label">OTHERS</p>
-						<p class="description">Placeholder</p>
-						<div class="px-3 py-1">
-							<div class="d-flex flex-row justify-content-space-evenly pt-1">
-								<div class="px-1">
-									<input type="radio" id="off" name="options" class="visually-hidden" />
-									<label for="off" class="button-like description scale-up rounded-border cursor-pointer">OFF</label>
-								</div>
-								<div class="px-1">
-									<input type="radio" id="low" name="options" class="visually-hidden" />
-									<label for="low" class="button-like description scale-up rounded-border cursor-pointer">LOW</label>
-								</div>
-								<div class="px-1">
-									<input type="radio" id="high" name="options" class="visually-hidden" />
-									<label for="high" class="button-like description scale-up rounded-border cursor-pointer">HIGH</label>
-								</div>
-							</div>
-						</div>
-					</div>
+		<div class="vw-100 vh-100 p-5">
+			<div class="d-flex justify-content-between w-80 mx-auto pb-3">
+				<div class="d-flex flex-row player-text player-1-text-color justify-content-end align-items-end">
+					<div id=player1score class="player-score-text-size pr-2">1</div>
+					<div id=player1name class="player-username-text-size pb-2">Wiliame</div>
+				</div>
+				<div class="d-flex flex-row player-text player-2-text-color justify-content-end align-items-end">
+					<div id=player2name class="player-username-text-size pb-2">Wallaca</div>
+					<div id=player2score class="player-score-text-size pl-2">2</div>
+				</div>
+			</div>
+			<div class="game-container mx-auto">
+				<div class="game-box mx-auto">
+					Game goes here
+					<h1>WebSocket Test</h1>
+					<p>Open the console to see the WebSocket messages</p>
+					<div id="dongball"></div>
+					<div id="paddle_left"></div>
+					<div id="paddle_right"></div>
+					<button id="start">Start Websocket</button>
+					<button id="ping">Ping</button>
+					<button id="RUN">Increment</button>
+					<button id="change">Decrement</button>
+					<button id="end">End Websocket</button>
 				</div>
 			</div>
 		</div>
