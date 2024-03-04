@@ -18,8 +18,9 @@ export default () => {
 			if (response.ok) {
 				const data = await response.json();
 				console.log('data', data);
-				console.log('displayname: ', data.displayname);
+				console.log('displayname: ', data.login);
 				console.log('email: ', data.email);
+				console.log('image: ', data.image.link);
 			} else {
 				console.error('Failed to send code to the backend.');
 			}
