@@ -5,7 +5,6 @@ import vsai from "./vs-ai.js";
 import vsplayer from "./vs-player.js";
 import game from "./game.js";
 import settings from "./settings.js";
-import test from "./test.js";
 
 const app = document.getElementById("app");
 const routes = {
@@ -15,7 +14,6 @@ const routes = {
 	"/vs-ai": { title: "VS AI", render: vsai },
 	"/vs-player": { title: "VS Player", render: vsplayer},
 	"/game": { title: "Game", render: game },
-	"/test" : { title: "Test", render: test},
 	"/settings": { title: "Settings", render: settings }
 };
 
