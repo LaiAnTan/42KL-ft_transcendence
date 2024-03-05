@@ -290,7 +290,7 @@ function game() {
                 </div>
             </div>
             <div class="game-container mx-auto">
-                <div class="game-box mx-auto">
+                <div class="game-box w-100">
                     <div id="dongball"></div>
                     <div id="paddle_left"></div>
                     <div id="paddle_right"></div>
