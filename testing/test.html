@@ -18,30 +18,83 @@
 		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 
-		<div class="vw-100 vh-100 p-5">
-			<div class="d-flex justify-content-between w-80 mx-auto pb-3">
-				<div class="d-flex flex-row player-text player-1-text-color justify-content-end align-items-end">
-					<div id=player1score class="player-score-text-size pr-2">1</div>
-					<div id=player1name class="player-username-text-size pb-2">Wiliame</div>
+		<!-- <div class="d-flex position-absolute align-items-center unselectable ml-4" style="height: 8vh; z-index: 1">
+			<p class="description scale-up cursor-pointer">GO BACK</p>
+		</div> -->
+		<div class="d-flex flex-row align-items-center justify-content-around h-100" style="padding: 50px 0;">
+			<div class="d-flex flex-column rounded-border glowing-border h-100 w-100 mx-3" style="min-width: 400px; max-width:600px;">
+				<!-- Game Statistics -->
+				<div class="p-4">
+					<div class="important-label">Game Statistics</div>
+					<div class="d-table description w-100 pt-2 px-4">
+						<div class="d-table-row">
+							<div class="d-table-cell">Games Played</div>
+							<div class="d-table-cell">0</div>
+						</div>
+						<div class="d-table-row">
+							<div class="d-table-cell">Games Won</div>
+							<div class="d-table-cell">0</div>
+						</div>
+						<div class="d-table-row">
+							<div class="d-table-cell">Games Lost</div>
+							<div class="d-table-cell">0</div>
+						</div>
+						<div class="d-table-row">
+							<div class="d-table-cell">Win Rate</div>
+							<div class="d-table-cell">0%</div>
+						</div>
+						<div class="d-table-row">
+							<div class="d-table-cell">Best Score</div>
+							<div class="d-table-cell">0</div>
+						</div>
+						<div class="d-table-row">
+							<div class="d-table-cell">Average Score</div>
+							<div class="d-table-cell">0</div>
+						</div>
+						<div class="d-table-row">
+							<div class="d-table-cell">Current Streak</div>
+							<div class="d-table-cell">0</div>
+						</div>
+						<div class="d-table-row">
+							<div class="d-table-cell">Longest Streak</div>
+							<div class="d-table-cell">0</div>
+						</div>
+					</div>
 				</div>
-				<div class="d-flex flex-row player-text player-2-text-color justify-content-end align-items-end">
-					<div id=player2name class="player-username-text-size pb-2">Wallaca</div>
-					<div id=player2score class="player-score-text-size pl-2">2</div>
+				<!-- Game History -->
+				<div class="p-4">
+					<div class="important-label">Game History</div>
+					<div class="description cursor-pointer">Button to redirect</div>
 				</div>
 			</div>
-			<div class="game-container mx-auto">
-				<div class="game-box w-100">
-					Game goes here
-					<h1>WebSocket Test</h1>
-					<p>Open the console to see the WebSocket messages</p>
-					<div id="dongball"></div>
-					<div id="paddle_left"></div>
-					<div id="paddle_right"></div>
-					<button id="start">Start Websocket</button>
-					<button id="ping">Ping</button>
-					<button id="RUN">Increment</button>
-					<button id="change">Decrement</button>
-					<button id="end">End Websocket</button>
+			<div class="d-flex flex-column align-items-center justify-content-center h-100 w-100" style="min-width: 200px; max-width:250px;">
+				<div class="circle"></div>
+				<div class="important-label" style="font-size: 40px;">HWONG</div>
+			</div>
+			<div class="d-flex flex-column rounded-border glowing-border h-100 w-100 mx-3" style="min-width: 400px; max-width:600px;">
+				<!-- Public data -->
+				<div class="p-4">
+					<div class="important-label">User Info</div>
+					<div class="d-table description w-100 pt-2 px-4">
+						<div class="d-table-row">
+							<div class="d-table-cell">Display Name</div>
+							<div class="d-table-cell" title="Hong You">Hong You</div>
+						</div>
+						<div class="d-table-row">
+							<div class="d-table-cell">Email</div>
+							<div class="d-table-cell" title="wonghongyou@gmail.com">wonghongyou@gmail.com</div>
+						</div>
+					</div>
+				</div>
+				<!-- Privaate data -->
+				<div class="p-4">
+					<div class="important-label">Personal Info</div>
+					<div class="d-table description w-100 pt-2 px-4">
+						<div class="d-table-row">
+							<div class="d-table-cell" title="Two Factor Authentication">2FA</div>
+							<div class="d-table-cell">Status</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

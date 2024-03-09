@@ -1,6 +1,8 @@
 body {
 	background-color: black;
 	font-family: 'Roboto', sans-serif;
+	width: 100vw;
+	height: 100vh;
 }
 
 body::-webkit-scrollbar {
@@ -173,69 +175,22 @@ input[type="range"]::-webkit-slider-thumb:active {
 	cursor: pointer;
 }
 
-.player-text {
-	font-family: 'Ubuntu', sans-serif;
-	font-weight: bold;
+.glowing-border {
+	box-shadow: 0 0 10px white;
 }
 
-.player-1-text-color {
-	color: #FF3C3C;
-	text-shadow: 0 0 25px #FF3C3C;
+.important-label {
+	text-shadow: 0;
+	-webkit-text-stroke: 0;
 }
 
-.player-2-text-color {
-	color: #4010FF;
-	text-shadow: 0 0 25px #4010FF;
-}
-
-.player-score-text-size {
-	font-size: 50px;
-	align-items: bottom;
-}
-
-.player-username-text-size {
-	font-size: 25px;
-}
-
-.game-container {
+.circle {
+	width: 200px;
+	height: 200px;
+	background-color: #3498db;
+	border-radius: 50%; /* This creates a circle */
 	display: flex;
 	justify-content: center;
-	aspect-ratio: 16/9;
-	max-width: 1300px;
-}
-
-.game-box {
-	position: relative;
-	aspect-ratio: 16/9;
-	max-width: 1300px;
-	border: 2px solid white;
-	box-shadow: #fff 0 0 25px;
-}
-
-#dongball {
-	width: 2%;
-	height: 4%;
-	left: 0%;
-	top: 0%;
-	border-radius: 50%;
-	background-color: red;
-	position: absolute;
-}
-
-#paddle_left {
-	width: 2%;
-	height: 25%;
-	background-color: #333;
-	top: 37.5%;
-	left: 3%;
-	position: absolute;
-}
-
-#paddle_right {
-	width: 2%;
-	height: 25%;
-	background-color: #333;
-	top: 37.5%;
-	left: 95%;
-	position: absolute;
+	align-items: center;
+	color: white;
 }
