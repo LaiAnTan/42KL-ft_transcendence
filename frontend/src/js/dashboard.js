@@ -5,46 +5,62 @@ export default () => {
 
 	const queryString = window.location.search;
 	if (!queryString) {
-		// Something here to v-model the text in search bar, and redirect to that url on button click
+		const ret = `
+<div class="important-label" style="font-size: 50px;">USER DASHBOARD</div>
+<div class="p-4" style="width: 500px">
+	<form>
+		<div class="search-bar">
+			<input id="searchbox" type="text" placeholder="Search by Intra ID" class="description" />
+			<button data-link="/dashboard?intra=" id="searchbutton" type="submit"><img src="../src/assets/search.png" style="width: 32px; height: 32px;"></img></button>
+		</div>
+	</form>
+</div>`
+		
+		let inputVal = ''
 
-		return `
-<div class="d-flex flex-column align-items-center justify-content-center vh-100">
-	<div class="important-label" style="font-size: 50px;">USER DASHBOARD</div>
-	<div class="p-4" style="width: 500px">
-		<form>
-			<div class="search-bar">
-				<input type="text" placeholder="Search by Intra ID" class="description" />
-				<button data-link="/dashboard?intra=hwong" type="submit"><img src="../src/assets/search.png" style="width: 32px; height: 32px;"></img></button>
-			</div>
-		</form>
-	</div>
-</div>
-		`
+		const handleInputChange = (e) => {
+			inputVal = e.target.value;
+			submitButton.dataset.link = `/dashboard?intra=${inputVal}`;
+		};
+
+		const container = document.createElement('div');
+		container.className = 'd-flex flex-column align-items-center justify-content-center vh-100';
+		container.innerHTML = ret;
+		document.body.appendChild(container);
+
+		const inputField = container.querySelector('#searchbox');
+		const submitButton = container.querySelector('#searchbutton');
+		inputField.addEventListener('input', handleInputChange);
+
+		return ;
 	}
-	
+
 	const params = {};
 	const paramPairs = queryString.slice(1).split('&');
-	
+
 	for (const pair of paramPairs) {
 		const [key, val] = pair.split('=');
 		params[key] = val;
 	}
-	
+
 	console.log(params);
-	
+
 	// temporary, but this should show error screen if requested ID is not in database
-	if (params['intra'] == 'undefined') {
+	if (params['intra'] == 'undefined' || params['intra'] == '') {
 		return `
 <div class="d-flex position-absolute align-items-center unselectable ml-4" style="height: 8vh; z-index: 1">
 	<p data-link="/dashboard" class="description scale-up cursor-pointer">GO BACK</p>
 </div>
 <div class="d-flex align-items-center justify-content-center vh-100">
-	<div class="important-label" style="font-size: 50px;">User does not exist.</div>
+	<div class="important-label" style="font-size: 50px;">User ${params['intra']} does not exist.</div>
 </div>
 		`
 	}
 
 	return `
+<div class="d-flex position-absolute align-items-center unselectable ml-4" style="height: 8vh; z-index: 1">
+	<p data-link="/dashboard" class="description scale-up cursor-pointer">GO BACK</p>
+</div>
 <div class="d-flex flex-row align-items-center justify-content-around vh-100" style="padding: 50px 0;">
 	<div class="d-flex flex-column rounded-border glowing-border h-100 w-100 mx-3" style="min-width: 400px; max-width:600px;">
 		<!-- Game Statistics -->
@@ -107,7 +123,7 @@ export default () => {
 					</div>
 					<div class="d-table-row">
 						<div class="d-table-cell">Email</div>
-						<div class="d-table-cell" title="wonghongyou@gmail.com">wonghongyou@gmail.com</div>
+						<div class="d-table-cell" title="someone@gmail.com">someone@gmail.com</div>
 					</div>
 				</div>
 			</div>
