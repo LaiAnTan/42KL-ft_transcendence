@@ -197,50 +197,50 @@ services:
       timeout: 10s
       retries: 120
 
-  metricbeat01:
-    depends_on:
-      es01:
-        condition: service_healthy
-      kibana:
-        condition: service_healthy
-    image: docker.elastic.co/beats/metricbeat:8.7.1
-    container_name: metricbeat
-    user: root
-    volumes:
-      - certs:/usr/share/metricbeat/certs
-      - metricbeatdata01:/usr/share/metricbeat/data
-      - "./setup/elk/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro"
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "/sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro"
-      - "/proc:/hostfs/proc:ro"
-      - "/:/hostfs:ro"
-    environment:
-      - ELASTIC_USER=elastic
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
-      - ELASTIC_HOSTS=https://es01:9200
-      - KIBANA_HOSTS=http://kibana:5601
-      - LOGSTASH_HOSTS=http://logstash01:9600
+  # metricbeat01:
+  #   depends_on:
+  #     es01:
+  #       condition: service_healthy
+  #     kibana:
+  #       condition: service_healthy
+  #   image: docker.elastic.co/beats/metricbeat:8.7.1
+  #   container_name: metricbeat
+  #   user: root
+  #   volumes:
+  #     - certs:/usr/share/metricbeat/certs
+  #     - metricbeatdata01:/usr/share/metricbeat/data
+  #     - "./setup/elk/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro"
+  #     - "/var/run/docker.sock:/var/run/docker.sock:ro"
+  #     - "/sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro"
+  #     - "/proc:/hostfs/proc:ro"
+  #     - "/:/hostfs:ro"
+  #   environment:
+  #     - ELASTIC_USER=elastic
+  #     - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+  #     - ELASTIC_HOSTS=https://es01:9200
+  #     - KIBANA_HOSTS=http://kibana:5601
+  #     - LOGSTASH_HOSTS=http://logstash01:9600
 
-  filebeat01:
-    depends_on:
-      es01:
-        condition: service_healthy
-    image: docker.elastic.co/beats/filebeat:8.7.1
-    container_name: filebeat
-    user: root
-    volumes:
-      - certs:/usr/share/filebeat/certs
-      - filebeatdata01:/usr/share/filebeat/data
-      - "./filebeat_ingest_data/:/usr/share/filebeat/ingest_data/"
-      - "./setup/elk/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro"
-      - "/var/lib/docker/containers:/var/lib/docker/containers:ro"
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-    environment:
-      - ELASTIC_USER=elastic
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
-      - ELASTIC_HOSTS=https://es01:9200
-      - KIBANA_HOSTS=http://kibana:5601
-      - LOGSTASH_HOSTS=http://logstash01:9600
+  # filebeat01:
+  #   depends_on:
+  #     es01:
+  #       condition: service_healthy
+  #   image: docker.elastic.co/beats/filebeat:8.7.1
+  #   container_name: filebeat
+  #   user: 0:0
+  #   volumes:
+  #     - certs:/usr/share/filebeat/certs
+  #     - filebeatdata01:/usr/share/filebeat/data
+  #     - "./filebeat_ingest_data/:/usr/share/filebeat/ingest_data/"
+  #     - "./setup/elk/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro"
+  #     - "/var/lib/docker/containers:/var/lib/docker/containers:ro"
+  #     - "/var/run/docker.sock:/var/run/docker.sock:ro"
+  #   environment:
+  #     - ELASTIC_USER=elastic
+  #     - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+  #     - ELASTIC_HOSTS=https://es01:9200
+  #     - KIBANA_HOSTS=http://kibana:5601
+  #     - LOGSTASH_HOSTS=http://logstash01:9600
  
   logstash01:
     depends_on:
