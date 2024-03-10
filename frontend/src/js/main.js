@@ -5,6 +5,7 @@ import vsai from "./vs-ai.js";
 import vsplayer from "./vs-player.js";
 import game from "./game.js";
 import settings from "./settings.js";
+import dashboard from "./dashboard.js";
 
 const app = document.getElementById("app");
 const routes = {
@@ -14,7 +15,8 @@ const routes = {
 	"/vs-ai": { title: "VS AI", render: vsai },
 	"/vs-player": { title: "VS Player", render: vsplayer},
 	"/game": { title: "Game", render: game },
-	"/settings": { title: "Settings", render: settings }
+	"/settings": { title: "Settings", render: settings },
+	"/dashboard": { title: "Dashboard", render: dashboard },
 };
 
 export function loadCSS(href) {
@@ -24,7 +26,7 @@ export function loadCSS(href) {
 	document.head.appendChild(link);
 }
 
-export function initRedirClicks(e) {
+function initRedirClicks(e) {
 	const parent = e.target.closest("[data-link]");
 	if (parent) {
 		e.preventDefault();
@@ -48,7 +50,8 @@ function router() {
 	if (view) {
 		document.title = view.title;
 		app.innerHTML = view.render();
-	} else {
+	}
+	else {
 		history.replaceState("", "", "/");
 		router();
 	}
