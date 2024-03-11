@@ -2,6 +2,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 import requests
 import os
+from base.models import User
 
 UID = os.getenv("UID")
 SECRET = os.getenv("SECRET")
