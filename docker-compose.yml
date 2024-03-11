@@ -1,6 +1,7 @@
 version: '3.9'
 
 services:
+
   postgres:
     container_name: postgres
     image: postgres:14-alpine
@@ -8,6 +9,7 @@ services:
       - 5432:5432
     env_file:
       - .env
+
   django:
     container_name: django
     build: backend
@@ -19,6 +21,7 @@ services:
       - .env
     volumes:
       - ./backend:/app
+
   javascript:
     container_name: javascript
     build: frontend
@@ -29,4 +32,46 @@ services:
     env_file:
       - .env
     volumes:
-      - ./frontend:/app 
+      - ./frontend:/app
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name:  prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./setup/prometheus:/setup/prometheus
+      - prometheus-data:/prometheus
+    command:
+      - "--config.file=/setup/prometheus/prometheus.yml"
+    
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter
+    container_name: postgres-exporter
+    ports:
+      - 9187:9187
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+
+volumes:
+
+  prometheus-data:
+    driver: local
+
+  grafana-data:
+    driver: local
+
+networks:
+  default:
+    name: ft_transcendence
+    external: false
