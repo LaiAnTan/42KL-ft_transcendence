@@ -40,10 +40,10 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./setup/prometheus:/setup/prometheus
+      - ./setup:/setup
       - prometheus-data:/prometheus
     command:
-      - "--config.file=/setup/prometheus/prometheus.yml"
+      - "--config.file=/setup/prometheus.yml"
     
   grafana:
     image: grafana/grafana:latest
