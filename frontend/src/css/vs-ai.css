@@ -26,19 +26,13 @@
 }
 
 .important-label {
-	margin: 0;
 	font-size: 40px;
-	font-family: 'Ubuntu', sans-serif; 
-	color: white;
 	text-shadow: 0 0 25px var(--vs-ai-color);
 	-webkit-text-stroke: 1px var(--vs-ai-color);
 }
 
 .description {
-	margin: 0;
 	font-size: 15px;
-    font-family: 'Aldrich', sans-serif;
-	color: white;
 	text-shadow: 0 0 25px var(--vs-ai-color);
 	-webkit-text-stroke: 1px var(--vs-ai-color);
 }
@@ -53,49 +47,12 @@
 	box-shadow: var(--vs-ai-color) 0 0 25px;
 }
 
-.rounded-border {
-	border: 4px solid white;
-	border-radius: 10px;
-}
-
-.scale-up {
-	transition: transform 0.1s ease-in-out;
-}
-
-.scale-up img {
-	transition: transform 0.1s ease-in-out;
-}
-
-.scale-up:hover {
-	transform: scale(1.05);
-}
-
 .scale-up:hover img {
 	content: url('../assets/star.png');
 }
 
 .header h1, p {
 	width: auto;
-}
-
-.w-45 {
-	width: 45%;
-}
-
-.w-80 {
-	width: 80%;
-}
-
-.h-85 {
-	height: 85%;
-}
-
-.unselectable {
-	user-select: none;
-}
-
-.cursor-pointer {
-	cursor: pointer;
 }
 
 #settings {

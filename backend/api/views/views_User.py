@@ -45,6 +45,8 @@ def addUser(request):
     JSON Format:
     {
     "username": "user",
+    "display_name": "User",
+    "email": "user@user.com",
     "versus_history": [],
     "tournament_history": []
     }
