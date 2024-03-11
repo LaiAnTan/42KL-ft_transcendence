@@ -1,4 +1,4 @@
-import { navigate, loadCSS } from "./main.js";
+import { navigate, router, loadCSS } from "./main.js";
 
 export default () => {
 	loadCSS("src/css/menu.css");
@@ -16,11 +16,8 @@ export default () => {
 				body: JSON.stringify({ "code": code }),
 			});
 			if (response.ok) {
-				const data = await response.json();
-				console.log('data', data);
-				console.log('displayname: ', data.login);
-				console.log('email: ', data.email);
-				console.log('image: ', data.image.link);
+				history.replaceState("", "", "/menu");
+				router();
 			} else {
 				console.error('Failed to send code to the backend.');
 			}
@@ -31,6 +28,10 @@ export default () => {
 
 	if (code) {
 		postCode();
+		return `
+<div class="d-flex align-items-center justify-content-center vh-100">
+	<div class="important-label" style="font-size: 50px;">Authenticating... Stay put</div>
+</div>`;
 	};
 
 	return `
@@ -50,6 +51,5 @@ export default () => {
 		<div class="menu-component-title">TOURNAMENT</div>
 		<div class="menu-component-description">BRACKET-STYLED TOURNAMENT</div>
 	</div>
-</div>
-	`;
+</div>`;
 };

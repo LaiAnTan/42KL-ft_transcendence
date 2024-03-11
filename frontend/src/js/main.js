@@ -44,7 +44,7 @@ export function navigate(path) {
 	router();
 }
 
-function router() {
+export function router() {
 	let view = routes[location.pathname];
 
 	if (view) {

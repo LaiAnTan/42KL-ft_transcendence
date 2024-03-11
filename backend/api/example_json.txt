@@ -2,6 +2,8 @@
 /addUser
 {
 "username": "test1",
+"display_name": "Test 1",
+"email": "test1@test.com",
 "versus_history": [],
 "tournament_history": []
 }

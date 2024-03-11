@@ -1,4 +1,4 @@
-import { loadCSS } from "./main.js"
+import { loadCSS, router } from "./main.js"
 
 export default () => {
 	loadCSS("src/css/dashboard.css");
@@ -11,7 +11,7 @@ export default () => {
 	<form>
 		<div class="search-bar">
 			<input id="searchbox" type="text" placeholder="Search by Intra ID" class="description" />
-			<button data-link="/dashboard?intra=" id="searchbutton" type="submit"><img src="../src/assets/search.png" style="width: 32px; height: 32px;"></img></button>
+			<button data-link="/dashboard?username=" id="searchbutton" type="submit"><img src="../src/assets/search.png" style="width: 32px; height: 32px;"></img></button>
 		</div>
 	</form>
 </div>`
@@ -20,7 +20,7 @@ export default () => {
 
 		const handleInputChange = (e) => {
 			inputVal = e.target.value;
-			submitButton.dataset.link = `/dashboard?intra=${inputVal}`;
+			submitButton.dataset.link = `/dashboard?username=${inputVal}&loading=true`;
 		};
 
 		const container = document.createElement('div');
@@ -35,24 +35,50 @@ export default () => {
 		return ;
 	}
 
+	/* If have query string means it is searching / has found user */
 	const params = {};
 	const paramPairs = queryString.slice(1).split('&');
-
 	for (const pair of paramPairs) {
 		const [key, val] = pair.split('=');
 		params[key] = val;
 	}
 
-	console.log(params);
+	const getUser = async () => {
+		try {
+			const response = await fetch(`http://localhost:8080/api/getUser?username=${params['username']}`, {
+				method: 'GET'
+			});
+			if (response.ok) {
+				console.log('User found.')
+				console.log(response)
+				history.replaceState("", "", `/dashboard?username=${params['username']}`);
+				router();
+			} else {
+				console.error('Failed to send code to the backend.');
+			}
+		} catch (error) {
+		  console.error('Error sending code:', error);
+		}
+	};
+	if (queryString.includes('loading=true')) {
+		getUser();
+
+		return `
+<div class="d-flex align-items-center justify-content-center vh-100">
+	<div class="important-label" style="font-size: 50px;">Searching for user ${params['username']} </div>
+</div>`;
+	}
+
+
 
 	// temporary, but this should show error screen if requested ID is not in database
-	if (params['intra'] == 'undefined' || params['intra'] == '') {
+	if (params['username'] == 'undefined' || params['username'] == '') {
 		return `
 <div class="d-flex position-absolute align-items-center unselectable ml-4" style="height: 8vh; z-index: 1">
 	<p data-link="/dashboard" class="description scale-up cursor-pointer">GO BACK</p>
 </div>
 <div class="d-flex align-items-center justify-content-center vh-100">
-	<div class="important-label" style="font-size: 50px;">User ${params['intra']} does not exist.</div>
+	<div class="important-label" style="font-size: 50px;">User ${params['username']} does not exist.</div>
 </div>
 		`
 	}
@@ -109,7 +135,7 @@ export default () => {
 	</div>
 	<div class="d-flex flex-column align-items-center justify-content-center h-100 w-100" style="min-width: 200px; max-width:250px;">
 		<div class="circle"></div>
-		<div class="important-label" style="font-size: 40px;">${params['intra'].toUpperCase()}</div>
+		<div class="important-label" style="font-size: 40px;">${params['username'].toUpperCase()}</div>
 	</div>
 	<div class="d-flex flex-column justify-content-between rounded-border glowing-border h-100 w-100 mx-3" style="min-width: 400px; max-width:600px;">
 		<div>
