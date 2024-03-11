@@ -45,16 +45,23 @@ export default () => {
 
 	const getUser = async () => {
 		try {
-			const response = await fetch(`http://localhost:8080/api/getUser?username=${params['username']}`, {
+			const response = await fetch(`http://localhost:8000/api/getUser?username=${params['username']}`, {
 				method: 'GET'
 			});
+
 			if (response.ok) {
 				console.log('User found.')
 				console.log(response)
 				history.replaceState("", "", `/dashboard?username=${params['username']}`);
 				router();
 			} else {
-				console.error('Failed to send code to the backend.');
+				return `
+<div class="d-flex position-absolute align-items-center unselectable ml-4" style="height: 8vh; z-index: 1">
+	<p data-link="/dashboard" class="description scale-up cursor-pointer">GO BACK</p>
+</div>
+<div class="d-flex align-items-center justify-content-center vh-100">
+	<div class="important-label" style="font-size: 50px;">User ${params['username']} does not exist.</div>
+</div>`;
 			}
 		} catch (error) {
 		  console.error('Error sending code:', error);
@@ -62,25 +69,10 @@ export default () => {
 	};
 	if (queryString.includes('loading=true')) {
 		getUser();
-
 		return `
 <div class="d-flex align-items-center justify-content-center vh-100">
 	<div class="important-label" style="font-size: 50px;">Searching for user ${params['username']} </div>
 </div>`;
-	}
-
-
-
-	// temporary, but this should show error screen if requested ID is not in database
-	if (params['username'] == 'undefined' || params['username'] == '') {
-		return `
-<div class="d-flex position-absolute align-items-center unselectable ml-4" style="height: 8vh; z-index: 1">
-	<p data-link="/dashboard" class="description scale-up cursor-pointer">GO BACK</p>
-</div>
-<div class="d-flex align-items-center justify-content-center vh-100">
-	<div class="important-label" style="font-size: 50px;">User ${params['username']} does not exist.</div>
-</div>
-		`
 	}
 
 	return `

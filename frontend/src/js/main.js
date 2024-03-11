@@ -7,7 +7,7 @@ import game from "./game.js";
 import settings from "./settings.js";
 import dashboard from "./dashboard.js";
 
-const app = document.getElementById("app");
+export const app = document.getElementById("app");
 const routes = {
 	"/": { title: "Ding Dong", render: home },
 	"/login": { title: "Login with 42", render: login },

@@ -8,7 +8,7 @@ export default () => {
 
 	const postCode = async () => {
 		try {
-			const response = await fetch("http://localhost:8000/api/postCode/", {
+			const response = await fetch("http://localhost:8000/api/postCode", {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
