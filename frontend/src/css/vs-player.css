@@ -1,0 +1,87 @@
+.vs-player-header {
+	border-bottom: 2px solid white;
+	box-shadow: 0 8px 25px -10px #98EB4C;
+	width: 120%;
+	margin-left: -10%;
+}
+
+.vs-player-header h1 {
+	text-align: center;
+	font-family: 'Ubuntu', sans-serif;
+	font-size: 50px;
+	color: white;
+	text-shadow: 0 0 25px #98EB4C;
+}
+
+.vs-player-content {
+	top: 55%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	position: absolute;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 90px;
+	margin-top: -80px;
+}
+
+.vs-player-component {
+    width: 902px;
+    height: 133px;
+    display: flex;
+    justify-content: space-between;
+    border: 2px solid white;
+    align-items: center;
+    color: white;
+	transition: transform 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
+    box-shadow: 0 0 25px white;
+	border-radius: 10px;
+	background-color: transparent;
+}
+
+.vs-player-component:hover {
+	transform: scale(1.05);
+	box-shadow: 0 0 40px #98EB4C;
+}
+
+.vs-player-component-title {
+    font-size: 50px;
+    font-family: 'Ubuntu', sans-serif; 
+    padding-left: 50px;
+    color: white;
+	text-shadow: 0 0 25px #98EB4C;
+	-webkit-text-stroke: 1px #98EB4C;
+}
+
+.vs-player-component-description {
+    font-size: 15px;
+    font-family: 'Aldrich', sans-serif;
+    padding-right: 90px;
+	width: 300px;
+	color: #98EB4C
+}
+
+.vs-player-buttons {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 103px;
+}
+
+.vs-player-input {
+	width: 1055px;
+	height: 76px;
+	max-width: 1095px;
+	border-radius: 10px;
+	padding-left: 50px;
+	background-color: transparent;
+	font-family: 'Aldrich', sans-serif;
+	font-size: 30px;
+	border: 1px solid white;
+	color: white;
+}
+
+.vs-player-input:hover {
+	border: 1px solid #98EB4C;
+	box-shadow: 0 0 20px #98EB4C;
+}

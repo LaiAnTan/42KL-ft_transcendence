@@ -1,0 +1,60 @@
+:root {
+	--vs-ai-color: #FAE84D;
+}
+
+.menu-header {
+	position: relative;
+	display: inline-block;
+}
+
+.menu-header::after {
+	content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    height: 5px;
+	width: 100vw;
+    background: linear-gradient(to bottom, var(--vs-ai-color), transparent);
+}
+
+.menu-header-title {
+	font-family: 'Ubuntu', sans-serif;
+	font-size: 40px;
+	color: white;
+	text-shadow: 0 0 25px var(--vs-ai-color);
+	width: 100vw;
+}
+
+.important-label {
+	font-size: 40px;
+	text-shadow: 0 0 25px var(--vs-ai-color);
+	-webkit-text-stroke: 1px var(--vs-ai-color);
+}
+
+.description {
+	font-size: 15px;
+	text-shadow: 0 0 25px var(--vs-ai-color);
+	-webkit-text-stroke: 1px var(--vs-ai-color);
+}
+
+.play-button {
+	box-shadow: whitesmoke 0 0 15px;
+	transition: transform 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
+}
+
+.play-button:hover {
+	transform: scale(1.05);
+	box-shadow: var(--vs-ai-color) 0 0 25px;
+}
+
+.scale-up:hover img {
+	content: url('../assets/star.png');
+}
+
+.header h1, p {
+	width: auto;
+}
+
+#settings {
+	border-radius: 10px;
+}

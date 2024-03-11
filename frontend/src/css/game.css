@@ -1,0 +1,66 @@
+.player-text {
+	font-family: 'Ubuntu', sans-serif;
+	font-weight: bold;
+}
+
+.player-1-text-color {
+	color: #FF3C3C;
+	text-shadow: 0 0 25px #FF3C3C;
+}
+
+.player-2-text-color {
+	color: #4010FF;
+	text-shadow: 0 0 25px #4010FF;
+}
+
+.player-score-text-size {
+	font-size: 50px;
+	align-items: bottom;
+}
+
+.player-username-text-size {
+	font-size: 25px;
+}
+
+.game-container {
+	display: flex;
+	justify-content: center;
+	aspect-ratio: 16/9;
+	max-width: 1300px;
+}
+
+.game-box {
+	position: relative;
+	aspect-ratio: 16/9;
+	max-width: 1300px;
+	border: 2px solid white;
+	box-shadow: #fff 0 0 25px;
+}
+
+#dongball {
+	width: 2%;
+	height: 4%;
+	left: 50%;
+	top: 50%;
+	border-radius: 50%;
+	background-color: red;
+	position: absolute;
+}
+
+#paddle_left {
+	width: 2%;
+	height: 25%;
+	background-color: #333;
+	top: 37.5%;
+	left: 3%;
+	position: absolute;
+}
+
+#paddle_right {
+	width: 2%;
+	height: 25%;
+	background-color: #333;
+	top: 37.5%;
+	left: 95%;
+	position: absolute;
+}
