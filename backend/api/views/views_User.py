@@ -81,7 +81,7 @@ def addUser(request):
 		return Response({"Error": "Failed to add User into Database"},
 						status=status.HTTP_400_BAD_REQUEST)
 
-    return Response(serializer.data)
+	return Response(serializer.data)
 
 @api_view(['POST'])
 def editUserFields(request):

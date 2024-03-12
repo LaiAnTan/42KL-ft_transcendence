@@ -161,7 +161,7 @@ export default () => {
 		${current_user == data.username ?
 		`<div class="d-flex flex-row align-items-center justify-content-between p-4">
 			<div class="description">Editable</div>
-			<button data-link="/editUser?username=${data.username}" type="submit" class="description rounded-border cursor-pointer p-2" style="background-color: green">Save</button>
+			<button id="updateButton" type="submit" class="description rounded-border cursor-pointer p-2" style="background-color: green">Save</button>
 		</div>` : ''}
 	</div>
 </div>`;
