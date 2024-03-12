@@ -9,75 +9,75 @@ from api.serializer import UserSerializer
 @api_view(['GET'])
 def getAllUsers(_request):
 
-    users = User.objects.all()
+	users = User.objects.all()
 
-    serializer = UserSerializer(users, many=True)
+	serializer = UserSerializer(users, many=True)
 
-    return Response(serializer.data)
+	return Response(serializer.data)
 
 
 @api_view(['GET'])
 def getUser(request):
 
-    username = request.query_params.get('username')
+	username = request.query_params.get('username')
 
-    if username is None:
-        return Response({"Error": '"username" must be included in query\
+	if username is None:
+		return Response({"Error": '"username" must be included in query\
 parameters '},
-                        status=status.HTTP_400_BAD_REQUEST)
+						status=status.HTTP_400_BAD_REQUEST)
 
-    try:
-        user = User.objects.get(username=username)
-    except User.DoesNotExist:
-        return Response({"Error": "User Not Found in Database"},
-                        status=status.HTTP_400_BAD_REQUEST)
+	try:
+		user = User.objects.get(username=username)
+	except User.DoesNotExist:
+		return Response({"Error": "User Not Found in Database"},
+						status=status.HTTP_400_BAD_REQUEST)
 
-    serializer = UserSerializer(user)
-    return Response(serializer.data)
+	serializer = UserSerializer(user)
+	return Response(serializer.data)
 
 
 @api_view(['POST'])
 def addUser(request):
 
-    """
-    API endpoint that adds a user to the database.
+	"""
+	API endpoint that adds a user to the database.
 
-    JSON Format:
-    {
-    "username": "user",
-    "display_name": "User",
-    "email": "user@user.com",
-    "versus_history": [],
-    "tournament_history": []
-    }
+	JSON Format:
+	{
+	"username": "user",
+	"display_name": "User",
+	"email": "user@user.com",
+	"versus_history": [],
+	"tournament_history": []
+	}
 
-    versus_history, tournament_history are optional fields, if not specified
-    a default will be used.
-    """
+	versus_history, tournament_history are optional fields, if not specified
+	a default will be used.
+	"""
 
-    try:
-        username = request.data['username']
-    except KeyError:
-        return Response({"Error": "Username not in request body"},
-                        status=status.HTTP_400_BAD_REQUEST)
+	try:
+		username = request.data['username']
+	except KeyError:
+		return Response({"Error": "Username not in request body"},
+						status=status.HTTP_400_BAD_REQUEST)
 
-    # add defaults if not specified
-    if 'versus_history' not in request.data:
-        request.data['versus_history'] = []
+	# add defaults if not specified
+	if 'versus_history' not in request.data:
+		request.data['versus_history'] = []
 
-    if 'tournament_history' not in request.data:
-        request.data['tournament_history'] = []
+	if 'tournament_history' not in request.data:
+		request.data['tournament_history'] = []
 
-    serializer = UserSerializer(data=request.data)
+	serializer = UserSerializer(data=request.data)
 
-    if User.objects.filter(username=username).exists():
-        return Response({"Error": "User already exists in Database"},
-                        status=status.HTTP_400_BAD_REQUEST)
+	if User.objects.filter(username=username).exists():
+		return Response({"Error": "User already exists in Database"},
+						status=status.HTTP_400_BAD_REQUEST)
 
-    if serializer.is_valid():
-        serializer.save()
-    else:
-        return Response({"Error": "Failed to add User into Database"},
-                        status=status.HTTP_400_BAD_REQUEST)
+	if serializer.is_valid():
+		serializer.save()
+	else:
+		return Response({"Error": "Failed to add User into Database"},
+						status=status.HTTP_400_BAD_REQUEST)
 
-    return Response(serializer.data)
+	return Response(serializer.data)

@@ -9,12 +9,12 @@
 
 .menu-header::after {
 	content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    height: 5px;
+	position: absolute;
+	bottom: -4px;
+	left: 0;
+	height: 5px;
 	width: 100vw;
-    background: linear-gradient(to bottom, var(--vs-ai-color), transparent);
+	background: linear-gradient(to bottom, var(--vs-ai-color), transparent);
 }
 
 .menu-header-title {

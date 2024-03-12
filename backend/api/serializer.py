@@ -4,31 +4,31 @@ from base.models import User, Matchup, Versus, Tournament
 
 class UserSerializer(serializers.ModelSerializer):
 
-    class Meta:
+	class Meta:
 
-        model = User
-        fields = '__all__'
+		model = User
+		fields = '__all__'
 
 
 class MatchupSerializer(serializers.ModelSerializer):
 
-    class Meta:
+	class Meta:
 
-        model = Matchup
-        fields = '__all__'
+		model = Matchup
+		fields = '__all__'
 
 
 class VersusSerializer(serializers.ModelSerializer):
 
-    class Meta:
+	class Meta:
 
-        model = Versus
-        fields = '__all__'
+		model = Versus
+		fields = '__all__'
 
 
 class TournamentSerializer(serializers.ModelSerializer):
 
-    class Meta:
+	class Meta:
 
-        model = Tournament
-        fields = '__all__'
+		model = Tournament
+		fields = '__all__'

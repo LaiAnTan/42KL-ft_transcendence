@@ -6,48 +6,48 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    initial = True
+	initial = True
 
-    dependencies = [
-    ]
+	dependencies = [
+	]
 
-    operations = [
-        migrations.CreateModel(
-            name='Matchup',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('player_1_id', models.IntegerField()),
-                ('player_2_id', models.IntegerField()),
-                ('player_1_score', models.IntegerField()),
-                ('player_2_score', models.IntegerField()),
-            ],
-        ),
-        migrations.CreateModel(
-            name='Tournament',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('date_played', models.DateTimeField(auto_now_add=True)),
-                ('player_ids', django.contrib.postgres.fields.ArrayField(base_field=models.IntegerField(), size=None)),
-                ('placements', django.contrib.postgres.fields.ArrayField(base_field=models.IntegerField(), size=None)),
-                ('matchup_ids', django.contrib.postgres.fields.ArrayField(base_field=models.IntegerField(), size=None)),
-            ],
-        ),
-        migrations.CreateModel(
-            name='User',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('username', models.CharField(max_length=30)),
-                ('date_created', models.DateTimeField(auto_now_add=True)),
-                ('versus_history', django.contrib.postgres.fields.ArrayField(base_field=models.IntegerField(), blank=True, size=None)),
-                ('tournament_history', django.contrib.postgres.fields.ArrayField(base_field=models.IntegerField(), blank=True, size=None)),
-            ],
-        ),
-        migrations.CreateModel(
-            name='Versus',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('date_played', models.DateTimeField(auto_now_add=True)),
-                ('matchup_id', models.IntegerField()),
-            ],
-        ),
-    ]
+	operations = [
+		migrations.CreateModel(
+			name='Matchup',
+			fields=[
+				('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+				('player_1_id', models.IntegerField()),
+				('player_2_id', models.IntegerField()),
+				('player_1_score', models.IntegerField()),
+				('player_2_score', models.IntegerField()),
+			],
+		),
+		migrations.CreateModel(
+			name='Tournament',
+			fields=[
+				('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+				('date_played', models.DateTimeField(auto_now_add=True)),
+				('player_ids', django.contrib.postgres.fields.ArrayField(base_field=models.IntegerField(), size=None)),
+				('placements', django.contrib.postgres.fields.ArrayField(base_field=models.IntegerField(), size=None)),
+				('matchup_ids', django.contrib.postgres.fields.ArrayField(base_field=models.IntegerField(), size=None)),
+			],
+		),
+		migrations.CreateModel(
+			name='User',
+			fields=[
+				('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+				('username', models.CharField(max_length=30)),
+				('date_created', models.DateTimeField(auto_now_add=True)),
+				('versus_history', django.contrib.postgres.fields.ArrayField(base_field=models.IntegerField(), blank=True, size=None)),
+				('tournament_history', django.contrib.postgres.fields.ArrayField(base_field=models.IntegerField(), blank=True, size=None)),
+			],
+		),
+		migrations.CreateModel(
+			name='Versus',
+			fields=[
+				('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+				('date_played', models.DateTimeField(auto_now_add=True)),
+				('matchup_id', models.IntegerField()),
+			],
+		),
+	]

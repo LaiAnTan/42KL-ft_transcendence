@@ -7,7 +7,12 @@ import game from "./game.js";
 import settings from "./settings.js";
 import dashboard from "./dashboard.js";
 
-export const app = document.getElementById("app");
+let app = document.getElementById("app");
+export const getApp = () => {
+	console.log(app);
+	return app;
+};
+
 const routes = {
 	"/": { title: "Ding Dong", render: home },
 	"/login": { title: "Login with 42", render: login },

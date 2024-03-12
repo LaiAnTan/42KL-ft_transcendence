@@ -4,13 +4,13 @@ from django.urls import path
 from . import consumers
 
 websocket_urlpatterns = [
-    path("test/", consumers.ChatConsumer.as_asgi()),
+	path("test/", consumers.ChatConsumer.as_asgi()),
 ]
 
 application = ProtocolTypeRouter(
-    {
-        "websocket": AuthMiddlewareStack(
-            URLRouter(websocket_urlpatterns)
-        ),
-    }
+	{
+		"websocket": AuthMiddlewareStack(
+			URLRouter(websocket_urlpatterns)
+		),
+	}
 )

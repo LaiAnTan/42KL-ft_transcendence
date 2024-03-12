@@ -26,15 +26,15 @@
 }
 
 .vs-player-component {
-    width: 902px;
-    height: 133px;
-    display: flex;
-    justify-content: space-between;
-    border: 2px solid white;
-    align-items: center;
-    color: white;
+	width: 902px;
+	height: 133px;
+	display: flex;
+	justify-content: space-between;
+	border: 2px solid white;
+	align-items: center;
+	color: white;
 	transition: transform 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
-    box-shadow: 0 0 25px white;
+	box-shadow: 0 0 25px white;
 	border-radius: 10px;
 	background-color: transparent;
 }
@@ -45,18 +45,18 @@
 }
 
 .vs-player-component-title {
-    font-size: 50px;
-    font-family: 'Ubuntu', sans-serif; 
-    padding-left: 50px;
-    color: white;
+	font-size: 50px;
+	font-family: 'Ubuntu', sans-serif; 
+	padding-left: 50px;
+	color: white;
 	text-shadow: 0 0 25px #98EB4C;
 	-webkit-text-stroke: 1px #98EB4C;
 }
 
 .vs-player-component-description {
-    font-size: 15px;
-    font-family: 'Aldrich', sans-serif;
-    padding-right: 90px;
+	font-size: 15px;
+	font-family: 'Aldrich', sans-serif;
+	padding-right: 90px;
 	width: 300px;
 	color: #98EB4C
 }
