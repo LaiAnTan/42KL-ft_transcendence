@@ -1,4 +1,4 @@
-import { navigate, loadCSS } from "./main.js";
+import { loadCSS, router } from "./main.js";
 
 export default () => {
 	loadCSS("src/css/login.css");
@@ -22,7 +22,6 @@ export default () => {
 			console.log("Display Name:", displayName);
 			console.log("Auth:" , authConfig);
 			signin42();
-			// navigate("/menu");
 		}
 	});
 
@@ -53,6 +52,5 @@ export default () => {
 	<button id="signin-button" class="signin">
 		SIGN IN WITH 42
 	</button>
-</div>
-	`;
+</div>`;
 };

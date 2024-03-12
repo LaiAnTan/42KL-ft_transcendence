@@ -5,31 +5,34 @@ export default () => {
 
 	const queryString = window.location.search;
 	if (!queryString) {
-		const ret = `
-<div class="important-label" style="font-size: 50px;">USER DASHBOARD</div>
-<div class="p-4" style="width: 500px">
-	<form>
-		<div class="search-bar">
-			<input id="searchbox" type="text" placeholder="Search by Intra ID" class="description" />
-			<button data-link="/dashboard?username=" id="searchbutton" type="submit"><img src="../src/assets/search.png" style="width: 32px; height: 32px;"></img></button>
-		</div>
-	</form>
-</div>`
-		
-		let inputVal = ''
+		let inputVal = '';
 
 		const handleInputChange = (e) => {
 			inputVal = e.target.value;
 			submitButton.dataset.link = `/dashboard?username=${inputVal}&loading=true`;
 		};
 
-		const container = document.createElement('div');
-		container.className = 'd-flex flex-column align-items-center justify-content-center vh-100';
-		container.innerHTML = ret;
-		document.body.appendChild(container);
-
-		const inputField = container.querySelector('#searchbox');
-		const submitButton = container.querySelector('#searchbutton');
+		let app = document.querySelector('#app');
+		const new_div = document.createElement('div');
+		new_div.setAttribute('id', 'app');
+		new_div.className = 'vw-100 v-100';
+		new_div.innerHTML = `
+<div class="d-flex flex-column align-items-center justify-content-center vh-100">
+	<div class="important-label" style="font-size: 50px;">USER DASHBOARD</div>
+	<div class="p-4" style="width: 500px">
+		<form>
+			<div class="search-bar">
+				<input id="searchbox" type="text" placeholder="Search by Intra ID" class="description" />
+				<button data-link="/dashboard?username=" id="searchbutton" type="submit"><img src="../src/assets/search.png" style="width: 32px; height: 32px;"></img></button>
+			</div>
+		</form>
+	</div>
+</div>`;
+		app.outerHTML = new_div.outerHTML;
+		
+		let ptr_app = document.querySelector('#app');
+		const inputField = ptr_app.querySelector('#searchbox');
+		const submitButton = ptr_app.querySelector('#searchbutton');
 		inputField.addEventListener('input', handleInputChange);
 
 		return ;
@@ -50,32 +53,35 @@ export default () => {
 			});
 
 			if (response.ok) {
-				console.log('User found.')
-				console.log(response)
-				history.replaceState("", "", `/dashboard?username=${params['username']}`);
-				router();
-			} else {
-				return `
+				const data = await response.json();
+
+				if (data.username == '') {
+					console.log('here');
+
+					let app = document.querySelector('#app');
+					const new_div = document.createElement('div');
+					new_div.setAttribute('id', 'app');
+					new_div.className = 'vw-100 vh-100';
+					new_div.innerHTML = `
 <div class="d-flex position-absolute align-items-center unselectable ml-4" style="height: 8vh; z-index: 1">
 	<p data-link="/dashboard" class="description scale-up cursor-pointer">GO BACK</p>
 </div>
 <div class="d-flex align-items-center justify-content-center vh-100">
 	<div class="important-label" style="font-size: 50px;">User ${params['username']} does not exist.</div>
 </div>`;
-			}
-		} catch (error) {
-		  console.error('Error sending code:', error);
-		}
-	};
-	if (queryString.includes('loading=true')) {
-		getUser();
-		return `
-<div class="d-flex align-items-center justify-content-center vh-100">
-	<div class="important-label" style="font-size: 50px;">Searching for user ${params['username']} </div>
-</div>`;
-	}
+					app.outerHTML = new_div.outerHTML;
+					return ;
+				}
 
-	return `
+				console.log('User found.');
+				console.log(data);
+				history.replaceState("", "", `/dashboard?username=${params['username']}`);
+
+				let app = document.querySelector('#app');
+				const new_div = document.createElement('div');
+				new_div.setAttribute('id', 'app');
+				new_div.className = 'vw-100 vh-100';
+				new_div.innerHTML = `
 <div class="d-flex position-absolute align-items-center unselectable ml-4" style="height: 8vh; z-index: 1">
 	<p data-link="/dashboard" class="description scale-up cursor-pointer">GO BACK</p>
 </div>
@@ -126,8 +132,10 @@ export default () => {
 		</div>
 	</div>
 	<div class="d-flex flex-column align-items-center justify-content-center h-100 w-100" style="min-width: 200px; max-width:250px;">
-		<div class="circle"></div>
-		<div class="important-label" style="font-size: 40px;">${params['username'].toUpperCase()}</div>
+		<div class="profile-pic">
+			<img src="${data.profile_pic}" />
+		</div>
+		<div class="important-label" style="font-size: 40px;">${data.username.toUpperCase()}</div>
 	</div>
 	<div class="d-flex flex-column justify-content-between rounded-border glowing-border h-100 w-100 mx-3" style="min-width: 400px; max-width:600px;">
 		<div>
@@ -137,11 +145,11 @@ export default () => {
 				<div class="d-table description w-100 pt-2 px-4">
 					<div class="d-table-row">
 						<div class="d-table-cell">Display Name</div>
-						<div class="d-table-cell" title="Hong You">Hong You</div>
+						<div class="d-table-cell">${data.display_name}</div>
 					</div>
 					<div class="d-table-row">
 						<div class="d-table-cell">Email</div>
-						<div class="d-table-cell" title="someone@gmail.com">someone@gmail.com</div>
+						<div class="d-table-cell">${data.email}</div>
 					</div>
 				</div>
 			</div>
@@ -162,6 +170,27 @@ export default () => {
 			<div class="description rounded-border cursor-pointer p-2" style="background-color: green;">Save</div>
 		</div>
 	</div>
-</div>
-	`
+</div>`;
+				app.outerHTML = new_div.outerHTML;
+				return ;
+			} else {
+				console.error(error);
+			}
+		} catch (error) {
+		  console.error('Error sending code:', error);
+		}
+	};
+	if (queryString.includes('loading=true')) {
+		getUser();
+
+		let app = document.querySelector('#app');
+		const new_div = document.createElement('div');
+		new_div.setAttribute('id', 'app');
+		new_div.className = 'vw-100 vh-100';
+		new_div.innerHTML = `
+<div class="d-flex align-items-center justify-content-center vh-100">
+	<div class="important-label" style="font-size: 50px;">Searching for user ${params['username']} </div>
+</div>`;
+		app.outerHTML = new_div.outerHTML;
+	}
 }

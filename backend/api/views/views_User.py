@@ -29,8 +29,8 @@ parameters '},
 	try:
 		user = User.objects.get(username=username)
 	except User.DoesNotExist:
-		return Response({"Error": "User Not Found in Database"},
-						status=status.HTTP_400_BAD_REQUEST)
+		return Response({"username": ""},
+						status=status.HTTP_200_OK)
 
 	serializer = UserSerializer(user)
 	return Response(serializer.data)
