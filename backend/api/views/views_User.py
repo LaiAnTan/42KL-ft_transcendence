@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from django.core.exceptions import FieldDoesNotExist
 
 from base.models import User
 from api.serializer import UserSerializer
@@ -78,6 +79,54 @@ def addUser(request):
         serializer.save()
     else:
         return Response({"Error": "Failed to add User into Database"},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def editUserFields(request):
+
+    """
+    API endpoint that edits the specified user's fields in the database.
+
+    JSON Format:
+    {
+    "display_name": "User",
+    "email": "user@user.com",
+    "versus_history": [],
+    "tournament_history": []
+
+    ...+ any fields to be edited
+    }
+    """
+    
+    username = request.query_params.get('username')
+
+    if username is None:
+        return Response({"Error": '"username" must be included in query\
+parameters '},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return Response({"Error": "User Not Found in Database"},
+                        status=status.HTTP_400_BAD_REQUEST)
+    
+    for field in request.data.keys():
+        try:
+            User._meta.get_field(field)
+        except FieldDoesNotExist:
+            return Response({"Error": f"Field '{field}' does not exist in User\
+model"},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+    serializer = UserSerializer(user, data=request.data, partial=True)
+
+    if serializer.is_valid():
+        serializer.save()
+    else:
+        return Response({"Error": "Failed to Update User Fields"},
                         status=status.HTTP_400_BAD_REQUEST)
 
     return Response(serializer.data)
