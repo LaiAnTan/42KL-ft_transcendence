@@ -1,12 +1,18 @@
-.circle {
+.profile-pic {
 	width: 200px;
 	height: 200px;
-	background-color: #3498db;
-	border-radius: 50%; /* This creates a circle */
+	background-color: transparent;
+	border-radius: 50%;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	color: white;
+}
+.profile-pic img {
+	width: 200px;
+	height: 200px;
+	border-radius: 50%;
+	background-size: cover;
+	background-position: center;
 }
 
 .search-bar {
@@ -16,7 +22,6 @@
 	border-radius: 20px;
 	padding: 5px 10px;
 }
-
 .search-bar input {
 	border: none;
 	outline: none;
@@ -25,15 +30,12 @@
 	caret-color: white;
 	background-color: transparent;
 }
-
 .search-bar button {
 	border: none;
 	background-color: transparent;
 	outline: none;
 	cursor: pointer;
 }
-
-/* Animation when the search bar becomes active */
 .search-bar:focus-within {
-	box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+	box-shadow: 0 0 20px rgb(255, 0, 0);
 }

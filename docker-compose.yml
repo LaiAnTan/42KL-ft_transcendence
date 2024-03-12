@@ -2,76 +2,76 @@ version: '3.9'
 
 services:
 
-	postgres:
-	container_name: postgres
-	image: postgres:14-alpine
-	ports:
-		- 5432:5432
-	env_file:
-		- .env
+  postgres:
+    container_name: postgres
+    image: postgres:14-alpine
+    ports:
+      - 5432:5432
+    env_file:
+      - .env
 
-	django:
-	container_name: django
-	build: backend
-	ports:
-		- "8000:8000"
-	depends_on:
-		- postgres
-	env_file:
-		- .env
-	volumes:
-		- ./backend:/app
+  django:
+    container_name: django
+    build: backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+    volumes:
+      - ./backend:/app
 
-	javascript:
-	container_name: javascript
-	build: frontend
-	ports:
-		- "8080:8080"
-	depends_on:
-		- django
-	env_file:
-		- .env
-	volumes:
-		- ./frontend:/app
+  javascript:
+    container_name: javascript
+    build: frontend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - django
+    env_file:
+      - .env
+    volumes:
+      - ./frontend:/app
 
-	prometheus:
-	image: prom/prometheus:latest
-	container_name:	prometheus
-	ports:
-		- "9090:9090"
-	volumes:
-		- ./setup:/setup
-		- prometheus-data:/prometheus
-	command:
-		- "--config.file=/setup/prometheus.yml"
-	
-	grafana:
-	image: grafana/grafana:latest
-	container_name: grafana
-	ports:
-		- "3000:3000"
-	volumes:
-		- grafana-data:/var/lib/grafana
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./setup:/setup
+      - prometheus-data:/prometheus
+    command:
+      - "--config.file=/setup/prometheus.yml"
+    
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
 
-	postgres-exporter:
-	image: prometheuscommunity/postgres-exporter
-	container_name: postgres-exporter
-	ports:
-		- 9187:9187
-	depends_on:
-		- postgres
-	env_file:
-		- .env
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter
+    container_name: postgres-exporter
+    ports:
+      - 9187:9187
+    depends_on:
+      - postgres
+    env_file:
+      - .env
 
 volumes:
 
-	prometheus-data:
-	driver: local
+  prometheus-data:
+    driver: local
 
-	grafana-data:
-	driver: local
+  grafana-data:
+    driver: local
 
 networks:
-	default:
-	name: ft_transcendence
-	external: false
+  default:
+    name: ft_transcendence
+    external: false

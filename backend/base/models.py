@@ -19,6 +19,7 @@ class User(models.Model):
 	username = models.CharField(max_length=20)
 	display_name = models.CharField(max_length=20, blank=True)
 	email = models.EmailField(max_length=100, blank=True)
+	profile_pic = models.CharField(blank=True)
 	versus_history = ArrayField(models.IntegerField(), blank=True)
 	tournament_history = ArrayField(models.IntegerField(), blank=True)
 	date_created = models.DateTimeField(auto_now_add=True)

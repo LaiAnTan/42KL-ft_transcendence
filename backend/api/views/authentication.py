@@ -41,6 +41,7 @@ def postCode(request):
 					username=username,
 					display_name=ft_me_json.get("displayname"),
 					email=ft_me_json.get("email"),
+					profile_pic=ft_me_json.get("image", {}).get("link"),
 					versus_history=versus_history,
 					tournament_history=tournament_history
 				)
