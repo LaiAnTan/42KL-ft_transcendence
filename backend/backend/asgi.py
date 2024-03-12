@@ -22,3 +22,4 @@ application = ProtocolTypeRouter({
 		path('dong', Dong.as_asgi()),
 	])
 })
+

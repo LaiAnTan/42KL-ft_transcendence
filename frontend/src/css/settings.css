@@ -39,12 +39,8 @@
 	width: 100px;
 }
 
-.button-like:hover {
-	background-color: #cb8aff;
-}
-
 .visually-hidden:checked + .button-like {
-	background-color: var(--settings-color);
+	/* background-color: var(--settings-color); */
 	transform: scale(1.1);
 }
 

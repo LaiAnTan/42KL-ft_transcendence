@@ -226,3 +226,4 @@ def getLoser(matchup: dict) -> int:
 
 	return matchup["player_1_id"] if matchup["player_1_score"] < \
 		matchup["player_2_score"] else matchup["player_2_id"]
+

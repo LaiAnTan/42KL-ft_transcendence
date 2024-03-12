@@ -82,3 +82,4 @@ class Tournament(models.Model):
 	player_ids = ArrayField(models.IntegerField())
 	placements = ArrayField(models.IntegerField())
 	matchup_ids = ArrayField(models.IntegerField())
+

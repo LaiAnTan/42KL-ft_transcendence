@@ -148,3 +148,4 @@ Database"},
 			"player_2_info": model_to_dict(player_2)}
 
 	return Response(data)
+

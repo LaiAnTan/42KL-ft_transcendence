@@ -56,17 +56,17 @@
 	transform: scale(1.05);
 }
 
-#vs-player:hover {
+/* #vs-player:hover {
 	box-shadow: 0 0 40px var(--vs-player-color);
 }
 
 #vs-ai:hover {
 	box-shadow: 0 0 40px var(--vs-ai-color);
-}
+} */
 
-#tourney:hover {
+/* #tourney:hover {
 	box-shadow: 0 0 40px var(--tourney-color);
-}
+} */
 
 .menu-component-title {
 	font-size: 50px;

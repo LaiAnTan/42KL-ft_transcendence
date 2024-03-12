@@ -32,3 +32,4 @@ class TournamentSerializer(serializers.ModelSerializer):
 
 		model = Tournament
 		fields = '__all__'
+

@@ -22,3 +22,4 @@ urlpatterns = [
 	path('allRooms', views_GameRoom.allRooms),
 	path('closeAllRooms', views_GameRoom.closeAllRooms),
 ]
+

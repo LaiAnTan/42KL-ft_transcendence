@@ -15,14 +15,14 @@ export default () => {
 		let app = document.querySelector('#app');
 		const new_div = document.createElement('div');
 		new_div.setAttribute('id', 'app');
-		new_div.className = 'vw-100 v-100';
+		new_div.className = 'vw-100 vh-100';
 		new_div.innerHTML = `
 <div class="d-flex flex-column align-items-center justify-content-center vh-100">
 	<div class="important-label" style="font-size: 50px;">USER DASHBOARD</div>
 	<div class="p-4" style="width: 500px">
 		<form>
-			<div class="search-bar">
-				<input id="searchbox" type="text" placeholder="Search by Intra ID" class="description" />
+			<div class="input-container">
+				<input id="searchbox" type="text" placeholder="Search by Intra ID" class="description input-box" />
 				<button data-link="/dashboard?username=" id="searchbutton" type="submit"><img src="../src/assets/search.png" style="width: 32px; height: 32px;"></img></button>
 			</div>
 		</form>
@@ -56,8 +56,6 @@ export default () => {
 				const data = await response.json();
 
 				if (data.username == '') {
-					console.log('here');
-
 					let app = document.querySelector('#app');
 					const new_div = document.createElement('div');
 					new_div.setAttribute('id', 'app');
@@ -77,11 +75,13 @@ export default () => {
 				console.log(data);
 				history.replaceState("", "", `/dashboard?username=${params['username']}`);
 
+				const current_user = sessionStorage.getItem('username');
+
 				let app = document.querySelector('#app');
 				const new_div = document.createElement('div');
 				new_div.setAttribute('id', 'app');
 				new_div.className = 'vw-100 vh-100';
-				new_div.innerHTML = `
+				let ret = `
 <div class="d-flex position-absolute align-items-center unselectable ml-4" style="height: 8vh; z-index: 1">
 	<p data-link="/dashboard" class="description scale-up cursor-pointer">GO BACK</p>
 </div>
@@ -145,32 +145,27 @@ export default () => {
 				<div class="d-table description w-100 pt-2 px-4">
 					<div class="d-table-row">
 						<div class="d-table-cell">Display Name</div>
-						<div class="d-table-cell">${data.display_name}</div>
+						${current_user == data.username ?
+							`<div class="d-table-cell input-container p-0 m-2"><input type="text" placeholder="Edit display name" class="description input-box" value="${data.display_name}"/></div>`
+							: `<div class="d-table-cell p-0">${data.display_name}</div>`
+						}
 					</div>
-					<div class="d-table-row">
+					<div class="d-table-row pt-3">
 						<div class="d-table-cell">Email</div>
 						<div class="d-table-cell">${data.email}</div>
 					</div>
 				</div>
 			</div>
-			<!-- Privaate data -->
-			<div class="p-4">
-				<div class="important-label">Personal Info</div>
-				<div class="d-table description w-100 pt-2 px-4">
-					<div class="d-table-row">
-						<div class="d-table-cell" title="Two Factor Authentication">2FA</div>
-						<div class="d-table-cell">Status</div>
-					</div>
-				</div>
-			</div>
 		</div>
 
-		<div class="d-flex flex-row align-items-center justify-content-between p-4">
+		${current_user == data.username ?
+		`<div class="d-flex flex-row align-items-center justify-content-between p-4">
 			<div class="description">Editable</div>
-			<div class="description rounded-border cursor-pointer p-2" style="background-color: green;">Save</div>
-		</div>
+			<button data-link="/editUser?username=${data.username}" type="submit" class="description rounded-border cursor-pointer p-2" style="background-color: green">Save</button>
+		</div>` : ''}
 	</div>
 </div>`;
+				new_div.innerHTML = ret;
 				app.outerHTML = new_div.outerHTML;
 				return ;
 			} else {

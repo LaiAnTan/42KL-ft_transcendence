@@ -7,11 +7,7 @@ import game from "./game.js";
 import settings from "./settings.js";
 import dashboard from "./dashboard.js";
 
-let app = document.getElementById("app");
-export const getApp = () => {
-	console.log(app);
-	return app;
-};
+
 
 const routes = {
 	"/": { title: "Ding Dong", render: home },
@@ -29,6 +25,26 @@ export function loadCSS(href) {
 	link.rel = "stylesheet";
 	link.href = href;
 	document.head.appendChild(link);
+}
+
+export function lightenColor(color, percent) {
+	color = color.replace('#', '');
+
+	const r = parseInt(color.substr(0, 2), 16);
+	const g = parseInt(color.substr(2, 2), 16);
+	const b = parseInt(color.substr(4, 2), 16);
+
+	const newR = Math.round(r + (255 - r) * percent / 100);
+	const newG = Math.round(g + (255 - g) * percent / 100);
+	const newB = Math.round(b + (255 - b) * percent / 100);
+
+	const newColorHex = [
+	newR.toString(16).padStart(2, '0'),
+	newG.toString(16).padStart(2, '0'),
+	newB.toString(16).padStart(2, '0')
+	].join('');
+
+	return `#${newColorHex}`;
 }
 
 function initRedirClicks(e) {
@@ -65,3 +81,5 @@ export function router() {
 window.addEventListener("click", initRedirClicks);
 window.addEventListener("popstate", router);
 window.addEventListener("DOMContentLoaded", router);
+
+localStorage.setItem('palette', 'default');
