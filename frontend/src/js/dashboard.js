@@ -3,19 +3,27 @@ import { loadCSS, router } from "./main.js"
 export default () => {
 	loadCSS("src/css/dashboard.css");
 
+	/* Get querystring from URL ( url?var1=something&var2=123 ) */
 	const queryString = window.location.search;
+	
+	/* If no query string, user must be on the search page */
 	if (!queryString) {
 		let inputVal = '';
 
+		/* Update the inputval variable on every handleInputChange call */
 		const handleInputChange = (e) => {
 			inputVal = e.target.value;
 			submitButton.dataset.link = `/dashboard?username=${inputVal}&loading=true`;
 		};
 
+		/* #app is the div we are constantly updating in index.html */
 		let app = document.querySelector('#app');
+
+		/* We create a new div, give it ID #app, give it the same styling as the original #app */
 		const new_div = document.createElement('div');
 		new_div.setAttribute('id', 'app');
 		new_div.className = 'w-100 h-100';
+		/* Specify the new HTML we want to show */
 		new_div.innerHTML = `
 <div class="d-flex flex-column align-items-center justify-content-center h-100">
 	<div class="important-label" style="font-size: 50px;">USER DASHBOARD</div>
@@ -28,11 +36,16 @@ export default () => {
 		</form>
 	</div>
 </div>`;
+		/* Replace the original #app's entire HTML with the new #app */
 		app.outerHTML = new_div.outerHTML;
 		
+		/* The entire reason we create a new #app is to be able to hook event listener to specified element IDs */
 		let ptr_app = document.querySelector('#app');
+		/* Text input field ~ like Display Name input box */
 		const inputField = ptr_app.querySelector('#searchbox');
+		/* Apply button ~ like Save button */
 		const submitButton = ptr_app.querySelector('#searchbutton');
+		/* Listen for any input change on the #searchbox input field, and call handleInputChange */
 		inputField.addEventListener('input', handleInputChange);
 
 		return ;
@@ -46,6 +59,7 @@ export default () => {
 		params[key] = val;
 	}
 
+	/* This is the function that GETs the user details from our Postgres DB through API ( /api/getUser ) */
 	const getUser = async () => {
 		try {
 			const response = await fetch(`http://localhost:8000/api/getUser?username=${params['username']}`, {
@@ -55,6 +69,7 @@ export default () => {
 			if (response.ok) {
 				const data = await response.json();
 
+				/* API returns username: '' when the requested user is not found */
 				if (data.username == '') {
 					let app = document.querySelector('#app');
 					const new_div = document.createElement('div');
@@ -73,8 +88,12 @@ export default () => {
 
 				console.log('User found.');
 				console.log(data);
+				/* Force a change of the URL to /dashboard?username=_username_,
+					to avoid any page reloads sending a GET to Postgres again,
+					due to loading=true present in querystring */
 				history.replaceState("", "", `/dashboard?username=${params['username']}`);
 
+				/* Get name of the active user */
 				const current_user = sessionStorage.getItem('username');
 
 				let app = document.querySelector('#app');
@@ -145,7 +164,7 @@ export default () => {
 				<div class="d-table description w-100 pt-2 px-4">
 					<div class="d-table-row">
 						<div class="d-table-cell">Display Name</div>
-						${current_user == data.username ?
+						${current_user == data.username ? /* Ternary here used to check if active user is the user being displayed. If yes, show input box */
 							`<div class="d-table-cell input-container p-0 m-2"><input type="text" placeholder="Edit display name" class="description input-box" value="${data.display_name}"/></div>`
 							: `<div class="d-table-cell p-0">${data.display_name}</div>`
 						}
@@ -158,7 +177,7 @@ export default () => {
 			</div>
 		</div>
 
-		${current_user == data.username ?
+		${current_user == data.username ? /* Ternary here used to check if active user is the user being displayed. If yes, show save button */
 		`<div class="d-flex flex-row align-items-center justify-content-between p-4">
 			<div class="description">Editable</div>
 			<button id="updateButton" type="submit" class="description rounded-border cursor-pointer p-2" style="background-color: green">Save</button>
