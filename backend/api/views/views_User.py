@@ -130,3 +130,27 @@ model"},
                         status=status.HTTP_400_BAD_REQUEST)
 
     return Response(serializer.data)
+
+@api_view(['DELETE'])
+def deleteUser(request):
+
+    """
+    API endpoint that deletes the specified user entry in the database.
+    """
+
+    username = request.query_params.get('username')
+
+    if username is None:
+        return Response({"Error": '"username" must be included in query\
+parameters '},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return Response({"Error": "User Not Found in Database"},
+                        status=status.HTTP_400_BAD_REQUEST)
+    
+    user.delete()
+
+    return Response({"Success": f"User {username} Deleted from Database"})
