@@ -13,6 +13,7 @@ export default () => {
 		/* Update the inputval variable on every handleInputChange call */
 		const handleInputChange = (e) => {
 			inputVal = e.target.value;
+			console.log(inputVal);
 			submitButton.dataset.link = `/dashboard?username=${inputVal}&loading=true`;
 		};
 
@@ -51,7 +52,6 @@ export default () => {
 		return ;
 	}
 
-	/* If have query string means it is searching / has found user */
 	const params = {};
 	const paramPairs = queryString.slice(1).split('&');
 	for (const pair of paramPairs) {
@@ -106,7 +106,6 @@ export default () => {
 </div>
 <div class="d-flex flex-row align-items-center justify-content-around h-100" style="padding: 50px 0;">
 	<div class="d-flex flex-column rounded-border glowing-border h-100 w-100 mx-3" style="min-width: 400px; max-width:600px;">
-		<!-- Game Statistics -->
 		<div class="p-4">
 			<div class="important-label">Game Statistics</div>
 			<div class="d-table description w-100 pt-2 px-4">
@@ -144,7 +143,6 @@ export default () => {
 				</div>
 			</div>
 		</div>
-		<!-- Game History -->
 		<div class="p-4">
 			<div class="important-label">Game History</div>
 			<div class="description cursor-pointer">Button to redirect</div>

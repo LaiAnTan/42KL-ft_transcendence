@@ -44,21 +44,21 @@ export default () => {
 	return `
 <div class="d-flex flex-column h-100">
 	<div class="menu-header unselectable">
-		<p class="h-100 m-0 text-center menu-header-title">MAIN MENU</p>
+		<p class="text-center menu-header-title h-100 m-0">MAIN MENU</p>
 	</div>
 	<div class="d-flex flex-column align-items-center justify-content-evenly unselectable flex-grow-1 px-4">
-		<div data-link="/vs-player" id="vs-player" class="menu-component vs-player">
+		<button type="button" data-link="/vs-player" id="vs-player" class="menu-component vs-player cursor-pointer" style="background-color: transparent">
 			<div class="menu-component-title">VS PLAYER</div>
 			<div class="menu-component-description">PLAY AGAINST OTHER PLAYERS</div>
-		</div>
-		<div data-link="/vs-ai" id="vs-ai" class="menu-component vs-ai cursor-pointer">
+		</button>
+		<button type="button" data-link="/vs-ai" id="vs-ai" class="menu-component vs-ai cursor-pointer" style="background-color: transparent">
 			<div class="menu-component-title">VS AI</div>
 			<div class="menu-component-description">PLAY 1V1 AGAINST AN AI</div>
-		</div>
-		<div data-link="/" id="tourney" class="menu-component tournament cursor-pointer">
+		</button>
+		<button type="button" data-link="/" id="tourney" class="menu-component tournament cursor-pointer" style="background-color: transparent">
 			<div class="menu-component-title">TOURNAMENT</div>
 			<div class="menu-component-description">BRACKET-STYLED TOURNAMENT</div>
-		</div>
+		</button>
 	</div>
 </div>`;
 };
