@@ -6,6 +6,7 @@ urlpatterns = [
     path('getUser', views_User.getUser),
     path('allUsers', views_User.getAllUsers),
     path('editUser', views_User.editUserFields),
+    path('deleteUser', views_User.deleteUser),
     path('addMatchup', views_Matchup.addMatchup),
     path('getMatchup', views_Matchup.getMatchup),
     path('allMatchups', views_Matchup.getAllMatchups),
