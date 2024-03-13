@@ -84,7 +84,7 @@ def addUser(request):
 	return Response(serializer.data)
 
 @api_view(['POST'])
-def editUserFields(request):
+def editUser(request):
 
     """
     API endpoint that edits the specified user's fields in the database.
@@ -153,4 +153,4 @@ parameters '},
     
     user.delete()
 
-    return Response({"Success": f"User {username} Deleted from Database"})
+    return Response({"Success": f"User {username} deleted from Database"})
