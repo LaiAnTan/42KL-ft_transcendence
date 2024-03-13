@@ -280,7 +280,7 @@ function game() {
 	});
 
 	return `
-<div class="vw-100 vh-100 p-5">
+<div class="w-100 h-100 p-5">
 	<div class="d-flex justify-content-between w-80 mx-auto pb-3">
 		<div class="d-flex flex-row player-text player-1-text-color justify-content-end align-items-end">
 			<div id=player1score class="player-score-text-size pr-2">${player_1_score.toString()}</div>

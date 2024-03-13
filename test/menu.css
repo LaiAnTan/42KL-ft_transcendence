@@ -30,15 +30,14 @@
 	flex-direction: column;
 	align-items: center;
 	gap: 103px;
+
 }
 
 .menu-component {
 	display: flex;
 	justify-content: space-around;
 	align-items: center;
-	width: 100%;
-	min-width: 400px;
-	max-width: 850px;
+	width: 850px;
 	height: 110px;
 	border: 4px solid white;
 	border-radius: 10px;

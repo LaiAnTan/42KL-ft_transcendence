@@ -9,7 +9,7 @@ export default () => {
 	let app = document.querySelector('#app');
 	const new_div = document.createElement('div');
 	new_div.setAttribute('id', 'app');
-	new_div.className = 'vw-100 v-100';
+	new_div.className = 'w-100 v-100';
 	new_div.innerHTML = `
 <div class="d-flex position-absolute align-items-center unselectable ml-4" style="height: 8vh; z-index: 1">
 	<p class="description scale-up cursor-pointer">GO BACK</p>
@@ -25,7 +25,7 @@ export default () => {
 				<p class="important-label">GRAPHICS</p>
 				<p class="description">Changes the particle effects</p>
 				<div class="px-3 py-1">
-					<div class="d-flex flex-row justify-content-space-evenly pt-1">
+					<div class="d-flex flex-row justify-content-evenly pt-1">
 						<div class="px-1">
 							<input type="radio" id="off" name="options" class="visually-hidden" />
 							<label for="off" class="button-like description scale-up rounded-border cursor-pointer">OFF</label>

@@ -1,0 +1,157 @@
+body {
+	width: 100vw;
+	height: 100vh;
+	background-color: black;
+	font-family: 'Roboto', sans-serif;
+}
+
+/* scrollbar */
+*::-webkit-scrollbar {
+	background-color: #fff;
+	width: 16px;
+}
+
+*::-webkit-scrollbar-track {
+	background-color: #fff;
+}
+
+*::-webkit-scrollbar-thumb {
+	background-color: #babac0;
+	border-radius: 16px;
+	border: 4px solid #fff;
+}
+
+*::-webkit-scrollbar-button {
+	display:none;
+}
+
+/* menu header */
+.menu-header {
+	position: relative;
+	display: inline-block;
+}
+
+.menu-header::after {
+	content: '';
+	position: absolute;
+	bottom: -4px;
+	left: 0;
+	height: 5px;
+	width: 100vw;
+	background: linear-gradient(to bottom, white, transparent);
+}
+
+.menu-header-title {
+	font-family: 'Ubuntu', sans-serif;
+	font-size: 40px;
+	color: white;
+	font-weight: 700;
+	text-shadow: 0 0 25px white;
+	width: 100vw;
+}
+
+.important-label {
+	margin: 0 !important;
+	padding: 0 !important;
+	font-size: 30px;
+	font-weight: 500;
+	font-family: 'Ubuntu', sans-serif; 
+	color: white;
+	text-shadow: 0 0 25px white;
+	-webkit-text-stroke: 1px white;
+}
+
+.description {
+	margin: 0;
+	font-size: 20px;
+	font-family: 'Aldrich', sans-serif;
+	color: white;
+}
+
+/* slider bar */
+input[type="range"] {
+	display: block;
+	appearance: none;
+	-webkit-appearance: none;
+	background-color: #bdc3c7;
+	width: 300px;
+	height: 5px;
+	border-radius: 5px;
+	margin: 0 auto;
+	outline: 0;
+}
+input[type="range"]::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	background-color: var(--color5);
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	border: 2px solid white;
+	cursor: pointer;
+	transition: .3s ease-in-out;
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+	background-color: var(--color5);
+	transform: scale(1.1);
+	border: 2px solid white;
+}
+input[type="range"]::-webkit-slider-thumb:active {
+	transform: scale(1.4);
+}
+
+/* commonly used customs */
+.important-label {
+	margin: 0 !important;
+	padding: 0 !important;
+	font-size: 30px;
+	font-weight: 500;
+	font-family: 'Ubuntu', sans-serif; 
+	color: white;
+	text-shadow: 0 0 25px white;
+	-webkit-text-stroke: 1px white;
+}
+
+.description {
+	margin: 0;
+	font-size: 20px;
+	font-family: 'Aldrich', sans-serif;
+	color: white;
+}
+
+.rounded-border {
+	border: 4px solid white;
+	border-radius: 10px;
+}
+
+.scale-up {
+	transition: transform 0.1s ease-in-out;
+}
+
+.scale-up:hover {
+	transform: scale(1.05);
+}
+
+/* miscellaneous missing bootstrap addons */
+.w-45 {
+	width: 45%;
+}
+
+.w-80 {
+	width: 80%;
+}
+
+.h-85 {
+	height: 85%;
+}
+
+.unselectable {
+	user-select: none;
+}
+
+.justify-content-evenly {
+	justify-content: space-evenly;
+}
+
+.cursor-pointer {
+	cursor: pointer;
+}

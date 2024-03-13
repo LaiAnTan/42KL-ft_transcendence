@@ -38,11 +38,11 @@ export default () => {
 </div>
 <div class="vs-player-content">
 	<input type="text" id="room-id" class="vs-player-input" placeholder="Enter room ID">
-	<button class="vs-player-component matchmaking" id="matchmaking">
+	<button data-link="/game" class="vs-player-component matchmaking" id="matchmaking">
 		<div class="vs-player-component-title">MATCHMAKING</div>
 		<div class="vs-player-component-description">MATCH WITH RANDOM PLAYERS</div>
 	</button>
-	<button class="vs-player-component" id="custom">
+	<button data-link="/custom" class="vs-player-component" id="custom">
 		<div class="vs-player-component-title">CUSTOM</div>
 		<div class="vs-player-component-description">CREATE A PARTY AND INVITE FRIENDS</div>
 	</button>

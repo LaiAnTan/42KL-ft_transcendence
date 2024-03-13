@@ -15,9 +15,9 @@ export default () => {
 		let app = document.querySelector('#app');
 		const new_div = document.createElement('div');
 		new_div.setAttribute('id', 'app');
-		new_div.className = 'vw-100 vh-100';
+		new_div.className = 'w-100 h-100';
 		new_div.innerHTML = `
-<div class="d-flex flex-column align-items-center justify-content-center vh-100">
+<div class="d-flex flex-column align-items-center justify-content-center h-100">
 	<div class="important-label" style="font-size: 50px;">USER DASHBOARD</div>
 	<div class="p-4" style="width: 500px">
 		<form>
@@ -59,12 +59,12 @@ export default () => {
 					let app = document.querySelector('#app');
 					const new_div = document.createElement('div');
 					new_div.setAttribute('id', 'app');
-					new_div.className = 'vw-100 vh-100';
+					new_div.className = 'w-100 h-100';
 					new_div.innerHTML = `
 <div class="d-flex position-absolute align-items-center unselectable ml-4" style="height: 8vh; z-index: 1">
 	<p data-link="/dashboard" class="description scale-up cursor-pointer">GO BACK</p>
 </div>
-<div class="d-flex align-items-center justify-content-center vh-100">
+<div class="d-flex align-items-center justify-content-center h-100">
 	<div class="important-label" style="font-size: 50px;">User ${params['username']} does not exist.</div>
 </div>`;
 					app.outerHTML = new_div.outerHTML;
@@ -80,12 +80,12 @@ export default () => {
 				let app = document.querySelector('#app');
 				const new_div = document.createElement('div');
 				new_div.setAttribute('id', 'app');
-				new_div.className = 'vw-100 vh-100';
+				new_div.className = 'w-100 h-100';
 				let ret = `
 <div class="d-flex position-absolute align-items-center unselectable ml-4" style="height: 8vh; z-index: 1">
 	<p data-link="/dashboard" class="description scale-up cursor-pointer">GO BACK</p>
 </div>
-<div class="d-flex flex-row align-items-center justify-content-around vh-100" style="padding: 50px 0;">
+<div class="d-flex flex-row align-items-center justify-content-around h-100" style="padding: 50px 0;">
 	<div class="d-flex flex-column rounded-border glowing-border h-100 w-100 mx-3" style="min-width: 400px; max-width:600px;">
 		<!-- Game Statistics -->
 		<div class="p-4">
@@ -181,9 +181,9 @@ export default () => {
 		let app = document.querySelector('#app');
 		const new_div = document.createElement('div');
 		new_div.setAttribute('id', 'app');
-		new_div.className = 'vw-100 vh-100';
+		new_div.className = 'w-100 h-100';
 		new_div.innerHTML = `
-<div class="d-flex align-items-center justify-content-center vh-100">
+<div class="d-flex align-items-center justify-content-center h-100">
 	<div class="important-label" style="font-size: 50px;">Searching for user ${params['username']} </div>
 </div>`;
 		app.outerHTML = new_div.outerHTML;
