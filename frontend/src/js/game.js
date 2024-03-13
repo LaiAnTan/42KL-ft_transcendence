@@ -1,6 +1,8 @@
 import { navigate, loadCSS } from "./main.js";
 
 function game() {
+	let config_palette = localStorage.getItem("palette");
+	loadCSS("src/css/palettes/" + config_palette + ".css");
 	loadCSS("src/css/game.css");
 
 	let player_1_score = 0;

@@ -4,13 +4,13 @@
 }
 
 .player-1-text-color {
-	color: #FF3C3C;
-	text-shadow: 0 0 25px #FF3C3C;
+	color: var(--color2);
+	text-shadow: 0 0 25px var(--color2);
 }
 
 .player-2-text-color {
-	color: #4010FF;
-	text-shadow: 0 0 25px #4010FF;
+	color: var(--color5);
+	text-shadow: 0 0 25px var(--color5);
 }
 
 .player-score-text-size {

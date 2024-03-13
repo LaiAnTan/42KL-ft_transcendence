@@ -10,14 +10,14 @@
 	left: 0;
 	height: 5px; /* Adjust this value based on your shadow thickness preference */
 	width: 100vw;
-	background: linear-gradient(to bottom, rgba(92, 181, 255, 0.959), transparent); /* Adjust shadow color and transparency */
+	background: linear-gradient(to bottom, var(--color1), transparent); /* Adjust shadow color and transparency */
 }
 
 .menu-header-title {
 	font-family: 'Ubuntu', sans-serif;
 	font-size: 50px;
 	color: white;
-	text-shadow: 0 0 25px #85EBE9;
+	text-shadow: 0 0 25px var(--color1);
 	width: 100vw;
 }
 

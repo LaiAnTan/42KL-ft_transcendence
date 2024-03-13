@@ -14,27 +14,28 @@
 	left: 0;
 	height: 5px;
 	width: 100vw;
-	background: linear-gradient(to bottom, var(--vs-ai-color), transparent);
+	background: linear-gradient(to bottom, var(--color3), transparent);
 }
 
 .menu-header-title {
 	font-family: 'Ubuntu', sans-serif;
 	font-size: 40px;
 	color: white;
-	text-shadow: 0 0 25px var(--vs-ai-color);
+	text-shadow: 0 0 25px var(--color3);
 	width: 100vw;
 }
 
 .important-label {
 	font-size: 40px;
-	text-shadow: 0 0 25px var(--vs-ai-color);
-	-webkit-text-stroke: 1px var(--vs-ai-color);
+	text-shadow: 0 0 25px var(--color3);
+	-webkit-text-stroke: 1px var(--color3);
 }
 
 .description {
 	font-size: 15px;
-	text-shadow: 0 0 25px var(--vs-ai-color);
-	-webkit-text-stroke: 1px var(--vs-ai-color);
+	/* color: var(--color3); */
+	text-shadow: 0 0 25px var(--color3);
+	-webkit-text-stroke: 1px var(--color3);
 }
 
 .play-button {
@@ -44,7 +45,7 @@
 
 .play-button:hover {
 	transform: scale(1.05);
-	box-shadow: var(--vs-ai-color) 0 0 25px;
+	box-shadow: var(--color3) 0 0 25px;
 }
 
 .scale-up:hover img {

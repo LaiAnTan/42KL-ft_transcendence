@@ -1,6 +1,8 @@
 import { loadCSS } from "./main.js";
 
 export default () => {
+	let config_palette = localStorage.getItem("palette");
+	loadCSS("src/css/palettes/" + config_palette + ".css");
 	loadCSS("src/css/vs-ai.css");
 
 	return `

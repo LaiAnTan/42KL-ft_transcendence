@@ -1,6 +1,6 @@
 .vs-player-header {
 	border-bottom: 2px solid white;
-	box-shadow: 0 8px 25px -10px #98EB4C;
+	box-shadow: 0 8px 25px -10px var(--color2);
 	width: 120%;
 	margin-left: -10%;
 }
@@ -10,7 +10,7 @@
 	font-family: 'Ubuntu', sans-serif;
 	font-size: 50px;
 	color: white;
-	text-shadow: 0 0 25px #98EB4C;
+	text-shadow: 0 0 25px var(--color2);
 }
 
 .vs-player-content {
@@ -41,7 +41,7 @@
 
 .vs-player-component:hover {
 	transform: scale(1.05);
-	box-shadow: 0 0 40px #98EB4C;
+	box-shadow: 0 0 40px var(--color2);
 }
 
 .vs-player-component-title {
@@ -49,8 +49,8 @@
 	font-family: 'Ubuntu', sans-serif; 
 	padding-left: 50px;
 	color: white;
-	text-shadow: 0 0 25px #98EB4C;
-	-webkit-text-stroke: 1px #98EB4C;
+	text-shadow: 0 0 25px var(--color2);
+	-webkit-text-stroke: 1px var(--color2);
 }
 
 .vs-player-component-description {
@@ -58,7 +58,7 @@
 	font-family: 'Aldrich', sans-serif;
 	padding-right: 90px;
 	width: 300px;
-	color: #98EB4C
+	color: var(--color2)
 }
 
 .vs-player-buttons {
@@ -82,6 +82,6 @@
 }
 
 .vs-player-input:hover {
-	border: 1px solid #98EB4C;
-	box-shadow: 0 0 20px #98EB4C;
+	border: 1px solid var(--color2);
+	box-shadow: 0 0 20px var(--color2);
 }
