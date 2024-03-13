@@ -82,4 +82,4 @@ window.addEventListener("click", initRedirClicks);
 window.addEventListener("popstate", router);
 window.addEventListener("DOMContentLoaded", router);
 
-localStorage.setItem('palette', 'default');
+localStorage.setItem('palette', 'dings-dazzle');

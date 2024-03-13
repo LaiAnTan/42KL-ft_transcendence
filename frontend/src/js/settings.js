@@ -1,14 +1,10 @@
 import { loadCSS, lightenColor } from "./main.js";
 
 export default () => {
+	let config_palette = localStorage.getItem("palette");
+	loadCSS("src/css/palettes/" + config_palette + ".css");
 	loadCSS("src/css/settings.css");
 
-	let config_palette = localStorage.getItem("palette");
-	let color1 = `--${config_palette}-1`;
-	let color2 = `--${config_palette}-2`;
-	let color3 = `--${config_palette}-3`;
-	let color4 = `--${config_palette}-4`;
-	let color5 = `--${config_palette}-5`;
 
 	let app = document.querySelector('#app');
 	const new_div = document.createElement('div');
@@ -18,8 +14,8 @@ export default () => {
 <div class="d-flex position-absolute align-items-center unselectable ml-4" style="height: 8vh; z-index: 1">
 	<p class="description scale-up cursor-pointer">GO BACK</p>
 </div>
-<div class="menu-header unselectable" style="height: 8vh; z-index: 0 background: linear-gradient(to bottom, var(${color5}), transparent)">
-	<p class="text-center menu-header-title h-100 m-0 pt-2" style="text-shadow: 0 0 25px var(${color5})">SETTINGS</p>
+<div class="menu-header unselectable" style="height: 8vh; z-index: 0 background: linear-gradient(to bottom, var(--color5), transparent)">
+	<p class="text-center menu-header-title h-100 m-0" style="text-shadow: 0 0 25px var(--color5)">SETTINGS</p>
 </div>
 <div class="unselectable" style="height: 92vh;">
 	<div class="d-flex align-items-center justify-content-center h-100">
@@ -32,15 +28,15 @@ export default () => {
 					<div class="d-flex flex-row justify-content-space-evenly pt-1">
 						<div class="px-1">
 							<input type="radio" id="off" name="options" class="visually-hidden" />
-							<label for="off" class="button-like description scale-up rounded-border cursor-pointer" onmouseover="this.style.boxShadow='0 0 40px var(${color5})'" onmouseout="this.style.boxShadow='none'">OFF</label>
+							<label for="off" class="button-like description scale-up rounded-border cursor-pointer">OFF</label>
 						</div>
 						<div class="px-1">
 							<input type="radio" id="low" name="options" class="visually-hidden" checked />
-							<label for="low" class="button-like description scale-up rounded-border cursor-pointer" onmouseover="this.style.boxShadow='0 0 40px var(${color5})'" onmouseout="this.style.boxShadow='none'">LOW</label>
+							<label for="low" class="button-like description scale-up rounded-border cursor-pointer">LOW</label>
 						</div>
 						<div class="px-1">
 							<input type="radio" id="high" name="options" class="visually-hidden" />
-							<label for="high" class="button-like description scale-up rounded-border cursor-pointer" onmouseover="this.style.boxShadow='0 0 40px var(${color5})'" onmouseout="this.style.boxShadow='none'">HIGH</label>
+							<label for="high" class="button-like description scale-up rounded-border cursor-pointer">HIGH</label>
 						</div>
 					</div>
 				</div>

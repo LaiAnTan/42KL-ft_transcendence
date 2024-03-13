@@ -10,7 +10,7 @@
 	left: 0;
 	height: 5px;
 	width: 100vw;
-	background: linear-gradient(to bottom, var(--settings-color), transparent);
+	background: linear-gradient(to bottom, var(--color5), transparent);
 }
 
 .menu-header-title {
@@ -18,7 +18,7 @@
 	font-size: 40px;
 	color: white;
 	font-weight: 700;
-	text-shadow: 0 0 25px var(--settings-color);
+	text-shadow: 0 0 25px var(--color5);
 	width: 100vw;
 }
 
@@ -39,8 +39,12 @@
 	width: 100px;
 }
 
+.button-like:hover {
+	box-shadow: 0 0 20px var(--color5);
+}
+
 .visually-hidden:checked + .button-like {
-	/* background-color: var(--settings-color); */
+	background-color: var(--color5);
 	transform: scale(1.1);
 }
 

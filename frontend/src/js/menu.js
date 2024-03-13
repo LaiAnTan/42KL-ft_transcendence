@@ -1,7 +1,10 @@
-import { navigate, router, loadCSS } from "./main.js";
+import { router, loadCSS } from "./main.js";
 
 export default () => {
+	let config_palette = localStorage.getItem("palette");
+	loadCSS("src/css/palettes/" + config_palette + ".css");
 	loadCSS("src/css/menu.css");
+
 
 	let queryString = new URLSearchParams(document.location.search);
 	const code = queryString.get('code')
@@ -37,27 +40,21 @@ export default () => {
 </div>`;
 	};
 
-	let config_palette = localStorage.getItem("palette");
-	let color1 = `--${config_palette}-1`;
-	let color2 = `--${config_palette}-2`;
-	let color3 = `--${config_palette}-3`;
-	let color4 = `--${config_palette}-4`;
-	let color5 = `--${config_palette}-5`;
 
 	return `
 <div class="menu-header unselectable" style="height: 8vh">
 	<p class="h-100 m-0 text-center pt-2 menu-header-title">MAIN MENU</p>
 </div>
-<div class="d-flex flex-column align-items-center justify-content-around pt-4 pb-4 unselectable" style="height: 92vh">
-	<div data-link="/vs-player" id="vs-player" class="menu-component vs-player" onmouseover="this.style.boxShadow='0 0 40px var(${color2})'" onmouseout="this.style.boxShadow='none'">
+<div class="d-flex flex-column align-items-center justify-content-around unselectable" style="height: 92vh">
+	<div data-link="/vs-player" id="vs-player" class="menu-component vs-player">
 		<div class="menu-component-title">VS PLAYER</div>
 		<div class="menu-component-description">PLAY AGAINST OTHER PLAYERS</div>
 	</div>
-	<div data-link="/vs-ai" id="vs-ai" class="menu-component vs-ai cursor-pointer" onmouseover="this.style.boxShadow='0 0 40px var(${color3})'" onmouseout="this.style.boxShadow='none'">
+	<div data-link="/vs-ai" id="vs-ai" class="menu-component vs-ai cursor-pointer">
 		<div class="menu-component-title">VS AI</div>
 		<div class="menu-component-description">PLAY 1V1 AGAINST AN AI</div>
 	</div>
-	<div data-link="/" id="tourney" class="menu-component tournament cursor-pointer" onmouseover="this.style.boxShadow='0 0 40px var(${color4})'" onmouseout="this.style.boxShadow='none'">
+	<div data-link="/" id="tourney" class="menu-component tournament cursor-pointer">
 		<div class="menu-component-title">TOURNAMENT</div>
 		<div class="menu-component-description">BRACKET-STYLED TOURNAMENT</div>
 	</div>

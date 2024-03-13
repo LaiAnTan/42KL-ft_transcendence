@@ -33,12 +33,6 @@
 
 }
 
-:root {
-	--vs-player-color: #98EB4C;
-	--vs-ai-color: #FAE84D;
-	--tourney-color: #D934F6;
-}
-
 .menu-component {
 	display: flex;
 	justify-content: space-around;
@@ -56,17 +50,17 @@
 	transform: scale(1.05);
 }
 
-/* #vs-player:hover {
-	box-shadow: 0 0 40px var(--vs-player-color);
+#vs-player:hover {
+	box-shadow: 0 0 40px var(--color2);
 }
 
 #vs-ai:hover {
-	box-shadow: 0 0 40px var(--vs-ai-color);
-} */
+	box-shadow: 0 0 40px var(--color3);
+}
 
-/* #tourney:hover {
-	box-shadow: 0 0 40px var(--tourney-color);
-} */
+#tourney:hover {
+	box-shadow: 0 0 40px var(--color4);
+}
 
 .menu-component-title {
 	font-size: 50px;
@@ -80,30 +74,30 @@
 }
 
 .vs-player .menu-component-title {
-	text-shadow: 0 0 25px var(--vs-player-color);
-	-webkit-text-stroke: 1px var(--vs-player-color);
+	text-shadow: 0 0 25px var(--color2);
+	-webkit-text-stroke: 1px var(--color2);
 }
 
 .vs-player .menu-component-description {
-	color: var(--vs-player-color);
+	color: var(--color2);
 }
 
 .vs-ai .menu-component-title {
-	text-shadow: 0 0 25px var(--vs-ai-color);
-	-webkit-text-stroke: 1px var(--vs-ai-color);
+	text-shadow: 0 0 25px var(--color3);
+	-webkit-text-stroke: 1px var(--color3);
 }
 
 .vs-ai .menu-component-description {
-	color: var(--vs-ai-color);
+	color: var(--color3);
 }
 
 .tournament .menu-component-title {
-	text-shadow: 0 0 25px var(--tourney-color);
-	-webkit-text-stroke: 1px var(--tourney-color);
+	text-shadow: 0 0 25px var(--color4);
+	-webkit-text-stroke: 1px var(--color4);
 }
 
 .tournament .menu-component-description {
-	color: var(--tourney-color);
+	color: var(--color4);
 }
 
 .unselectable {
