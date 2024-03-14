@@ -113,7 +113,8 @@ export default () => {
 	</div>
 	<div class="d-flex flex-column align-items-center justify-content-center h-100 w-100" style="min-width: 200px; max-width:250px;">
 		<div class="profile-pic">
-			<img src="${data.profile_pic}" />
+			<img src="${data.profile_pic}" style="z-index=0" />
+			<img src="/src/assets/wojak-point.png" style="z-index=1" />
 		</div>
 		<div class="important-label" style="font-size: 40px;">${data.username.toUpperCase()}</div>
 	</div>
@@ -156,7 +157,6 @@ export default () => {
 					</div>
 				</div>
 			</div>
-			<!-- Public data -->
 			<div class="p-4">
 				<div class="important-label">User Info</div>
 				<div class="d-table description w-100 pt-2 px-4">
@@ -185,7 +185,6 @@ export default () => {
 				new_div.innerHTML = ret;
 				app.outerHTML = new_div.outerHTML;
 
-				
 				const handleInputChange = (e) => { newDisplayName = e.target.value; }
 				const handleUpdate = async (e) => {
 					e.preventDefault();
