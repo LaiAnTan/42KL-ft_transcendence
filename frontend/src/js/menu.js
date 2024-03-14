@@ -44,7 +44,7 @@ export default () => {
 	return `
 <div class="d-flex flex-column h-100">
 	<div class="menu-header unselectable">
-		<p class="text-center menu-header-title h-100 m-0">MAIN MENU</p>
+		<p class="text-center menu-header-title h-100 my-4">MAIN MENU</p>
 	</div>
 	<div class="d-flex flex-column align-items-center justify-content-evenly unselectable flex-grow-1 px-4">
 		<button type="button" data-link="/vs-player" id="vs-player" class="menu-component vs-player cursor-pointer" style="background-color: transparent">

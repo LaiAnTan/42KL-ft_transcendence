@@ -15,7 +15,7 @@ export default () => {
 		<p class="description scale-up cursor-pointer">GO BACK</p>
 	</div>
 	<div class="menu-header unselectable" style="z-index: 0">
-		<p class="text-center menu-header-title h-100 m-0" style="text-shadow: 0 0 25px var(--color5)">SETTINGS</p>
+		<p class="text-center menu-header-title h-100 my-4" style="text-shadow: 0 0 25px var(--color5)">SETTINGS</p>
 	</div>
 	<div class="d-flex align-items-center justify-content-center unselectable flex-grow-1 overflow-y">
 		<div class="d-flex flex-column align-items-center justify-content-center m-4 w-50" style="min-width: 400px; max-width: 650px">

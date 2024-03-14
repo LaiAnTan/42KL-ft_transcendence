@@ -175,14 +175,6 @@ input[type="range"]::-webkit-slider-thumb:active {
 	height: 85%;
 }
 
-.w-100 {
-	width: 100vw;
-}
-
-.h-100 {
-	height: 100vh;
-}
-
 .unselectable {
 	user-select: none;
 }

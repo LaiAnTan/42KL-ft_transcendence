@@ -8,7 +8,7 @@ export default () => {
 	return `
 <div class="d-flex flex-column h-100">
 	<div class="menu-header unselectable">
-		<p class="text-center menu-header-title h-100 m-0">VS AI</p>
+		<p class="text-center menu-header-title h-100 my-4">VS AI</p>
 	</div>
 	<div class="d-flex flex-row justify-content-evenly unselectable flex-grow-1" style="padding: 100px 0">
 		<div class="d-flex flex-column rounded-border w-45 p-3 mr-1" style="min-width: 300px; max-width: 600px; min-height: 400px;">

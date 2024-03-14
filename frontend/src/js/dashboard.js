@@ -8,7 +8,7 @@ export default () => {
 	
 	/* If no query string, user must be on the search page */
 	if (!queryString) {
-		let inputVal = '';
+		var inputVal = '';
 
 		/* Update the inputval variable on every handleInputChange call */
 		const handleInputChange = (e) => {
@@ -112,9 +112,9 @@ export default () => {
 		</div>
 	</div>
 	<div class="d-flex flex-column align-items-center justify-content-center h-100 w-100" style="min-width: 200px; max-width:250px;">
-		<div class="profile-pic">
-			<img src="${data.profile_pic}" style="z-index=0" />
-			<img src="/src/assets/wojak-point.png" style="z-index=1" />
+		<div class="profile-pic" style="position: relative">
+			<img src="${data.profile_pic}" style="z-index: 0; position: absolute" />
+			${current_user == data.username ? '<img src="/src/assets/wojak-point.png" style="z-index: 1; opacity: 85%" />' : ''}
 		</div>
 		<div class="important-label" style="font-size: 40px;">${data.username.toUpperCase()}</div>
 	</div>
@@ -163,7 +163,7 @@ export default () => {
 					<div class="d-table-row">
 						<div class="d-table-cell">Display Name</div>
 						${current_user == data.username ? /* Ternary here used to check if active user is the user being displayed. If yes, show input box */
-							`<div class="d-table-cell input-container p-0 m-2"><input id="newDisplayName" type="text" placeholder="Edit display name" class="description input-box" value="${data.display_name}"/></div>`
+							`<div class="d-table-cell input-container p-0 m-2"><input id="new-display-name" type="text" placeholder="Edit display name" class="description input-box" value="${data.display_name}"/></div>`
 							: `<div class="d-table-cell p-0">${data.display_name}</div>`
 						}
 					</div>
@@ -178,7 +178,7 @@ export default () => {
 		${current_user == data.username ? /* Ternary here used to check if active user is the user being displayed. If yes, show save button */
 		`<div class="d-flex flex-row align-items-center justify-content-between p-4">
 			<div class="description">Editable</div>
-			<button id="updateButton" type="submit" class="description rounded-border cursor-pointer p-2" style="background-color: green">Save</button>
+			<button id="update-button" type="submit" class="description rounded-border cursor-pointer p-2" style="background-color: green">Save</button>
 		</div>` : ''}
 	</div>
 </div>`;
@@ -206,8 +206,8 @@ export default () => {
 
 				/* EVENT HANDLER */
 				let ptr_app = document.querySelector('#app');
-				let newDisplayName = ptr_app.querySelector('#newDisplayName');
-				let updateButton = ptr_app.querySelector('#updateButton');
+				let newDisplayName = ptr_app.querySelector('#new-display-name');
+				let updateButton = ptr_app.querySelector('#update-button');
 
 				newDisplayName.addEventListener('input', handleInputChange);
 				updateButton.addEventListener('click', handleUpdate);
