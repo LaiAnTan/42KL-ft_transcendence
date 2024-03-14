@@ -107,43 +107,6 @@ export default () => {
 <div class="d-flex flex-row align-items-center justify-content-around h-100" style="padding: 50px 0;">
 	<div class="d-flex flex-column rounded-border glowing-border h-100 w-100 mx-3" style="min-width: 400px; max-width:600px;">
 		<div class="p-4">
-			<div class="important-label">Game Statistics</div>
-			<div class="d-table description w-100 pt-2 px-4">
-				<div class="d-table-row">
-					<div class="d-table-cell">Games Played</div>
-					<div class="d-table-cell">0</div>
-				</div>
-				<div class="d-table-row">
-					<div class="d-table-cell">Games Won</div>
-					<div class="d-table-cell">0</div>
-				</div>
-				<div class="d-table-row">
-					<div class="d-table-cell">Games Lost</div>
-					<div class="d-table-cell">0</div>
-				</div>
-				<div class="d-table-row">
-					<div class="d-table-cell">Win Rate</div>
-					<div class="d-table-cell">0%</div>
-				</div>
-				<div class="d-table-row">
-					<div class="d-table-cell">Best Score</div>
-					<div class="d-table-cell">0</div>
-				</div>
-				<div class="d-table-row">
-					<div class="d-table-cell">Average Score</div>
-					<div class="d-table-cell">0</div>
-				</div>
-				<div class="d-table-row">
-					<div class="d-table-cell">Current Streak</div>
-					<div class="d-table-cell">0</div>
-				</div>
-				<div class="d-table-row">
-					<div class="d-table-cell">Longest Streak</div>
-					<div class="d-table-cell">0</div>
-				</div>
-			</div>
-		</div>
-		<div class="p-4">
 			<div class="important-label">Game History</div>
 			<div class="description cursor-pointer">Button to redirect</div>
 		</div>
@@ -156,6 +119,43 @@ export default () => {
 	</div>
 	<div class="d-flex flex-column justify-content-between rounded-border glowing-border h-100 w-100 mx-3" style="min-width: 400px; max-width:600px;">
 		<div>
+			<div class="p-4">
+				<div class="important-label">Game Statistics</div>
+				<div class="d-table description w-100 pt-2 px-4">
+					<div class="d-table-row">
+						<div class="d-table-cell">Games Played</div>
+						<div class="d-table-cell">0</div>
+					</div>
+					<div class="d-table-row">
+						<div class="d-table-cell">Games Won</div>
+						<div class="d-table-cell">0</div>
+					</div>
+					<div class="d-table-row">
+						<div class="d-table-cell">Games Lost</div>
+						<div class="d-table-cell">0</div>
+					</div>
+					<div class="d-table-row">
+						<div class="d-table-cell">Win Rate</div>
+						<div class="d-table-cell">0%</div>
+					</div>
+					<div class="d-table-row">
+						<div class="d-table-cell">Best Score</div>
+						<div class="d-table-cell">0</div>
+					</div>
+					<div class="d-table-row">
+						<div class="d-table-cell">Average Score</div>
+						<div class="d-table-cell">0</div>
+					</div>
+					<div class="d-table-row">
+						<div class="d-table-cell">Current Streak</div>
+						<div class="d-table-cell">0</div>
+					</div>
+					<div class="d-table-row">
+						<div class="d-table-cell">Longest Streak</div>
+						<div class="d-table-cell">0</div>
+					</div>
+				</div>
+			</div>
 			<!-- Public data -->
 			<div class="p-4">
 				<div class="important-label">User Info</div>
@@ -186,11 +186,7 @@ export default () => {
 				app.outerHTML = new_div.outerHTML;
 
 				
-				const handleInputChange = (e) => {
-					newDisplayName = e.target.value;
-					console.log(newDisplayName);
-				}
-				
+				const handleInputChange = (e) => { newDisplayName = e.target.value; }
 				const handleUpdate = async (e) => {
 					e.preventDefault();
 					console.log('Update button clicked');
