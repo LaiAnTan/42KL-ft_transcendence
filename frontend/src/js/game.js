@@ -31,7 +31,7 @@ function game() {
     .then(response => response.json())
     .then(data => {
         roomID = data.roomID;
-        socket = new WebSocket(`ws://localhost:8000/dong?roomID=${roomID}&clientID=${clientID}`);
+        socket = new WebSocket(`ws://localhost:8000/pong?roomID=${roomID}&clientID=${clientID}`);
         // Set up WebSocket event listeners
         socket.onopen = function(event) {
             console.log("WebSocket connection opened");
