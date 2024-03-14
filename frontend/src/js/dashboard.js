@@ -163,7 +163,7 @@ export default () => {
 					<div class="d-table-row">
 						<div class="d-table-cell">Display Name</div>
 						${current_user == data.username ? /* Ternary here used to check if active user is the user being displayed. If yes, show input box */
-							`<div class="d-table-cell input-container p-0 m-2"><input type="text" placeholder="Edit display name" class="description input-box" value="${data.display_name}"/></div>`
+							`<div class="d-table-cell input-container p-0 m-2"><input id="newDisplayName" type="text" placeholder="Edit display name" class="description input-box" value="${data.display_name}"/></div>`
 							: `<div class="d-table-cell p-0">${data.display_name}</div>`
 						}
 					</div>
@@ -184,6 +184,39 @@ export default () => {
 </div>`;
 				new_div.innerHTML = ret;
 				app.outerHTML = new_div.outerHTML;
+
+				
+				const handleInputChange = (e) => {
+					newDisplayName = e.target.value;
+					console.log(newDisplayName);
+				}
+				
+				const handleUpdate = async (e) => {
+					e.preventDefault();
+					console.log('Update button clicked');
+					console.log(newDisplayName);
+					const response = await fetch(`http://localhost:8000/api/editUser?username=${params['username']}`, {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify({ "display_name": newDisplayName }),
+					});
+					if (response.ok) {
+						console.log('Display name updated');
+					} else {
+						console.error('Error updating display name');
+					}
+				}
+
+				/* EVENT HANDLER */
+				let ptr_app = document.querySelector('#app');
+				let newDisplayName = ptr_app.querySelector('#newDisplayName');
+				let updateButton = ptr_app.querySelector('#updateButton');
+
+				newDisplayName.addEventListener('input', handleInputChange);
+				updateButton.addEventListener('click', handleUpdate);
+
 				return ;
 			} else {
 				console.error(error);
