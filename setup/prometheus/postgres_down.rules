@@ -2,10 +2,10 @@ groups:
 - name: PostgreSQLDownAlert
   rules:
   - alert: PostgreSQLDown
-    expr: pg_up{job="postgres-exporter"} == 0
-    for: 5m
+    expr: pg_up{instance="postgres-exporter:9187", job="postgres-exporter"} == 0
+    for: 5s
     labels:
       severity: critical
     annotations:
       summary: "PostgreSQL instance is down"
-      description: "PostgreSQL instance has been down for more than 5 minutes."
+      description: "FUCK YEAH PostgreSQL instance is down!!!"
