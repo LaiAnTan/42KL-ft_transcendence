@@ -17,8 +17,9 @@ from .consumers import Dong
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mysite.settings')
 
 application = ProtocolTypeRouter({
-    "http": get_asgi_application(),
+	"http": get_asgi_application(),
 	"websocket": URLRouter([
 		path('dong', Dong.as_asgi()),
 	])
 })
+

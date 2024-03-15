@@ -1,115 +1,55 @@
-.menu-header {
-	position: relative;
-	display: inline-block;
-}
-
 .menu-header::after {
-	content: '';
-	position: absolute;
-	bottom: -4px; /* Adjust this value based on your shadow preference */
-	left: 0;
-	height: 5px; /* Adjust this value based on your shadow thickness preference */
-	width: 100vw;
-	background: linear-gradient(to bottom, rgba(92, 181, 255, 0.959), transparent); /* Adjust shadow color and transparency */
+	background: linear-gradient(to bottom, var(--color1), transparent);
 }
 
 .menu-header-title {
-	font-family: 'Ubuntu', sans-serif;
-	font-size: 50px;
-	color: white;
-	text-shadow: 0 0 25px #85EBE9;
-	width: 100vw;
-}
-
-.menu-content {
-	top: 55%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	position: absolute;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 103px;
-
-}
-
-:root {
-	--vs-player-color: #98EB4C;
-	--vs-ai-color: #FAE84D;
-	--tourney-color: #D934F6;
-}
-
-.menu-component {
-	display: flex;
-	justify-content: space-around;
-	align-items: center;
-    width: 850px;
-    height: 110px;
-    border: 4px solid white;
-	border-radius: 10px;
-    color: white;
-	transition: transform 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
-	box-shadow: white 0 0 15px;
-}
-
-.menu-component:hover {
-	transform: scale(1.05);
+	text-shadow: 0 0 25px var(--color1);
 }
 
 #vs-player:hover {
-	box-shadow: 0 0 40px var(--vs-player-color);
+	box-shadow: 0 0 40px var(--color2);
 }
 
 #vs-ai:hover {
-	box-shadow: 0 0 40px var(--vs-ai-color);
+	box-shadow: 0 0 40px var(--color3);
 }
 
 #tourney:hover {
-	box-shadow: 0 0 40px var(--tourney-color);
-}
-
-.menu-component-title {
-    font-size: 50px;
-    font-family: 'Ubuntu', sans-serif; 
-    color: white;
-}
-
-.menu-component-description {
-    font-size: 20px;
-    font-family: 'Aldrich', sans-serif;
+	box-shadow: 0 0 40px var(--color4);
 }
 
 .vs-player .menu-component-title {
-    text-shadow: 0 0 25px var(--vs-player-color);
-	-webkit-text-stroke: 1px var(--vs-player-color);
+	text-shadow: 0 0 25px var(--color2);
+	-webkit-text-stroke: 1px var(--color2);
 }
 
 .vs-player .menu-component-description {
-    color: var(--vs-player-color);
+	color: var(--color2);
 }
 
 .vs-ai .menu-component-title {
-    text-shadow: 0 0 25px var(--vs-ai-color);
-	-webkit-text-stroke: 1px var(--vs-ai-color);
+	text-shadow: 0 0 25px var(--color3);
+	-webkit-text-stroke: 1px var(--color3);
 }
 
 .vs-ai .menu-component-description {
-    color: var(--vs-ai-color);
+	color: var(--color3);
 }
 
 .tournament .menu-component-title {
-    text-shadow: 0 0 25px var(--tourney-color);
-	-webkit-text-stroke: 1px var(--tourney-color);
+	text-shadow: 0 0 25px var(--color4);
+	-webkit-text-stroke: 1px var(--color4);
 }
 
 .tournament .menu-component-description {
-    color: var(--tourney-color);
+	color: var(--color4);
 }
 
-.unselectable {
-	user-select: none;
+#settings-button:hover {
+	animation: spin 1s linear infinite;
 }
 
-.cursor-pointer {
-	cursor: pointer;
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }

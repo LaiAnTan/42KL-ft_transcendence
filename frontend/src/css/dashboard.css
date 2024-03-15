@@ -1,23 +1,28 @@
-.circle {
+.profile-pic {
 	width: 200px;
 	height: 200px;
-	background-color: #3498db;
-	border-radius: 50%; /* This creates a circle */
+	background-color: transparent;
+	border-radius: 50%;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	color: white;
+}
+.profile-pic img {
+	width: 200px;
+	height: 200px;
+	border-radius: 50%;
+	background-size: cover;
+	background-position: center;
 }
 
-.search-bar {
+.input-container {
 	display: flex;
 	align-items: center;
-	border: 4px solid #ccc;
+	border: 2px solid #ccc;
 	border-radius: 20px;
 	padding: 5px 10px;
 }
-
-.search-bar input {
+.input-container input[type="text"] {
 	border: none;
 	outline: none;
 	padding: 5px;
@@ -25,15 +30,17 @@
 	caret-color: white;
 	background-color: transparent;
 }
-
-.search-bar button {
+.input-container input[type="file"] {
+	width: 100%;
+	font-size: 14px;
+	box-sizing: border-box;
+}
+.input-container button {
 	border: none;
 	background-color: transparent;
 	outline: none;
 	cursor: pointer;
 }
-
-/* Animation when the search bar becomes active */
-.search-bar:focus-within {
-	box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+.input-container:focus-within {
+	box-shadow: 0 0 20px rgb(255, 0, 0);
 }

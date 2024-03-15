@@ -21,6 +21,5 @@ export default () => {
 		<div class="title">DING DONG</div>
 	</div>
 	<p>Press any key to continue</p>
-</div>
-	`;
+</div>`;
 };

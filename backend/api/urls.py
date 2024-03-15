@@ -5,6 +5,8 @@ urlpatterns = [
     path('addUser', views_User.addUser),
     path('getUser', views_User.getUser),
     path('allUsers', views_User.getAllUsers),
+    path('editUser', views_User.editUser),
+    path('deleteUser', views_User.deleteUser),
     path('addMatchup', views_Matchup.addMatchup),
     path('getMatchup', views_Matchup.getMatchup),
     path('allMatchups', views_Matchup.getAllMatchups),
@@ -23,3 +25,4 @@ urlpatterns = [
 	path('closeAllRooms', views_GameRoom.closeAllRooms),
     path('alert', alert.alert)
 ]
+
