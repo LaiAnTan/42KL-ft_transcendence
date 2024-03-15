@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import views_User, views_Matchup, views_Versus, views_Tournament, authentication, views_GameRoom
+from .views import views_User, views_Matchup, views_Versus, views_Tournament, authentication, views_GameRoom, alert
 
 urlpatterns = [
     path('addUser', views_User.addUser),
@@ -21,4 +21,5 @@ urlpatterns = [
 	path('joinRoom/<str:room_code>', views_GameRoom.joinRoom),
 	path('allRooms', views_GameRoom.allRooms),
 	path('closeAllRooms', views_GameRoom.closeAllRooms),
+    path('alert', alert.alert)
 ]
