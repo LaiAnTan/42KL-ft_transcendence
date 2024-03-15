@@ -1,6 +1,9 @@
 global:
   scrape_interval: 15s
 
+rule_files:
+  - '/setup/postgres_down.rules'
+
 scrape_configs:
   - job_name: 'prometheus'
     scrape_interval: 5s

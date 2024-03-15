@@ -1,0 +1,11 @@
+groups:
+- name: PostgreSQLDownAlert
+  rules:
+  - alert: PostgreSQLDown
+    expr: pg_up{job="postgres-exporter"} == 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "PostgreSQL instance is down"
+      description: "PostgreSQL instance has been down for more than 5 minutes."
