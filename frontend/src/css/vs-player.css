@@ -1,43 +1,23 @@
-.menu-header {
-	position: relative;
-	display: inline-block;
-}
-
 .menu-header::after {
-	content: '';
-	position: absolute;
-	bottom: -4px;
-	left: 0;
-	height: 5px;
-	width: 100vw;
 	background: linear-gradient(to bottom, var(--color2), transparent);
 }
 
 .menu-header-title {
-	font-family: 'Ubuntu', sans-serif;
-	font-size: 45px;
-	color: white;
 	text-shadow: 0 0 25px var(--color2);
-	width: 100vw;
 }
 
-.menu-component {
-	display: flex;
-	justify-content: space-around;
-	align-items: center;
-	width: 100%;
-	min-width: 400px;
-	max-width: 850px;
-	height: 110px;
-	border: 4px solid white;
-	border-radius: 10px;
-	color: white;
-	transition: transform 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
-	box-shadow: white 0 0 15px;
-}
 .menu-component:hover {
-	transform: scale(1.05);
 	box-shadow: 0 0 40px var(--color2);
+}
+
+.menu-component-title {
+	color: var(--color2);
+}
+
+.menu-component-description {
+	margin: 0 !important;
+	padding: 0 !important;
+	color: var(--color2);
 }
 
 #room-id-div {
@@ -48,17 +28,6 @@
 	min-width: 400px;
 	max-width: 850px;
 	height: 110px;
-}
-
-.menu-component-title {
-	font-size: 35px;
-	font-family: 'Ubuntu', sans-serif; 
-	color: white;
-}
-
-.menu-component-description {
-	font-size: 20px;
-	font-family: 'Aldrich', sans-serif;
 }
 
 .vs-player-input {

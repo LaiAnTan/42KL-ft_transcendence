@@ -64,7 +64,6 @@ body {
 	transition: transform 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
 	box-shadow: white 0 0 15px;
 }
-
 .menu-component:hover {
 	transform: scale(1.05);
 	box-shadow: 0 0 40px white;
@@ -112,23 +111,26 @@ body {
 }
 
 .user-profile {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	position: absolute;
-	height: 110px;
 	top: 0;
 	right: 0;
+	border: none;
+	height: 110px;
+	display: flex;
+	position: absolute;
+	align-items: center;
+	flex-direction: row;
+	justify-content: center;
+	background-color: transparent;
 }
 .user-img {
 	width: 50px;
 	height: 50px;
-	background-color: transparent;
-	border-radius: 50%;
 	display: flex;
-	justify-content: center;
+	margin-right: 20px;
+	border-radius: 50%;
 	align-items: center;
+	justify-content: center;
+	background-color: transparent;
 }
 .user-img img {
 	width: 50px;

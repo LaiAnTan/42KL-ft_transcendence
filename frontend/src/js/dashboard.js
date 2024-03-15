@@ -14,7 +14,7 @@ export default () => {
 		const handleInputChange = (e) => {
 			inputVal = e.target.value;
 			console.log(inputVal);
-			submitButton.dataset.link = `/dashboard?username=${inputVal}&loading=true`;
+			submitButton.dataset.link = `/dashboard?username=${inputVal}`;
 		};
 
 		/* #app is the div we are constantly updating in index.html */
@@ -26,6 +26,9 @@ export default () => {
 		new_div.className = 'w-100 h-100';
 		/* Specify the new HTML we want to show */
 		new_div.innerHTML = `
+<button data-link="/menu" type="button" class="go-back-button scale-up ml-4" style="z-index: 1">
+	<p class="description scale-up cursor-pointer">GO BACK</p>
+</button>
 <div class="d-flex flex-column align-items-center justify-content-center h-100">
 	<div class="important-label" style="font-size: 50px;">USER DASHBOARD</div>
 	<div class="p-4" style="width: 500px">

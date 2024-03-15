@@ -45,13 +45,16 @@ export default () => {
 
 	return `
 <div class="d-flex flex-column h-100">
+	<button data-link="/settings" type="button" class="go-back-button ml-4" style="z-index: 1">
+		<img id="settings-button" src="src/assets/settings.png" style="height: 50px; width: 50px"></img>
+	</button>
 	<div class="menu-header unselectable">
 		<p class="text-center menu-header-title h-100 my-4">MAIN MENU</p>
 	</div>
-	<div class="user-profile unselectable scale-up mr-4" style="z-index: 1">
-		<button title="To dashboard" data-link="/dashboard?username=${sessionStorage.getItem('username')}&loading=true" type="submit" class="user-img"><img src="${sessionStorage.getItem('profile_pic')}"></img></button>
+	<button title="To dashboard" data-link="/dashboard?username=${sessionStorage.getItem('username')}" type="submit" class="user-profile unselectable scale-up mr-4" style="z-index: 1">
+		<div class="user-img"><img src="${sessionStorage.getItem('profile_pic')}"></img></div>
 		<p class="description cursor-pointer">${sessionStorage.getItem('display_name')}</p>
-	</div>
+	</button>
 	<div class="d-flex flex-column align-items-center justify-content-evenly unselectable flex-grow-1 px-4">
 		<button type="button" data-link="/vs-player" id="vs-player" class="menu-component vs-player cursor-pointer" style="background-color: transparent">
 			<div class="menu-component-title">VS PLAYER</div>

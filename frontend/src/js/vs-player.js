@@ -17,10 +17,10 @@ export default () => {
 	<div class="menu-header unselectable">
 		<p class="text-center menu-header-title h-100 my-4">VS PLAYER</p>
 	</div>
-	<div class="user-profile unselectable scale-up mr-4" style="z-index: 1">
-		<button title="To dashboard" data-link="/dashboard?username=${sessionStorage.getItem('username')}&loading=true" type="submit" class="user-img"><img src="${sessionStorage.getItem('profile_pic')}"></img></button>
+	<button title="To dashboard" data-link="/dashboard?username=${sessionStorage.getItem('username')}" type="submit" class="user-profile unselectable scale-up mr-4" style="z-index: 1">
+		<div class="user-img"><img src="${sessionStorage.getItem('profile_pic')}"></img></div>
 		<p class="description cursor-pointer">${sessionStorage.getItem('display_name')}</p>
-	</div>
+	</button>
 	<div class="d-flex justify-content-center w-100">
 		<div id="room-id-div" class="mx-4">
 			<input type="text" id="room-id" class="vs-player-input w-80" placeholder="Join a room" />
@@ -30,11 +30,11 @@ export default () => {
 	<div class="d-flex flex-column align-items-center justify-content-around unselectable flex-grow-1 px-4" style="margin-bottom: 110px">
 		<button type="button" data-link="/game" class="menu-component cursor-pointer" style="background-color: transparent">
 			<div class="menu-component-title">MATCHMAKING</div>
-			<div class="menu-component-description">MATCH WITH RANDOM PLAYERS</div>
+			<div class="menu-component-description">MATCH WITH A RANDOM PLAYER</div>
 		</button>
 		<button type="button" data-link="/" class="menu-component cursor-pointer" style="background-color: transparent">
 			<div class="menu-component-title">CUSTOM</div>
-			<div class="menu-component-description">CREATE A PARTY AND INVITE FRIENDS</div>
+			<div class="menu-component-description">CREATE A ROOM, INVITE A FRIEND</div>
 		</button>
 	</div>
 </div>`;

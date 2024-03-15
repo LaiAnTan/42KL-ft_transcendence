@@ -11,11 +11,14 @@ export default () => {
 	new_div.className = 'w-100 h-100';
 	new_div.innerHTML = `
 <div class="d-flex flex-column h-100">
-	<div class="d-flex position-absolute align-items-center unselectable ml-4" style="z-index: 1">
+	<button data-link="/menu" type="button" class="go-back-button scale-up ml-4" style="z-index: 1">
 		<p class="description scale-up cursor-pointer">GO BACK</p>
-	</div>
+	</button>
 	<div class="menu-header unselectable" style="z-index: 0">
 		<p class="text-center menu-header-title h-100 my-4" style="text-shadow: 0 0 25px var(--color5)">SETTINGS</p>
+	</div>
+	<div class="d-flex justify-content-center align-items-center important-label unselectable position-absolute mr-4" style="top: 0; right: 0; height: 110px; z-index: 1">
+		SIGN OUT
 	</div>
 	<div class="d-flex align-items-center justify-content-center unselectable flex-grow-1 overflow-y">
 		<div class="d-flex flex-column align-items-center justify-content-center m-4 w-50" style="min-width: 400px; max-width: 650px">
