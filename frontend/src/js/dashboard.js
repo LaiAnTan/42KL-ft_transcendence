@@ -167,6 +167,13 @@ export default () => {
 							: `<div class="d-table-cell p-0">${data.display_name}</div>`
 						}
 					</div>
+					${current_user == data.username ?
+						`<div class="d-table-row">
+							<div class="d-table-cell">Avatar</div>
+							<div class="d-table-cell p-0 m-2"><input id="new-avatar" type="file" accept="image/jpeg, image/png, image/jpg"></div>
+						</div>`
+							: ``
+					}
 					<div class="d-table-row pt-3">
 						<div class="d-table-cell">Email</div>
 						<div class="d-table-cell">${data.email}</div>
