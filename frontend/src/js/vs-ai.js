@@ -7,8 +7,15 @@ export default () => {
 
 	return `
 <div class="d-flex flex-column h-100">
+	<button data-link="/menu" type="button" class="go-back-button scale-up ml-4" style="z-index: 1">
+		<p class="description scale-up cursor-pointer">GO BACK</p>
+	</button>
 	<div class="menu-header unselectable">
 		<p class="text-center menu-header-title h-100 my-4">VS AI</p>
+	</div>
+	<div class="user-profile unselectable scale-up mr-4" style="z-index: 1">
+		<button title="To dashboard" data-link="/dashboard?username=${sessionStorage.getItem('username')}&loading=true" type="submit" class="user-img"><img src="${sessionStorage.getItem('profile_pic')}"></img></button>
+		<p class="description cursor-pointer">${sessionStorage.getItem('display_name')}</p>
 	</div>
 	<div class="d-flex flex-row justify-content-evenly unselectable flex-grow-1" style="padding: 100px 0">
 		<div class="d-flex flex-column rounded-border w-45 p-3 mr-1" style="min-width: 300px; max-width: 600px; min-height: 400px;">

@@ -1,4 +1,4 @@
-import { loadCSS, lightenColor } from "./main.js";
+import { loadCSS } from "./main.js";
 
 export default () => {
 	let config_palette = localStorage.getItem("palette");

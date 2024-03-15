@@ -35,7 +35,6 @@
 	transition: transform 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
 	box-shadow: white 0 0 15px;
 }
-
 .menu-component:hover {
 	transform: scale(1.05);
 	box-shadow: 0 0 40px var(--color2);

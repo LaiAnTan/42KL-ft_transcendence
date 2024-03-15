@@ -11,11 +11,15 @@ export default () => {
 	new_div.className = 'w-100 h-100';
 	let ret = `
 <div class="d-flex flex-column h-100">
-	<div class="d-flex position-absolute align-items-center unselectable ml-4" style="z-index: 1">
+	<button data-link="/menu" type="button" class="go-back-button scale-up ml-4" style="z-index: 1">
 		<p class="description scale-up cursor-pointer">GO BACK</p>
-	</div>
+	</button>
 	<div class="menu-header unselectable">
 		<p class="text-center menu-header-title h-100 my-4">VS PLAYER</p>
+	</div>
+	<div class="user-profile unselectable scale-up mr-4" style="z-index: 1">
+		<button title="To dashboard" data-link="/dashboard?username=${sessionStorage.getItem('username')}&loading=true" type="submit" class="user-img"><img src="${sessionStorage.getItem('profile_pic')}"></img></button>
+		<p class="description cursor-pointer">${sessionStorage.getItem('display_name')}</p>
 	</div>
 	<div class="d-flex justify-content-center w-100">
 		<div id="room-id-div" class="mx-4">

@@ -1,4 +1,4 @@
-import { router, loadCSS } from "./main.js";
+import { router, loadCSS, resetCSS } from "./main.js";
 
 export default () => {
 	let config_palette = localStorage.getItem("palette");
@@ -45,12 +45,12 @@ export default () => {
 
 	return `
 <div class="d-flex flex-column h-100">
+	<div class="menu-header unselectable">
+		<p class="text-center menu-header-title h-100 my-4">MAIN MENU</p>
+	</div>
 	<div class="user-profile unselectable scale-up mr-4" style="z-index: 1">
 		<button title="To dashboard" data-link="/dashboard?username=${sessionStorage.getItem('username')}&loading=true" type="submit" class="user-img"><img src="${sessionStorage.getItem('profile_pic')}"></img></button>
 		<p class="description cursor-pointer">${sessionStorage.getItem('display_name')}</p>
-	</div>
-	<div class="menu-header unselectable">
-		<p class="text-center menu-header-title h-100 my-4">MAIN MENU</p>
 	</div>
 	<div class="d-flex flex-column align-items-center justify-content-evenly unselectable flex-grow-1 px-4">
 		<button type="button" data-link="/vs-player" id="vs-player" class="menu-component vs-player cursor-pointer" style="background-color: transparent">

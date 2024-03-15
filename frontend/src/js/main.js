@@ -27,24 +27,13 @@ export function loadCSS(href) {
 	document.head.appendChild(link);
 }
 
-export function lightenColor(color, percent) {
-	color = color.replace('#', '');
-
-	const r = parseInt(color.substr(0, 2), 16);
-	const g = parseInt(color.substr(2, 2), 16);
-	const b = parseInt(color.substr(4, 2), 16);
-
-	const newR = Math.round(r + (255 - r) * percent / 100);
-	const newG = Math.round(g + (255 - g) * percent / 100);
-	const newB = Math.round(b + (255 - b) * percent / 100);
-
-	const newColorHex = [
-	newR.toString(16).padStart(2, '0'),
-	newG.toString(16).padStart(2, '0'),
-	newB.toString(16).padStart(2, '0')
-	].join('');
-
-	return `#${newColorHex}`;
+export function resetCSS() {
+	const links = document.querySelectorAll('link[rel="stylesheet"]');
+	links.forEach(link => {
+		let href = link.getAttribute("href");
+		if (href.includes("style.css") || href.includes("bootstrap.min.css")) { return; }
+		link.remove();
+	});
 }
 
 function initRedirClicks(e) {
@@ -66,6 +55,7 @@ export function navigate(path) {
 }
 
 export function router() {
+	resetCSS();
 	let view = routes[location.pathname];
 
 	if (view) {
