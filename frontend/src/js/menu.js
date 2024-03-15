@@ -5,9 +5,9 @@ export default () => {
 	loadCSS("src/css/palettes/" + config_palette + ".css");
 	loadCSS("src/css/menu.css");
 
-
 	let queryString = new URLSearchParams(document.location.search);
 	const code = queryString.get('code')
+
 
 	const postCode = async () => {
 		try {
@@ -20,7 +20,10 @@ export default () => {
 			});
 			if (response.ok) {
 				response.json().then(data => {
-					sessionStorage.setItem('username', data.json.login);
+					console.log(data);
+					sessionStorage.setItem('username', data.json.username);
+					sessionStorage.setItem('display_name', data.json.display_name);
+					sessionStorage.setItem('profile_pic', data.json.profile_pic);
 					history.replaceState("", "", "/menu");
 					router();
 				});
@@ -40,9 +43,12 @@ export default () => {
 </div>`;
 	};
 
-
 	return `
 <div class="d-flex flex-column h-100">
+	<div class="user-profile unselectable scale-up mr-4" style="z-index: 1">
+		<button title="To dashboard" data-link="/dashboard?username=${sessionStorage.getItem('username')}&loading=true" type="submit" class="user-img"><img src="${sessionStorage.getItem('profile_pic')}"></img></button>
+		<p class="description cursor-pointer">${sessionStorage.getItem('display_name')}</p>
+	</div>
 	<div class="menu-header unselectable">
 		<p class="text-center menu-header-title h-100 my-4">MAIN MENU</p>
 	</div>

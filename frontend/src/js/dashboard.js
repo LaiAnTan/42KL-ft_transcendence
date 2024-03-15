@@ -119,8 +119,8 @@ export default () => {
 		<div class="important-label" style="font-size: 40px;">${data.username.toUpperCase()}</div>
 	</div>
 	<div class="d-flex flex-column justify-content-between rounded-border glowing-border h-100 w-100 mx-3" style="min-width: 400px; max-width:600px;">
-		<div>
-			<div class="p-4">
+		<div class="flex-grow-1" style="overflow-y: auto">
+			<div class="px-4 py-2">
 				<div class="important-label">Game Statistics</div>
 				<div class="d-table description w-100 pt-2 px-4">
 					<div class="d-table-row">
@@ -157,20 +157,20 @@ export default () => {
 					</div>
 				</div>
 			</div>
-			<div class="p-4">
+			<div class="px-4 py-2">
 				<div class="important-label">User Info</div>
 				<div class="d-table description w-100 pt-2 px-4">
-					<div class="d-table-row">
+					<div class="d-table-row my-2">
 						<div class="d-table-cell">Display Name</div>
 						${current_user == data.username ? /* Ternary here used to check if active user is the user being displayed. If yes, show input box */
-							`<div class="d-table-cell input-container p-0 m-2"><input id="new-display-name" type="text" placeholder="Edit display name" class="description input-box" value="${data.display_name}"/></div>`
+							`<div class="d-table-cell input-container"><input id="new-display-name" type="text" placeholder="Edit display name" class="description" value="${data.display_name}" /></div>`
 							: `<div class="d-table-cell p-0">${data.display_name}</div>`
 						}
 					</div>
 					${current_user == data.username ?
 						`<div class="d-table-row">
 							<div class="d-table-cell">Avatar</div>
-							<div class="d-table-cell p-0 m-2"><input id="new-avatar" type="file" accept="image/jpeg, image/png, image/jpg"></div>
+							<div class="d-table-cell input-container"><input id="new-avatar" type="file" accept="image/jpeg, image/png, image/jpg" /></div>
 						</div>`
 							: ``
 					}
@@ -183,7 +183,7 @@ export default () => {
 		</div>
 
 		${current_user == data.username ? /* Ternary here used to check if active user is the user being displayed. If yes, show save button */
-		`<div class="d-flex flex-row align-items-center justify-content-between p-4">
+		`<div class="d-flex flex-row align-items-center justify-content-between border-top px-4 py-2">
 			<div class="description">Editable</div>
 			<button id="update-button" type="submit" class="description rounded-border cursor-pointer p-2" style="background-color: green">Save</button>
 		</div>` : ''}
@@ -227,17 +227,18 @@ export default () => {
 		  console.error('Error sending code:', error);
 		}
 	};
-	if (queryString.includes('loading=true')) {
-		getUser();
 
-		let app = document.querySelector('#app');
-		const new_div = document.createElement('div');
-		new_div.setAttribute('id', 'app');
-		new_div.className = 'w-100 h-100';
-		new_div.innerHTML = `
+	getUser();
+
+	let app = document.querySelector('#app');
+	const new_div = document.createElement('div');
+	new_div.setAttribute('id', 'app');
+	new_div.className = 'w-100 h-100';
+	new_div.innerHTML = `
 <div class="d-flex align-items-center justify-content-center h-100">
-	<div class="important-label" style="font-size: 50px;">Searching for user ${params['username']} </div>
+<div class="important-label" style="font-size: 50px;">Searching for user ${params['username']} </div>
 </div>`;
-		app.outerHTML = new_div.outerHTML;
-	}
+	app.outerHTML = new_div.outerHTML;
+
+	return ;
 }

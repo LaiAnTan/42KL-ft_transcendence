@@ -35,7 +35,7 @@ def postCode(request):
 
 			existing_user = User.objects.filter(username=username).first()
 			if existing_user:
-				return Response({"Success": "User already exists", "user_id": existing_user.id, "json": ft_me_json}, status=200)
+				return Response({"Success": "User already exists", "user_id": existing_user.id, "json": existing_user.to_json()}, status=200)
 			else:
 				user_instance = User.objects.create(
 					username=username,
@@ -45,7 +45,7 @@ def postCode(request):
 					versus_history=versus_history,
 					tournament_history=tournament_history
 				)
-			return Response({"Success": "User data stored successfully", "user_id": user_instance.id, "json": ft_me_json}, status=200)
+			return Response({"Success": "User data stored successfully", "user_id": user_instance.id, "json": user_instance.to_json()}, status=200)
 			# return Response(ft_me_json, status=200)
 		else:
 			# If the request failed, return an error response

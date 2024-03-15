@@ -21,6 +21,33 @@
 	width: 100vw;
 }
 
+.user-profile {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	position: absolute;
+	height: 110px;
+	top: 0;
+	right: 0;
+}
+.user-img {
+	width: 50px;
+	height: 50px;
+	background-color: transparent;
+	border-radius: 50%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.user-img img {
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+	background-size: cover;
+	background-position: center;
+}
+
 .menu-content {
 	top: 55%;
 	left: 50%;

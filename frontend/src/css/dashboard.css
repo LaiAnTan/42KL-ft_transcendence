@@ -22,13 +22,18 @@
 	border-radius: 20px;
 	padding: 5px 10px;
 }
-.input-box {
+.input-container input[type="text"] {
 	border: none;
 	outline: none;
 	padding: 5px;
 	flex-grow: 1;
 	caret-color: white;
 	background-color: transparent;
+}
+.input-container input[type="file"] {
+	width: 100%;
+	font-size: 14px;
+	box-sizing: border-box;
 }
 .input-container button {
 	border: none;

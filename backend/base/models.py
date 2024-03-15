@@ -1,3 +1,4 @@
+import json
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 
@@ -23,6 +24,21 @@ class User(models.Model):
 	versus_history = ArrayField(models.IntegerField(), blank=True)
 	tournament_history = ArrayField(models.IntegerField(), blank=True)
 	date_created = models.DateTimeField(auto_now_add=True)
+
+	def to_json(self):
+		"""
+		Serialise the User's display name and profile pic into a JSON string.
+		"""
+
+		return {
+			'username': self.username,
+			'display_name': self.display_name,
+			'email': self.email,
+			'profile_pic': self.profile_pic,
+			'versus_history': self.versus_history,
+			'tournament_history': self.tournament_history,
+			'date_created': self.date_created.strftime('%Y-%m-%d %H:%M:%S')
+		}
 
 
 class Matchup(models.Model):
