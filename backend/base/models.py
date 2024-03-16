@@ -27,7 +27,7 @@ class User(models.Model):
 
 	def to_json(self):
 		"""
-		Serialise the User's display name and profile pic into a JSON string.
+		Return user data as JSON object.
 		"""
 
 		return {

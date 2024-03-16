@@ -105,7 +105,7 @@ export default () => {
 				new_div.className = 'w-100 h-100';
 				let ret = `
 <div class="d-flex position-absolute align-items-center unselectable ml-4" style="height: 8vh; z-index: 1">
-	<p data-link="/dashboard" class="description scale-up cursor-pointer">GO BACK</p>
+	<p data-link="/menu" class="description scale-up cursor-pointer">GO BACK</p>
 </div>
 <div class="d-flex flex-row align-items-center justify-content-around h-100" style="padding: 50px 0;">
 	<div class="d-flex flex-column rounded-border glowing-border h-100 w-100 mx-3" style="min-width: 400px; max-width:600px;">

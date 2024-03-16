@@ -140,6 +140,37 @@ body {
 	background-position: center;
 }
 
+.input-container {
+	display: flex;
+	align-items: center;
+	border: 2px solid #ccc;
+	border-radius: 10px;
+	padding: 2px 5px;
+}
+.input-container input[type="text"] {
+	border: none;
+	outline: none;
+	font-size: 15px;
+	padding: 5px;
+	flex-grow: 1;
+	caret-color: white;
+	background-color: transparent;
+}
+.input-container input[type="file"] {
+	width: 100%;
+	font-size: 14px;
+	box-sizing: border-box;
+}
+.input-container button {
+	border: none;
+	background-color: transparent;
+	outline: none;
+	cursor: pointer;
+}
+.input-container:focus-within {
+	box-shadow: 0 0 20px rgb(255, 0, 0);
+}
+
 /* slider bar */
 input[type="range"] {
 	display: block;
