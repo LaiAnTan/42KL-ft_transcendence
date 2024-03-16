@@ -79,7 +79,7 @@ export default () => {
 				<p class="description">USER DASHBOARD</p>
 				<div class="input-container mt-3">
 					<input id="dashboard-search" type="text" placeholder="Search by Intra ID" class="description input-box" />
-					<button data-link="/menu" id="dashboard-button" type="submit"><img src="../src/assets/search.png" style="width: 32px; height: 32px;"></img></button>
+					<button id="dashboard-button" type="submit"><img src="../src/assets/search.png" style="width: 32px; height: 32px;"></img></button>
 				</div>
 			</div>
 			<div class="d-flex flex-column p-4 w-100">
@@ -94,24 +94,11 @@ export default () => {
 </div>`;
 	app.outerHTML = new_div.outerHTML;
 
-	let ptr_app = document.querySelector('#app');
-	const dashboard_search = ptr_app.querySelector('#dashboard-search');
-	const dashboard_button = ptr_app.querySelector('#dashboard-button');
-
-	var dash_search_val = '';
-	dashboard_search.addEventListener('input', (event) => {
-		dash_search_val = event.target.value;
-		
-		if (data_search_val.length == 0) {
-			dashboard_button.dataset.link = `/dashboard`;
-		} else {
-			dashboard_button.dataset.link = `/dashboard?username=${dash_search_val}`;
-		}
-	});
-	dashboard_search.addEventListener('keydown', (event) => {
-		if (event.key === 'Enter')
-			dashboard_button.click();
-	});
+	$('#dashboard-button').click(function () {
+        const username = $('#dashboard-search').val();
+        if (username)
+            navigate(`/dashboard?username=${username}`);
+    })
 
 	return ;
 };
