@@ -32,7 +32,7 @@ export default () => {
 							<label for="off" class="button-like description scale-up rounded-border cursor-pointer">OFF</label>
 						</div>
 						<div class="px-1">
-							<input type="radio" id="low" name="options" class="visually-hidden" checked />
+							<input type="radio" id="low" name="options" class="visually-hidden" />
 							<label for="low" class="button-like description scale-up rounded-border cursor-pointer">LOW</label>
 						</div>
 						<div class="px-1">
@@ -48,15 +48,15 @@ export default () => {
 				<div class="px-3 py-1">
 					<div class="pt-1">
 						<p class="description pb-4">Master</p>
-						<input type="range" id="master" name="master" min="0" max="100" value="100" class="mx-auto w-100" style="min-width: 300px; max-width: 400px" />
+						<input type="range" id="master" name="master" min="0" max="100" class="mx-auto w-100" style="min-width: 300px; max-width: 400px" />
 					</div>
 					<div class="pt-4">
 						<p class="description pb-4">Game</p>
-						<input type="range" id="game" name="game" min="0" max="100" value="100" class="mx-auto w-100" style="min-width: 300px; max-width: 400px" />
+						<input type="range" id="game" name="game" min="0" max="100" class="mx-auto w-100" style="min-width: 300px; max-width: 400px" />
 					</div>
 					<div class="pt-4">
-						<p class="description pb-4">Effects</p>
-						<input type="range" id="effects" name="effects" min="0" max="100" value="100" class="mx-auto w-100" style="min-width: 300px; max-width: 400px" />
+						<p class="description pb-4">Music</p>
+						<input type="range" id="music" name="music" min="0" max="100" class="mx-auto w-100" style="min-width: 300px; max-width: 400px" />
 					</div>
 				</div>
 			</div>
@@ -64,4 +64,24 @@ export default () => {
 	</div>
 </div>`;
 	app.outerHTML = new_div.outerHTML;
+
+	$('input[type="radio"]').on('click', function () {
+		let val = $(this).attr('id');
+		localStorage.setItem('particles', val);
+	})
+
+	$('input[type="range"]').on('mouseup', function () {
+		let id = $(this).attr('id');
+		let val = $(this).val();
+		localStorage.setItem(id + '-volume', val);
+	});
+
+	var particle_quality = localStorage.getItem('particles') ?? 'high';
+	$('#' + particle_quality).prop('checked', true);
+
+	$('#master').val(localStorage.getItem('master-volume') ?? 100);
+    $('#game').val(localStorage.getItem('game-volume') ?? 100);
+    $('#music').val(localStorage.getItem('music-volume') ?? 100);
+
+	return ;
 };
