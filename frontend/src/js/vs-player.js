@@ -41,17 +41,7 @@ export default () => {
 	new_div.innerHTML = ret;
 	app.outerHTML = new_div.outerHTML;
 
-	var roomID = '';
-	const handleRoomID = (e) => { roomID = e.target.value; }
-	const handleSearch = async (e) => {
-		e.preventDefault();
-		console.log(`Seach button clicked with roomID ${roomID}`);
-	}
-
-	let ptr_app = document.querySelector('#app');
-	let newRoomID = ptr_app.querySelector('#room-id');
-	let searchButton = ptr_app.querySelector('#search-button');
-
-	newRoomID.addEventListener('input', handleRoomID);
-	searchButton.addEventListener('click', handleSearch);
+	$('#search-button').on('click', function () {
+		console.log(`Searching for room ${$('#room-id').val()}`);
+	});
 };

@@ -44,7 +44,11 @@ export default () => {
 </div>`;
 	};
 
-	return `
+	let app = document.querySelector('#app');
+	const new_div = document.createElement('div');
+	new_div.setAttribute('id', 'app');
+	new_div.className = 'w-100 h-100';
+	new_div.innerHTML = `
 <div class="d-flex flex-column h-100">
 	<button data-link="/settings" type="button" class="go-back-button ml-4" style="z-index: 1">
 		<img id="settings-button" src="src/assets/settings.png" style="height: 50px; width: 50px"></img>
@@ -56,19 +60,46 @@ export default () => {
 		<div class="user-img"><img src="${sessionStorage.getItem('profile_pic')}"></img></div>
 		<p class="description cursor-pointer">${sessionStorage.getItem('display_name')}</p>
 	</button>
-	<div class="d-flex flex-column align-items-center justify-content-evenly unselectable flex-grow-1 px-4">
-		<button type="button" data-link="/vs-player" id="vs-player" class="menu-component vs-player cursor-pointer" style="background-color: transparent">
-			<div class="menu-component-title">VS PLAYER</div>
-			<div class="menu-component-description">PLAY AGAINST OTHER PLAYERS</div>
-		</button>
-		<button type="button" data-link="/vs-ai" id="vs-ai" class="menu-component vs-ai cursor-pointer" style="background-color: transparent">
-			<div class="menu-component-title">VS AI</div>
-			<div class="menu-component-description">PLAY 1V1 AGAINST AN AI</div>
-		</button>
-		<button type="button" data-link="/" id="tourney" class="menu-component tournament cursor-pointer" style="background-color: transparent">
-			<div class="menu-component-title">TOURNAMENT</div>
-			<div class="menu-component-description">BRACKET-STYLED TOURNAMENT</div>
-		</button>
+	<div class="d-flex flex-row flex-grow-1">
+		<div class="d-flex flex-column align-items-center justify-content-evenly unselectable w-75 px-4">
+			<button type="button" data-link="/vs-player" id="vs-player" class="menu-component vs-player cursor-pointer" style="background-color: transparent">
+				<div class="menu-component-title">VS PLAYER</div>
+				<div class="menu-component-description">PLAY AGAINST OTHER PLAYERS</div>
+			</button>
+			<button type="button" data-link="/vs-ai" id="vs-ai" class="menu-component vs-ai cursor-pointer" style="background-color: transparent">
+				<div class="menu-component-title">VS AI</div>
+				<div class="menu-component-description">PLAY 1V1 AGAINST AN AI</div>
+			</button>
+			<button type="button" data-link="/" id="tourney" class="menu-component tournament cursor-pointer" style="background-color: transparent">
+				<div class="menu-component-title">TOURNAMENT</div>
+				<div class="menu-component-description">BRACKET-STYLED TOURNAMENT</div>
+			</button>
+		</div>
+		<div id="right-sidebar" class="d-flex flex-column border-left flex-grow-1" style="min-width: 330px">
+			<div class="d-flex flex-column p-4">
+				<p class="description">USER DASHBOARD</p>
+				<div class="input-container mt-3">
+					<input id="dashboard-search" type="text" placeholder="Search by Intra ID" class="description input-box" />
+					<button id="dashboard-button" type="submit"><img src="../src/assets/search.png" style="width: 32px; height: 32px;"></img></button>
+				</div>
+			</div>
+			<div class="d-flex flex-column p-4 w-100">
+				<p class="description">FRIENDS</p>
+				<p class="description" style="opacity: 0.5">
+					No friends yet<br /><br />
+					You can add someone<br />from their dashboard!
+				</p>
+			</div>
+		</div>
 	</div>
 </div>`;
+	app.outerHTML = new_div.outerHTML;
+
+	$('#dashboard-button').click(function () {
+        const username = $('#dashboard-search').val();
+        if (username)
+            navigate(`/dashboard?username=${username}`);
+    })
+
+	return ;
 };
