@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib.postgres.fields import ArrayField
 from django.conf import settings
 
+import os
 
 class User(models.Model):
 
@@ -35,7 +36,7 @@ class User(models.Model):
 			'username': self.username,
 			'display_name': self.display_name,
 			'email': self.email,
-			'profile_pic': self.profile_pic,
+			'profile_pic': os.path.join(settings.MEDIA_URL, self.profile_pic.name),
 			'versus_history': self.versus_history,
 			'tournament_history': self.tournament_history,
 			'date_created': self.date_created.strftime('%Y-%m-%d %H:%M:%S')

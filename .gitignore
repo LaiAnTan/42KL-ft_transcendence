@@ -2,3 +2,5 @@ __pycache__/
 .env
 *.sqlite3
 node_modules/
+/backend/media/
+.DS_Store

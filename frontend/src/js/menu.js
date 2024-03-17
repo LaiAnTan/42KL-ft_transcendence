@@ -19,11 +19,12 @@ export default () => {
 				body: JSON.stringify({ "code": code }),
 			});
 			if (response.ok) {
+
 				response.json().then(data => {
 					console.log(data);
 					sessionStorage.setItem('username', data.json.username);
 					sessionStorage.setItem('display_name', data.json.display_name);
-					sessionStorage.setItem('profile_pic', data.json.profile_pic);
+					sessionStorage.setItem('profile_pic', "http://localhost:8000/api" + data.json.profile_pic); 
 					history.replaceState("", "", "/menu");
 					router();
 				});
