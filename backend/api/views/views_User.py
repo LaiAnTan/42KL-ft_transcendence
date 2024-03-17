@@ -126,6 +126,11 @@ parameters '},
 model"},
                             status=status.HTTP_400_BAD_REQUEST)
 
+    if 'profile_pic' in request.FILES:
+        profile_pic = ImageFile(request.FILES['profile_pic'])
+        profile_pic.name = request.FILES['profile_pic'].name
+        request.data['profile_pic'] = profile_pic
+
     serializer = UserSerializer(user, data=request.data, partial=True)
 
     if serializer.is_valid():

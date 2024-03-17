@@ -1,4 +1,4 @@
-import { router, loadCSS, resetCSS } from "./main.js";
+import { router, loadCSS, resetCSS, navigate } from "./main.js";
 
 export default () => {
 	let config_palette = localStorage.getItem("palette");

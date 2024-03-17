@@ -91,6 +91,7 @@ export default () => {
 
 				console.log('User found.');
 				console.log(data);
+
 				/* Force a change of the URL to /dashboard?username=_username_,
 					to avoid any page reloads sending a GET to Postgres again,
 					due to loading=true present in querystring */
@@ -116,7 +117,7 @@ export default () => {
 	</div>
 	<div class="d-flex flex-column align-items-center justify-content-center h-100 w-100" style="min-width: 200px; max-width:250px;">
 		<div class="profile-pic" style="position: relative">
-			<img src="${data.profile_pic}" style="z-index: 0; position: absolute" />
+			<img src="${"http://localhost:8000/api" + data.profile_pic}" style="z-index: 0; position: absolute" />
 			${current_user == data.username ? '<img src="/src/assets/wojak-point.png" style="z-index: 1; opacity: 85%" />' : ''}
 		</div>
 		<div class="important-label" style="font-size: 40px;">${data.username.toUpperCase()}</div>
@@ -241,21 +242,28 @@ export default () => {
 					console.log(newAvatar);
 					console.log(fileSize);
 
+					let form_data = new FormData();
+
+					form_data.append("profile_pic", newAvatar)
+					form_data.append("display_name", newDisplayName)
+					
+					// for update profile
 					if (fileSize > 50)
 						alert("Image size too large.");
 					else {
 						$.ajax({
 							url: `http://localhost:8000/api/editUser?username=${params['username']}`,
 							type: 'POST',
-							contentType: 'application/json',
-							data: JSON.stringify({ "display_name": newDisplayName, "profile_pic": newAvatar }),
+							contentType: 'multipart/form-data',
+							data: form_data,
+							processData: false,
 							success: function(response) {
 								alert("Details updated!");
-								console.log('Display name updated');
+								console.log('Details updated');
 							},
 							error: function(jqXHR, textStatus, errorThrown) {
 								alert("Failed to update, fucking noob");
-								console.error('Error updating display name');
+								console.error('Error updating details');
 							}
 						});
 					}
