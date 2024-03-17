@@ -36,15 +36,27 @@ services:
 
   prometheus:
     image: prom/prometheus:latest
-    container_name:  prometheus
+    container_name: prometheus
     ports:
       - "9090:9090"
     volumes:
-      - ./setup:/setup
+      - ./setup/prometheus:/setup/prometheus
       - prometheus-data:/prometheus
     command:
-      - "--config.file=/setup/prometheus.yml"
-    
+      - "--config.file=/setup/prometheus/prometheus.yml"
+
+  alert-manager:
+    image: prom/alertmanager:latest
+    container_name: alertmanager
+    ports:
+      - "9093:9093"
+    depends_on:
+      - prometheus
+    volumes:
+      - ./setup/alertmanager:/etc/alertmanager
+    command:
+      - "--config.file=/etc/alertmanager/alertmanager.yml"
+
   grafana:
     image: grafana/grafana:latest
     container_name: grafana

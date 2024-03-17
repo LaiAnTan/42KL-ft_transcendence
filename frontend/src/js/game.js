@@ -1,29 +1,31 @@
 import { navigate, loadCSS } from "./main.js";
 
 function game() {
-    loadCSS("src/css/game.css");
+	let config_palette = localStorage.getItem("palette");
+	loadCSS("src/css/palettes/" + config_palette + ".css");
+	loadCSS("src/css/game.css");
 
-    let player_1_score = 0;
-    let player_2_score = 0;
-    let player_1_username = "sealw4ll";
-    let player_2_username = "lwilliam";
-    let is_animating = false;
-    var socket;
-    let id = "1"
-    var roomID;
-    var clientID = 123;
+	let player_1_score = 0;
+	let player_2_score = 0;
+	let player_1_username = "sealw4ll";
+	let player_2_username = "lwilliam";
+	let is_animating = false;
+	var socket;
+	let id = "1"
+	var roomID;
+	var clientID = 123;
 
-    let isLeftPaddleAnimating = false;
-    let isRightPaddleAnimating = false;
+	let isLeftPaddleAnimating = false;
+	let isRightPaddleAnimating = false;
 
-    function isJSON(str) {
-        try {
-            JSON.parse(str);
-            return true;
-        } catch (e) {
-            return false;
-        }
-    }
+	function isJSON(str) {
+		try {
+			JSON.parse(str);
+			return true;
+		} catch (e) {
+			return false;
+		}
+	}
 
     fetch("http://localhost:8000/api/matchmaking?clientID=" + clientID, {
         method: "GET"
@@ -81,225 +83,224 @@ function game() {
         console.error("Error: ", error);
     });
 
-    function tweenPaddlePosition(element, targetY, duration) {
-        let isAnimating = element.classList.contains('paddle-left') ? isLeftPaddleAnimating : isRightPaddleAnimating;
-        
-        if (isAnimating) {
-            return; // Don't start a new animation if one is already in progress
-          }
-          
-          isAnimating = true;
-          
-          const start = { y: parseFloat(element.style.top) || 0 };
-        const change = { y: targetY - start.y };
-        const startTime = performance.now();
-    
-        function updateTween() {
-            const elapsed = performance.now() - startTime;
-            const progress = Math.min(1, elapsed / duration);
-    
-            const newY = start.y + change.y * progress;
-    
-            element.style.top = newY + "%";
-    
-            if (progress < 1) {
-                requestAnimationFrame(updateTween);
-            } else {
-                isAnimating = false; // Animation completed, reset the flag
-                if (element.classList.contains('paddle-left')) {
-                    isLeftPaddleAnimating = false;
-                } else {
-                    isRightPaddleAnimating = false;
-                }
-            }
-        }
-    
-        requestAnimationFrame(updateTween);
-    }
+	function tweenPaddlePosition(element, targetY, duration) {
+		let isAnimating = element.classList.contains('paddle-left') ? isLeftPaddleAnimating : isRightPaddleAnimating;
+		
+		if (isAnimating) {
+			return; // Don't start a new animation if one is already in progress
+		  }
+		  
+		  isAnimating = true;
+		  
+		  const start = { y: parseFloat(element.style.top) || 0 };
+		const change = { y: targetY - start.y };
+		const startTime = performance.now();
+	
+		function updateTween() {
+			const elapsed = performance.now() - startTime;
+			const progress = Math.min(1, elapsed / duration);
+	
+			const newY = start.y + change.y * progress;
+	
+			element.style.top = newY + "%";
+	
+			if (progress < 1) {
+				requestAnimationFrame(updateTween);
+			} else {
+				isAnimating = false; // Animation completed, reset the flag
+				if (element.classList.contains('paddle-left')) {
+					isLeftPaddleAnimating = false;
+				} else {
+					isRightPaddleAnimating = false;
+				}
+			}
+		}
+	
+		requestAnimationFrame(updateTween);
+	}
 
-    function tweenBallPosition(element, targetX, targetY, duration) {
-        
-        if (is_animating) {
-        return; // Don't start a new animation if one is already in progress
-        }
+	function tweenBallPosition(element, targetX, targetY, duration) {
+		
+		if (is_animating) {
+		return; // Don't start a new animation if one is already in progress
+		}
 
-        is_animating = true;
+		is_animating = true;
 
-        const start = { x: parseFloat(element.style.left) || 0, y: parseFloat(element.style.top) || 0 };
-        const change = { x: targetX - start.x, y: targetY - start.y };
-        const startTime = performance.now();
+		const start = { x: parseFloat(element.style.left) || 0, y: parseFloat(element.style.top) || 0 };
+		const change = { x: targetX - start.x, y: targetY - start.y };
+		const startTime = performance.now();
 
-        function updateTween() {
-            const elapsed = performance.now() - startTime;
-            const progress = Math.min(1, elapsed / duration);
+		function updateTween() {
+			const elapsed = performance.now() - startTime;
+			const progress = Math.min(1, elapsed / duration);
 
-            const newX = start.x + change.x * progress;
-            const newY = start.y + change.y * progress;
+			const newX = start.x + change.x * progress;
+			const newY = start.y + change.y * progress;
 
-            element.style.left = newX + "%";
-            element.style.top = newY + "%";
+			element.style.left = newX + "%";
+			element.style.top = newY + "%";
 
-            if (progress < 1) {
-                requestAnimationFrame(updateTween);
-            } else {
-            is_animating = false; // Animation completed, reset the flag
-            }
-        }
+			if (progress < 1) {
+				requestAnimationFrame(updateTween);
+			} else {
+			is_animating = false; // Animation completed, reset the flag
+			}
+		}
 
-        requestAnimationFrame(updateTween);
-    }
+		requestAnimationFrame(updateTween);
+	}
 
-    function playWallSound() {
-        console.log("SOUNDDDD");
-        let beat = new Audio('../src/assets/osu-hit-sound.mp3');
-        beat.play();
-        // x.play();
-    }
+	function playWallSound() {
+		console.log("SOUNDDDD");
+		let beat = new Audio('../src/assets/osu-hit-sound.mp3');
+		beat.play();
+		// x.play();
+	}
 
-    document.addEventListener("click", (event) => {
-        if (event.target && event.target.id === "end") {
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                socket.close();
-            } else {
-                console.error("WebSocket connection not established or closed");
-            }
-        }
-        if (event.target && event.target.id === "game") {
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                let message = {
-                    "command": "START_GAME",
-                };
-                socket.send(JSON.stringify(message));
-            } else {
-                console.error("WebSocket connection not established or closed");
-            }
-        }
-    });
+	document.addEventListener("click", (event) => {
+		if (event.target && event.target.id === "end") {
+			if (socket && socket.readyState === WebSocket.OPEN) {
+				socket.close();
+			} else {
+				console.error("WebSocket connection not established or closed");
+			}
+		}
+		if (event.target && event.target.id === "game") {
+			if (socket && socket.readyState === WebSocket.OPEN) {
+				let message = {
+					"command": "START_GAME",
+				};
+				socket.send(JSON.stringify(message));
+			} else {
+				console.error("WebSocket connection not established or closed");
+			}
+		}
+	});
 
-    const pressedKeys = new Set();
+	const pressedKeys = new Set();
 
-    document.addEventListener("keydown", (event) => {
-        if (event.key === 'w' || event.key === 's') {
-            pressedKeys.add(event.key);
-    
-            // Determine the direction based on pressed keys
-            let direction;
-            if (pressedKeys.has('w') && pressedKeys.has('s')) {
-                // If both keys are pressed, cancel out the movement
-                direction = "PADDLE_STOP";
-            } else if (pressedKeys.has('w')) {
-                direction = "PADDLE_UP";
-            } else if (pressedKeys.has('s')) {
-                direction = "PADDLE_DOWN";
-            }
-    
-            if (direction) {
-                const message = {
-                    id: id,
-                    direction: direction
-                };
-    
-                // Send the WebSocket message
-                socket.send(JSON.stringify(message));
-            }
-        }
+	document.addEventListener("keydown", (event) => {
+		if (event.key === 'w' || event.key === 's') {
+			pressedKeys.add(event.key);
+	
+			// Determine the direction based on pressed keys
+			let direction;
+			if (pressedKeys.has('w') && pressedKeys.has('s')) {
+				// If both keys are pressed, cancel out the movement
+				direction = "PADDLE_STOP";
+			} else if (pressedKeys.has('w')) {
+				direction = "PADDLE_UP";
+			} else if (pressedKeys.has('s')) {
+				direction = "PADDLE_DOWN";
+			}
+	
+			if (direction) {
+				const message = {
+					id: id,
+					direction: direction
+				};
+	
+				// Send the WebSocket message
+				socket.send(JSON.stringify(message));
+			}
+		}
 
-        if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-            pressedKeys.add(event.key);
-    
-            // Determine the direction based on pressed keys
-            let direction;
-            if (pressedKeys.has('ArrowUp') && pressedKeys.has('ArrowDown')) {
-                // If both keys are pressed, cancel out the movement
-                direction = "PADDLE_STOP";
-            } else if (pressedKeys.has('ArrowUp')) {
-                direction = "PADDLE_UP";
-            } else if (pressedKeys.has('ArrowDown')) {
-                direction = "PADDLE_DOWN";
-            }
-    
-            if (direction) {
-                const message = {
-                    id: "2",
-                    direction: direction
-                };
-    
-                // Send the WebSocket message
-                socket.send(JSON.stringify(message));
-            }
-        }
-    });
-    
-    // Keyup event listener
-    document.addEventListener("keyup", (event) => {
-        if (event.key === 'w' || event.key === 's') {
-            pressedKeys.delete(event.key);
-    
-            // Determine the direction based on remaining pressed keys
-            let direction;
-            if (pressedKeys.has('w')) {
-                direction = "PADDLE_UP";
-            } else if (pressedKeys.has('s')) {
-                direction = "PADDLE_DOWN";
-            } else {
-                direction = "PADDLE_STOP";
-            }
-    
-            const message = {
-                id: id,
-                direction: direction
-            };
-    
-            // Send the WebSocket message
-            socket.send(JSON.stringify(message));
-        }
+		if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+			pressedKeys.add(event.key);
+	
+			// Determine the direction based on pressed keys
+			let direction;
+			if (pressedKeys.has('ArrowUp') && pressedKeys.has('ArrowDown')) {
+				// If both keys are pressed, cancel out the movement
+				direction = "PADDLE_STOP";
+			} else if (pressedKeys.has('ArrowUp')) {
+				direction = "PADDLE_UP";
+			} else if (pressedKeys.has('ArrowDown')) {
+				direction = "PADDLE_DOWN";
+			}
+	
+			if (direction) {
+				const message = {
+					id: "2",
+					direction: direction
+				};
+	
+				// Send the WebSocket message
+				socket.send(JSON.stringify(message));
+			}
+		}
+	});
+	
+	// Keyup event listener
+	document.addEventListener("keyup", (event) => {
+		if (event.key === 'w' || event.key === 's') {
+			pressedKeys.delete(event.key);
+	
+			// Determine the direction based on remaining pressed keys
+			let direction;
+			if (pressedKeys.has('w')) {
+				direction = "PADDLE_UP";
+			} else if (pressedKeys.has('s')) {
+				direction = "PADDLE_DOWN";
+			} else {
+				direction = "PADDLE_STOP";
+			}
+	
+			const message = {
+				id: id,
+				direction: direction
+			};
+	
+			// Send the WebSocket message
+			socket.send(JSON.stringify(message));
+		}
 
-        if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-            pressedKeys.delete(event.key);
-    
-            // Determine the direction based on remaining pressed keys
-            let direction;
-            if (pressedKeys.has('ArrowUp')) {
-                direction = "PADDLE_UP";
-            } else if (pressedKeys.has('ArrowDown')) {
-                direction = "PADDLE_DOWN";
-            } else {
-                direction = "PADDLE_STOP";
-            }
+		if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+			pressedKeys.delete(event.key);
+	
+			// Determine the direction based on remaining pressed keys
+			let direction;
+			if (pressedKeys.has('ArrowUp')) {
+				direction = "PADDLE_UP";
+			} else if (pressedKeys.has('ArrowDown')) {
+				direction = "PADDLE_DOWN";
+			} else {
+				direction = "PADDLE_STOP";
+			}
 
-            const message = {
-                id: "2",
-                direction: direction
-            };
-    
-            // Send the WebSocket message
-            socket.send(JSON.stringify(message));
-        }
-    });
+			const message = {
+				id: "2",
+				direction: direction
+			};
+	
+			// Send the WebSocket message
+			socket.send(JSON.stringify(message));
+		}
+	});
 
-    return `
-        <div class="vw-100 vh-100 p-5">
-            <div class="d-flex justify-content-between w-80 mx-auto pb-3">
-                <div class="d-flex flex-row player-text player-1-text-color justify-content-end align-items-end">
-                    <div id=player1score class="player-score-text-size pr-2">${player_1_score.toString()}</div>
-                    <div id=player1name class="player-username-text-size pb-2">${player_1_username}</div>
-                </div>
-                <div class="d-flex flex-row player-text player-2-text-color justify-content-end align-items-end">
-                    <div id=player2name class="player-username-text-size pb-2">${player_2_username}</div>
-                    <div id=player2score class="player-score-text-size pl-2">${player_2_score.toString()}</div>
-                </div>
-            </div>
-            <div class="game-container mx-auto">
-                <div class="game-box w-100">
-                    <div id="dongball"></div>
-                    <div id="paddle_left"></div>
-                    <div id="paddle_right"></div>
-                    <button id="game">Start Game</button>
-                    <button id="end">End Websocket</button>
-                </div>
-            </div>
-        </div>
-    `;
+	return `
+<div class="w-100 h-100 p-5">
+	<div class="d-flex justify-content-between w-80 mx-auto pb-3">
+		<div class="d-flex flex-row player-text player-1-text-color justify-content-end align-items-end">
+			<div id=player1score class="player-score-text-size pr-2">${player_1_score.toString()}</div>
+			<div id=player1name class="player-username-text-size pb-2">${player_1_username}</div>
+		</div>
+		<div class="d-flex flex-row player-text player-2-text-color justify-content-end align-items-end">
+			<div id=player2name class="player-username-text-size pb-2">${player_2_username}</div>
+			<div id=player2score class="player-score-text-size pl-2">${player_2_score.toString()}</div>
+		</div>
+	</div>
+	<div class="game-container mx-auto">
+		<div class="game-box w-100">
+			<div id="dongball"></div>
+			<div id="paddle_left"></div>
+			<div id="paddle_right"></div>
+			<button id="game">Start Game</button>
+			<button id="end">End Websocket</button>
+		</div>
+	</div>
+</div>`;
 }
 
 export default game;
