@@ -8,7 +8,8 @@ import dong from "./dong.js";
 import settings from "./settings.js";
 import dashboard from "./dashboard.js";
 
-export const app = document.getElementById("app");
+
+
 const routes = {
 	"/": { title: "Ding Dong", render: home },
 	"/login": { title: "Login with 42", render: login },
@@ -26,6 +27,15 @@ export function loadCSS(href) {
 	link.rel = "stylesheet";
 	link.href = href;
 	document.head.appendChild(link);
+}
+
+export function resetCSS() {
+	const links = document.querySelectorAll('link[rel="stylesheet"]');
+	links.forEach(link => {
+		let href = link.getAttribute("href");
+		if (href.includes("style.css") || href.includes("bootstrap.min.css")) { return; }
+		link.remove();
+	});
 }
 
 function initRedirClicks(e) {
@@ -47,6 +57,7 @@ export function navigate(path) {
 }
 
 export function router() {
+	resetCSS();
 	let view = routes[location.pathname];
 
 	if (view) {
@@ -62,3 +73,5 @@ export function router() {
 window.addEventListener("click", initRedirClicks);
 window.addEventListener("popstate", router);
 window.addEventListener("DOMContentLoaded", router);
+
+localStorage.setItem('palette', 'electric-dream');

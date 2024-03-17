@@ -22,107 +22,107 @@ class Dong(AsyncJsonWebsocketConsumer):
     ball_rampup = 0.02
     points_to_win = 10
 
-    rooms = {}
+	rooms = {}
 
-    async def connect(self):
-        query_string = self.scope.get("query_string", b"").decode("utf-8")
-        query_parameters = urllib.parse.parse_qs(query_string)
+	async def connect(self):
+		query_string = self.scope.get("query_string", b"").decode("utf-8")
+		query_parameters = urllib.parse.parse_qs(query_string)
 
-        self.room_id = query_parameters.get('roomID', [''])[0]
-        self.client_id = query_parameters.get('clientID', [''])[0]
-        self.room_group_name = f"room_{self.room_id}"
+		self.room_id = query_parameters.get('roomID', [''])[0]
+		self.client_id = query_parameters.get('clientID', [''])[0]
+		self.room_group_name = f"room_{self.room_id}"
 
-        await self.channel_layer.group_add(
-            self.room_group_name,
-            self.channel_name
-        )
+		await self.channel_layer.group_add(
+			self.room_group_name,
+			self.channel_name
+		)
 
-        if self.room_id not in self.rooms:
-            # Initialize the room with game-related variables
-            self.rooms[self.room_id] = {
-                'game_started': False,
-                'paddle_left': Paddle("1", height=25, width=2, x=self.paddle_padding, y=50),
-                'paddle_right': Paddle("2", height=25, width=2, x=self.game_width - self.paddle_padding, y=50),
-                'player_in_room': 0,
-                'players': [],
-            }
+		if self.room_id not in self.rooms:
+			# Initialize the room with game-related variables
+			self.rooms[self.room_id] = {
+				'game_started': False,
+				'paddle_left': Paddle("1", height=25, width=2, x=self.paddle_padding, y=50),
+				'paddle_right': Paddle("2", height=25, width=2, x=self.game_width - self.paddle_padding, y=50),
+				'player_in_room': 0,
+				'players': [],
+			}
 
-        self.rooms[self.room_id]['player_in_room'] += 1
-        self.rooms[self.room_id]['players'].append(self.client_id)
+		self.rooms[self.room_id]['player_in_room'] += 1
+		self.rooms[self.room_id]['players'].append(self.client_id)
 
-        if self.rooms[self.room_id]['player_in_room'] > 2:
-            await self.send_json({'message': 'ROOM FULL'})
-            self.rooms[self.room_id]['player_in_room'] -= 1
-            await self.close()
-            return
+		if self.rooms[self.room_id]['player_in_room'] > 2:
+			await self.send_json({'message': 'ROOM FULL'})
+			self.rooms[self.room_id]['player_in_room'] -= 1
+			await self.close()
+			return
 
-        await self.accept()
+		await self.accept()
 
-    async def disconnect(self, close_code):
-        self.rooms[self.room_id]['player_in_room'] -= 1
-        self.rooms[self.room_id]['game_started'] = False
-        self.rooms[self.room_id]['players'].remove(self.client_id)
-        if self.rooms[self.room_id]['player_in_room'] == 0:
-            del self.rooms[self.room_id]
+	async def disconnect(self, close_code):
+		self.rooms[self.room_id]['player_in_room'] -= 1
+		self.rooms[self.room_id]['game_started'] = False
+		self.rooms[self.room_id]['players'].remove(self.client_id)
+		if self.rooms[self.room_id]['player_in_room'] == 0:
+			del self.rooms[self.room_id]
 
-        await self.channel_layer.group_discard(
-            self.room_group_name,
-            self.channel_name
-        )
+		await self.channel_layer.group_discard(
+			self.room_group_name,
+			self.channel_name
+		)
 
-    async def receive(self, text_data=None, bytes_data=None, **kwargs):
-        data = json.loads(text_data)
+	async def receive(self, text_data=None, bytes_data=None, **kwargs):
+		data = json.loads(text_data)
 
-        if 'command' in data:
-            if data['command'] == 'START_GAME':
-                if self.rooms[self.room_id]['player_in_room'] == 2:
-                    asyncio.create_task(self.run())
-                else:
-                    await self.send_json({'console': 'WAITING FOR PLAYER TO JOIN'})
-            elif data['command'] == 'USERS':
-                await self.send_json({'message': self.rooms[self.room_id], 'room_id': self.room_id})
+		if 'command' in data:
+			if data['command'] == 'START_GAME':
+				if self.rooms[self.room_id]['player_in_room'] == 2:
+					asyncio.create_task(self.run())
+				else:
+					await self.send_json({'console': 'WAITING FOR PLAYER TO JOIN'})
+			elif data['command'] == 'USERS':
+				await self.send_json({'message': self.rooms[self.room_id], 'room_id': self.room_id})
 
-        elif (data['id'] == self.rooms[self.room_id]["paddle_left"].id):
-            if (data['direction'] == "PADDLE_UP"):
-                self.rooms[self.room_id]["paddle_left"].count = 1
-            elif (data['direction'] == "PADDLE_DOWN"):
-                self.rooms[self.room_id]["paddle_left"].count = -1
-            else:
-                self.rooms[self.room_id]["paddle_left"].count = 0
-            return
-        
-        elif (data['id'] == self.rooms[self.room_id]["paddle_right"].id):
-            if (data['direction'] == "PADDLE_UP"):
-                self.rooms[self.room_id]["paddle_right"].count = 1
-            elif (data['direction'] == "PADDLE_DOWN"):
-                self.rooms[self.room_id]["paddle_right"].count = -1
-            else:
-                self.rooms[self.room_id]["paddle_right"].count = 0
-            return
-    
-    async def resetball(self, side):
+		elif (data['id'] == self.rooms[self.room_id]["paddle_left"].id):
+			if (data['direction'] == "PADDLE_UP"):
+				self.rooms[self.room_id]["paddle_left"].count = 1
+			elif (data['direction'] == "PADDLE_DOWN"):
+				self.rooms[self.room_id]["paddle_left"].count = -1
+			else:
+				self.rooms[self.room_id]["paddle_left"].count = 0
+			return
+		
+		elif (data['id'] == self.rooms[self.room_id]["paddle_right"].id):
+			if (data['direction'] == "PADDLE_UP"):
+				self.rooms[self.room_id]["paddle_right"].count = 1
+			elif (data['direction'] == "PADDLE_DOWN"):
+				self.rooms[self.room_id]["paddle_right"].count = -1
+			else:
+				self.rooms[self.room_id]["paddle_right"].count = 0
+			return
+	
+	async def resetball(self, side):
 
-        if side == "LEFT":
-            room = self.rooms[self.room_id]
-            room['ball'].y = self.game_height / 2
-            room['ball'].x = self.paddle_padding + self.ball_start_dist
-            room['ball'].dx = self.ball_speed
-            room['ball'].dy = random.randint(-4, 4)
-        
-        if side == "RIGHT":
-            room = self.rooms[self.room_id]
-            room['ball'].y = self.game_height / 2
-            room['ball'].x = self.game_width - self.ball_start_dist - self.paddle_padding - self.paddle_width
-            room['ball'].dx = self.ball_speed * -1
-            room['ball'].dy = random.randint(-4, 4)
+		if side == "LEFT":
+			room = self.rooms[self.room_id]
+			room['ball'].y = self.game_height / 2
+			room['ball'].x = self.paddle_padding + self.ball_start_dist
+			room['ball'].dx = self.ball_speed
+			room['ball'].dy = random.randint(-4, 4)
+		
+		if side == "RIGHT":
+			room = self.rooms[self.room_id]
+			room['ball'].y = self.game_height / 2
+			room['ball'].x = self.game_width - self.ball_start_dist - self.paddle_padding - self.paddle_width
+			room['ball'].dx = self.ball_speed * -1
+			room['ball'].dy = random.randint(-4, 4)
 
-        await asyncio.sleep(1)
+		await asyncio.sleep(1)
 
-    async def run(self):
-        room = self.rooms[self.room_id]
-        room['ball'] = Ball(size=3, y=self.game_height / 2, x=room['paddle_left'].x + self.ball_start_dist,
-            dx=self.ball_speed, dy=random.randint(-6, 6))
-        room['game_started'] = True
+	async def run(self):
+		room = self.rooms[self.room_id]
+		room['ball'] = Ball(size=3, y=self.game_height / 2, x=room['paddle_left'].x + self.ball_start_dist,
+			dx=self.ball_speed, dy=random.randint(-6, 6))
+		room['game_started'] = True
 
         while room['paddle_left'].score < self.points_to_win and room['paddle_right'].score < self.points_to_win:
             await asyncio.sleep(1 / 60)
@@ -165,22 +165,22 @@ class Dong(AsyncJsonWebsocketConsumer):
             'players': room['players'],
         }
 
-    async def wall_hit(self):
-        await self.channel_layer.group_send(
-        self.room_group_name, {
-            'type': 'send_game_data',
-            'message': {'hit': 'HIT WALL'}
-        }
-    )
+	async def wall_hit(self):
+		await self.channel_layer.group_send(
+		self.room_group_name, {
+			'type': 'send_game_data',
+			'message': {'hit': 'HIT WALL'}
+		}
+	)
 
-    async def send_game_data(self, event):
-        message = event['message']
-        await self.send_json(message)
+	async def send_game_data(self, event):
+		message = event['message']
+		await self.send_json(message)
 
-    async def game(self):
-        room = self.rooms[self.room_id]
-        room['ball'].x = room['ball'].x + room['ball'].dx
-        room['ball'].y = room['ball'].y + room['ball'].dy
+	async def game(self):
+		room = self.rooms[self.room_id]
+		room['ball'].x = room['ball'].x + room['ball'].dx
+		room['ball'].y = room['ball'].y + room['ball'].dy
 
         # hit bottom wall
         if room['ball'].y > self.game_height - self.ball_height_offset:
@@ -244,27 +244,27 @@ class Dong(AsyncJsonWebsocketConsumer):
 
     async def update(self):
 
-        room = self.rooms[self.room_id]
-        # left paddle
-        if room['paddle_left'].count > 0:
-            room['paddle_left'].y -= self.paddle_speed
-            if room['paddle_left'].y < 0:
-                room['paddle_left'].y = 0
+		room = self.rooms[self.room_id]
+		# left paddle
+		if room['paddle_left'].count > 0:
+			room['paddle_left'].y -= self.paddle_speed
+			if room['paddle_left'].y < 0:
+				room['paddle_left'].y = 0
 
-        if room['paddle_left'].count < 0:
-            room['paddle_left'].y += self.paddle_speed
-            if room['paddle_left'].y > self.game_height - self.paddle_height:
-                room['paddle_left'].y = self.game_height - self.paddle_height
-        room['paddle_left'].count = 0
+		if room['paddle_left'].count < 0:
+			room['paddle_left'].y += self.paddle_speed
+			if room['paddle_left'].y > self.game_height - self.paddle_height:
+				room['paddle_left'].y = self.game_height - self.paddle_height
+		room['paddle_left'].count = 0
 
-        # right padddle
-        if room['paddle_right'].count > 0:
-            room['paddle_right'].y -= self.paddle_speed
-            if room['paddle_right'].y < 0:
-                room['paddle_right'].y = 0
+		# right padddle
+		if room['paddle_right'].count > 0:
+			room['paddle_right'].y -= self.paddle_speed
+			if room['paddle_right'].y < 0:
+				room['paddle_right'].y = 0
 
-        if room['paddle_right'].count < 0:
-            room['paddle_right'].y += self.paddle_speed
-            if room['paddle_right'].y > self.game_height - self.paddle_height:
-                room['paddle_right'].y = self.game_height - self.paddle_height
-        room['paddle_right'].count = 0
+		if room['paddle_right'].count < 0:
+			room['paddle_right'].y += self.paddle_speed
+			if room['paddle_right'].y > self.game_height - self.paddle_height:
+				room['paddle_right'].y = self.game_height - self.paddle_height
+		room['paddle_right'].count = 0
