@@ -53,10 +53,14 @@ def addUser(request):
 	"username": "user",
 	"display_name": "User",
 	"email": "user@user.com",
+    !! "profile_pic": (JS File object)
 	"versus_history": [],
 	"tournament_history": []
 	}
 
+    !! must use contentType: multipart/form-data
+    
+    
 	versus_history, tournament_history are optional fields, if not specified
 	a default will be used.
 	"""
@@ -100,9 +104,12 @@ def editUser(request):
     "email": "user@user.com",
     "versus_history": [],
     "tournament_history": []
+    !! "profile_pic": (JS File object)
 
     ...+ any fields to be edited
     }
+    
+    !! must use contentType: multipart/form-data
     """
     
     username = request.query_params.get('username')
