@@ -21,20 +21,14 @@ export default () => {
 		<div class="user-img"><img src="${sessionStorage.getItem('profile_pic')}"></img></div>
 		<p class="description cursor-pointer">${sessionStorage.getItem('display_name')}</p>
 	</button>
-	<div class="d-flex justify-content-center w-100">
-		<div id="room-id-div" class="mx-4">
-			<input type="text" id="room-id" class="vs-player-input w-80" placeholder="Join a room" />
-			<button type="button" id="search-button" class="scale-up description" style="background-color: transparent; height: 50px; border-radius: 10px;">SEARCH</button>
-		</div>
-	</div>
 	<div class="d-flex flex-column align-items-center justify-content-around unselectable flex-grow-1 px-4" style="margin-bottom: 110px">
-		<button type="button" data-link="/game" class="menu-component cursor-pointer" style="background-color: transparent">
-			<div class="menu-component-title">MATCHMAKING</div>
-			<div class="menu-component-description">MATCH WITH A RANDOM PLAYER</div>
+		<button type="button" data-link="/pong" class="menu-component cursor-pointer" style="background-color: transparent">
+			<div class="menu-component-title">PONG</div>
+			<div class="menu-component-description">KEEP IT CLASSIC</div>
 		</button>
-		<button type="button" data-link="/" class="menu-component cursor-pointer" style="background-color: transparent">
-			<div class="menu-component-title">CUSTOM</div>
-			<div class="menu-component-description">CREATE A ROOM, INVITE A FRIEND</div>
+		<button type="button" data-link="/dong" class="menu-component cursor-pointer" style="background-color: transparent">
+			<div class="menu-component-title">DONG</div>
+			<div class="menu-component-description">DODGE THE BALLS</div>
 		</button>
 	</div>
 </div>`;

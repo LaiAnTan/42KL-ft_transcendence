@@ -80,7 +80,7 @@ export default () => {
 					new_div.className = 'w-100 h-100';
 					new_div.innerHTML = `
 <div class="d-flex position-absolute align-items-center unselectable ml-4" style="height: 8vh; z-index: 1">
-	<p data-link="/dashboard" class="description scale-up cursor-pointer">GO BACK</p>
+	<p data-link="/menu" class="description scale-up cursor-pointer">GO BACK</p>
 </div>
 <div class="d-flex align-items-center justify-content-center h-100">
 	<div class="important-label" style="font-size: 50px;">User ${params['username']} does not exist.</div>

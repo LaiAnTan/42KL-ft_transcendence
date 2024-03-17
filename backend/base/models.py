@@ -1,7 +1,9 @@
 import json
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
+from django.conf import settings
 
+import os
 
 class User(models.Model):
 
@@ -20,7 +22,7 @@ class User(models.Model):
 	username = models.CharField(max_length=20)
 	display_name = models.CharField(max_length=20, blank=True)
 	email = models.EmailField(max_length=100, blank=True)
-	profile_pic = models.CharField(blank=True)
+	profile_pic = models.ImageField(upload_to="profiles/")
 	versus_history = ArrayField(models.IntegerField(), blank=True)
 	tournament_history = ArrayField(models.IntegerField(), blank=True)
 	date_created = models.DateTimeField(auto_now_add=True)
@@ -34,7 +36,7 @@ class User(models.Model):
 			'username': self.username,
 			'display_name': self.display_name,
 			'email': self.email,
-			'profile_pic': self.profile_pic,
+			'profile_pic': os.path.join(settings.MEDIA_URL, self.profile_pic.name),
 			'versus_history': self.versus_history,
 			'tournament_history': self.tournament_history,
 			'date_created': self.date_created.strftime('%Y-%m-%d %H:%M:%S')

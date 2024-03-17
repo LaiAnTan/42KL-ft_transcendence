@@ -15,6 +15,9 @@ import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+MEDIA_URL = '/media/'
+MEDIA_ROOT = '/app/media'
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -143,4 +146,18 @@ CHANNEL_LAYERS = {
 	'default': {
 		'BACKEND': 'channels.layers.InMemoryChannelLayer', # Or use Redis or other appropriate backend
 	},
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
 }
