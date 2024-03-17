@@ -1,6 +1,7 @@
 import json
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
+from django.conf import settings
 
 
 class User(models.Model):
@@ -20,7 +21,7 @@ class User(models.Model):
 	username = models.CharField(max_length=20)
 	display_name = models.CharField(max_length=20, blank=True)
 	email = models.EmailField(max_length=100, blank=True)
-	profile_pic = models.CharField(blank=True)
+	profile_pic = models.ImageField(upload_to="profiles/")
 	versus_history = ArrayField(models.IntegerField(), blank=True)
 	tournament_history = ArrayField(models.IntegerField(), blank=True)
 	date_created = models.DateTimeField(auto_now_add=True)

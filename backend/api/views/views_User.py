@@ -2,9 +2,14 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.core.exceptions import FieldDoesNotExist
+from django.utils.crypto import get_random_string
+from django.core.files.images import ImageFile
 
 from base.models import User
-from api.serializer import UserSerializer
+from api.serializer import UserSerializer, ImageSerializer
+
+import os
+from django.conf import settings
 
 
 @api_view(['GET'])
@@ -154,3 +159,58 @@ parameters '},
     user.delete()
 
     return Response({"Success": f"User {username} deleted from Database"})
+
+@api_view(['POST'])
+def uploadProfile(request):
+    
+    """
+    API endpoint that uploads a profile picture for a specified user
+    entry in the database.
+    """
+    
+    username = request.query_params.get('username')
+
+    if username is None:
+        return Response({"Error": '"username" must be included in query\
+parameters '},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return Response({"Error": "User Not Found in Database"},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    img_serializer = ImageSerializer(data=request.data)
+
+    if img_serializer.is_valid() is False:
+        return Response(img_serializer.errors,
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    image = img_serializer.validated_data['image']
+
+    file_path = os.path.join(settings.MEDIA_ROOT,
+                             get_random_string(length=32) + "." + \
+                                               image.name.split(".")[-1])
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    
+    with open(file_path, 'wb') as f:
+        for chunk in image.chunks():
+            f.write(chunk)
+            
+    image_file = ImageFile(open(file_path, 'rb'))
+    image_file.name = os.path.basename(file_path)
+
+    if user.profile_pic:
+        user.profile_pic.delete()  # Delete the old profile picture
+
+    user_serializer = UserSerializer(user, data={"profile_pic": image_file},
+                                     partial=True)
+    
+    if user_serializer.is_valid():
+        user_serializer.save()
+    else:
+        return Response({"Error": "Failed to Update User Fields"},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    return Response(user_serializer.data)
