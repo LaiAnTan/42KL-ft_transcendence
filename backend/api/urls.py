@@ -1,5 +1,8 @@
 from django.urls import path
+from django.conf.urls.static import static
 from .views import views_User, views_Matchup, views_Versus, views_Tournament, authentication, views_GameRoom, alert
+from django.conf import settings
+
 
 urlpatterns = [
     path('addUser', views_User.addUser),
@@ -7,6 +10,7 @@ urlpatterns = [
     path('allUsers', views_User.getAllUsers),
     path('editUser', views_User.editUser),
     path('deleteUser', views_User.deleteUser),
+    path('uploadProfile',  views_User.uploadProfile),
     path('addMatchup', views_Matchup.addMatchup),
     path('getMatchup', views_Matchup.getMatchup),
     path('allMatchups', views_Matchup.getAllMatchups),
@@ -24,5 +28,5 @@ urlpatterns = [
 	path('allRooms', views_GameRoom.allRooms),
 	path('closeAllRooms', views_GameRoom.closeAllRooms),
     path('alert', alert.alert)
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
