@@ -27,61 +27,61 @@ function game() {
 		}
 	}
 
-	fetch("http://localhost:8000/api/matchmaking?clientID=" + clientID, {
-		method: "GET"
-	})
-	.then(response => response.json())
-	.then(data => {
-		roomID = data.roomID;
-		socket = new WebSocket(`ws://localhost:8000/dong?roomID=${roomID}&clientID=${clientID}`);
-		// Set up WebSocket event listeners
-		socket.onopen = function(event) {
-			console.log("WebSocket connection opened");
-			console.log("client", clientID, "joined room", roomID);
-		};
-		socket.onmessage = function(event) {
-			// console.log( "Received message:", event.data);
-			if (isJSON(event.data)) {
-				let endElement = document.getElementById("dongball");
-				let eventData = JSON.parse(event.data);
-				if (eventData.console != undefined) {
-					console.log(eventData.console);
-				}
-				if (endElement !== null) {
-					tweenBallPosition(endElement, eventData.ball_x, eventData.ball_y, 1);
-					tweenPaddlePosition(document.getElementById('paddle_left'), eventData.paddle_left_y, 2);
-					tweenPaddlePosition(document.getElementById('paddle_right'), eventData.paddle_right_y, 2);
-					if (eventData.hit != undefined) {
-						if (eventData.hit == "HIT WALL") {
-							playWallSound();
-						}
-						if (eventData.hit == "HIT LEFT") {
-							player_2_score += 1;
-							document.getElementById('player2score').textContent = player_2_score.toString();
-						}
-						if (eventData.hit == "HIT RIGHT") {
-							player_1_score += 1;
-							document.getElementById('player1score').textContent = player_1_score.toString();
-						}
-					}
-					return ;
-				} 
-				else {
-					console.error("Element with id 'end' not found.");
-				}
-			}
-		};
-		socket.onclose = function(event) {
-			console.log("WebSocket connection closed");
-		};
-		socket.onerror = function(event) {
-			console.error("WebSocket error:", event);
-			console.error("WebSocket connection closed due to room already have 2 players or room not found");
-		};
-	})
-	.catch(error => {
-		console.error("Error: ", error);
-	});
+    fetch("http://localhost:8000/api/matchmaking?clientID=" + clientID, {
+        method: "GET"
+    })
+    .then(response => response.json())
+    .then(data => {
+        roomID = data.roomID;
+        socket = new WebSocket(`ws://localhost:8000/pong?roomID=${roomID}&clientID=${clientID}`);
+        // Set up WebSocket event listeners
+        socket.onopen = function(event) {
+            console.log("WebSocket connection opened");
+            console.log("client", clientID, "joined room", roomID);
+        };
+        socket.onmessage = function(event) {
+            // console.log( "Received message:", event.data);
+            if (isJSON(event.data)) {
+                let endElement = document.getElementById("dongball");
+                let eventData = JSON.parse(event.data);
+                if (eventData.console != undefined) {
+                    console.log(eventData.console);
+                }
+                if (endElement !== null) {
+                    tweenBallPosition(endElement, eventData.ball_x, eventData.ball_y, 1);
+                    tweenPaddlePosition(document.getElementById('paddle_left'), eventData.paddle_left_y, 2);
+                    tweenPaddlePosition(document.getElementById('paddle_right'), eventData.paddle_right_y, 2);
+                    if (eventData.hit != undefined) {
+                        if (eventData.hit == "HIT WALL") {
+                            playWallSound();
+                        }
+                        if (eventData.hit == "HIT LEFT") {
+                            player_2_score += 1;
+                            document.getElementById('player2score').textContent = player_2_score.toString();
+                        }
+                        if (eventData.hit == "HIT RIGHT") {
+                            player_1_score += 1;
+                            document.getElementById('player1score').textContent = player_1_score.toString();
+                        }
+                    }
+                    return ;
+                } 
+                else {
+                    console.error("Element with id 'end' not found.");
+                }
+            }
+        };
+        socket.onclose = function(event) {
+            console.log("WebSocket connection closed");
+        };
+        socket.onerror = function(event) {
+            console.error("WebSocket error:", event);
+            console.error("WebSocket connection closed due to room already have 2 players or room not found");
+        };
+    })
+    .catch(error => {
+        console.error("Error: ", error);
+    });
 
 	function tweenPaddlePosition(element, targetY, duration) {
 		let isAnimating = element.classList.contains('paddle-left') ? isLeftPaddleAnimating : isRightPaddleAnimating;
