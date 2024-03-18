@@ -9,18 +9,17 @@ from .game_utils import Paddle
 
 class Dong(AsyncJsonWebsocketConsumer):
 
-    game_width = 100
-    game_height = 100
-    ball_height_offset = 1
-    ball_width_offset = 0
-    paddle_speed = 10
-    paddle_height = 25
-    paddle_width = 2 
-    paddle_padding = 5
-    ball_start_dist = 5
-    ball_speed = 1.0
-    ball_rampup = 0.02
-    points_to_win = 10
+	game_width = 100
+	game_height = 100
+	ball_height_offset = 1
+	ball_width_offset = 0
+	paddle_speed = 10
+	paddle_height = 25
+	paddle_width = 2 
+	paddle_padding = 5
+	ball_start_dist = 5
+	ball_speed = 1.0
+	ball_rampup = 0.02
 
 	rooms = {}
 
@@ -124,46 +123,27 @@ class Dong(AsyncJsonWebsocketConsumer):
 			dx=self.ball_speed, dy=random.randint(-6, 6))
 		room['game_started'] = True
 
-        while room['paddle_left'].score < self.points_to_win and room['paddle_right'].score < self.points_to_win:
-            await asyncio.sleep(1 / 60)
-            await self.game()
-            await self.update()
-            await self.channel_layer.group_send(
-                self.room_group_name, {
-                    'type': 'send_game_data',
-                    'message': await self.get_game_data()
-                }
-            )
+		while room['game_started']:
+			await asyncio.sleep(1 / 60)
+			await self.game()
+			await self.update()
+			await self.channel_layer.group_send(
+				self.room_group_name, {
+					'type': 'send_game_data',
+					'message': await self.get_game_data()
+				}
+			)
 
-        await self.channel_layer.group_send(
-                self.room_group_name, {
-                    'type': 'send_game_data',
-                    'message': await self.get_final_data()
-                }
-            )
-
-    async def get_final_data(self):
-        room = self.rooms[self.room_id]
-        return {
-            'room_id': self.room_id,
-            'player_1': room['players'][0],
-            'player_2': room['players'][1],
-            'player_1_score': room['paddle_left'].score,
-            'player_2_score': room['paddle_right'].score,
-            'match_type': 'dong'
-        }
-
-
-    async def get_game_data(self):
-        room = self.rooms[self.room_id]
-        return {
-            'ball_x': room['ball'].x if room['ball'] else None,
-            'ball_y': room['ball'].y if room['ball'] else None,
-            'paddle_left_y': room['paddle_left'].y,    
-            'paddle_right_y': room['paddle_right'].y,
-            'room_id': self.room_id,
-            'players': room['players'],
-        }
+	async def get_game_data(self):
+		room = self.rooms[self.room_id]
+		return {
+			'ball_x': room['ball'].x if room['ball'] else None,
+			'ball_y': room['ball'].y if room['ball'] else None,
+			'paddle_left_y': room['paddle_left'].y,	
+			'paddle_right_y': room['paddle_right'].y,
+			'room_id': self.room_id,
+			'players': room['players'],
+		}
 
 	async def wall_hit(self):
 		await self.channel_layer.group_send(
@@ -182,67 +162,59 @@ class Dong(AsyncJsonWebsocketConsumer):
 		room['ball'].x = room['ball'].x + room['ball'].dx
 		room['ball'].y = room['ball'].y + room['ball'].dy
 
-        # hit bottom wall
-        if room['ball'].y > self.game_height - self.ball_height_offset:
-            room['ball'].y = self.game_height - self.ball_height_offset
-            room['ball'].dy *= -1
-            await self.wall_hit()
+		if room['ball'].y > self.game_height - self.ball_height_offset:
+			room['ball'].y = self.game_height - self.ball_height_offset
+			room['ball'].dy *= -1
+			await self.wall_hit()
 
-        # hit top wall
-        if room['ball'].y < 0:
-            room['ball'].y = 0
-            room['ball'].dy *= -1
-            await self.wall_hit()
+		if room['ball'].y < 0:
+			room['ball'].y = 0
+			room['ball'].dy *= -1
+			await self.wall_hit()
 
-        # hit left paddle
-        if (room['ball'].x  < self.paddle_padding and 
-            room['ball'].x > self.paddle_padding - self.paddle_width and 
-            room['ball'].y > room['paddle_left'].y and 
-            room['ball'].y < room['paddle_left'].y + self.paddle_height):
-            await self.channel_layer.group_send(
-                self.room_group_name, {
-                    'type': 'send_game_data',
-                    'message': {'hit': 'HIT LEFT'}
-                }
-            )
-            room['paddle_right'].score += 1
-            await self.resetball("LEFT")
+		if (room['ball'].x  < self.paddle_padding and 
+			room['ball'].x > self.paddle_padding - self.paddle_width and 
+			room['ball'].y > room['paddle_left'].y and 
+			room['ball'].y < room['paddle_left'].y + self.paddle_height):
+			await self.channel_layer.group_send(
+				self.room_group_name, {
+					'type': 'send_game_data',
+					'message': {'hit': 'HIT LEFT'}
+				}
+			)
+			await self.resetball("LEFT")
 
-        # hit right paddle
-        if (room['ball'].x  > self.game_width - self.paddle_padding - self.paddle_width and 
-            room['ball'].x < self.game_width - self.paddle_padding + self.paddle_width and 
-            room['ball'].y > room['paddle_right'].y and 
-            room['ball'].y < room['paddle_right'].y + self.paddle_height):
-            await self.channel_layer.group_send(
-                self.room_group_name, {
-                    'type': 'send_game_data',
-                    'message': {'hit': 'HIT RIGHT'}
-                }
-            )
-            room['paddle_left'].score += 1
-            await self.resetball("RIGHT")
+		if (room['ball'].x  > self.game_width - self.paddle_padding - self.paddle_width and 
+			room['ball'].x < self.game_width - self.paddle_padding + self.paddle_width and 
+			room['ball'].y > room['paddle_right'].y and 
+			room['ball'].y < room['paddle_right'].y + self.paddle_height):
+			await self.channel_layer.group_send(
+				self.room_group_name, {
+					'type': 'send_game_data',
+					'message': {'hit': 'HIT RIGHT'}
+				}
+			)
+			await self.resetball("RIGHT")
 
-        # hit left wall
-        if room['ball'].x < 0:
-            room['ball'].x = 0
-            room['ball'].dx = (abs(room['ball'].dx) + self.ball_rampup)
-            if room['ball'].dy >= 0:
-                room['ball'].dy += self.ball_rampup + random.uniform(-0.499, 0.501)
-                await self.wall_hit()
-            if room['ball'].dy < 0:
-                room['ball'].dy -= self.ball_rampup + random.uniform(-0.499, 0.501)
-                await self.wall_hit()
+		if room['ball'].x > self.game_width - room['ball'].width_or_height - self.ball_width_offset:
+			room['ball'].x = self.game_width - room['ball'].width_or_height
+			room['ball'].dx = (abs(room['ball'].dx) + self.ball_rampup) * -1
+			self.wall_hit()
+			if room['ball'].dy < 0:
+				room['ball'].dy -= self.ball_rampup + random.uniform(-0.499, 0.501)
+				await self.wall_hit()
 
-        # hit right wall
-        if room['ball'].x > self.game_width - room['ball'].width_or_height - self.ball_width_offset:
-            room['ball'].x = self.game_width - room['ball'].width_or_height
-            room['ball'].dx = (abs(room['ball'].dx) + self.ball_rampup) * -1
-            self.wall_hit()
-            if room['ball'].dy < 0:
-                room['ball'].dy -= self.ball_rampup + random.uniform(-0.499, 0.501)
-                await self.wall_hit()
+		if room['ball'].x < 0:
+			room['ball'].x = 0
+			room['ball'].dx = (abs(room['ball'].dx) + self.ball_rampup)
+			if room['ball'].dy >= 0:
+				room['ball'].dy += self.ball_rampup + random.uniform(-0.499, 0.501)
+				await self.wall_hit()
+			if room['ball'].dy < 0:
+				room['ball'].dy -= self.ball_rampup + random.uniform(-0.499, 0.501)
+				await self.wall_hit()
 
-    async def update(self):
+	async def update(self):
 
 		room = self.rooms[self.room_id]
 		# left paddle
