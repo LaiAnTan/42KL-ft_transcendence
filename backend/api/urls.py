@@ -21,12 +21,16 @@ urlpatterns = [
     path('getTournament', views_Tournament.getTournament),
     path('allTournaments', views_Tournament.getAllTournament),
     path('authConfig/', authentication.get_auth_config),
-	path('postCode', authentication.postCode),
-	path('matchmaking', views_GameRoom.matchmaking),
-	path('closeRoom', views_GameRoom.closeRoom),
-	path('joinRoom/<str:room_code>', views_GameRoom.joinRoom),
-	path('allRooms', views_GameRoom.allRooms),
-	path('closeAllRooms', views_GameRoom.closeAllRooms),
-    path('alert', alert.alert)
+    path('postCode', authentication.postCode),
+    path('matchmaking', views_GameRoom.matchmaking),
+    path('closeRoom', views_GameRoom.closeRoom),
+    path('joinRoom/<str:room_code>', views_GameRoom.joinRoom),
+    path('allRooms', views_GameRoom.allRooms),
+    path('closeAllRooms', views_GameRoom.closeAllRooms),
+    path('alert', alert.alert),
+    path('tournamentInit', views_GameRoom.tournamentInit),
+    path('tournamentAssign', views_GameRoom.tournamentAssign),
+    path('tournamentAllRooms', views_GameRoom.tournamentAllRooms),
+    path('tournamentEnd', views_GameRoom.tournamentEnd)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
