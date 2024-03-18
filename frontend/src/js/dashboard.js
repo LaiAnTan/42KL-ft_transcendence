@@ -92,7 +92,7 @@ export default () => {
 				/* Force a change of the URL to /dashboard?username=_username_,
 					to avoid any page reloads sending a GET to Postgres again,
 					due to loading=true present in querystring */
-				history.replaceState("", "", `/dashboard?username=${params['username']}`);
+				window.history.replaceState("", "", `/dashboard?username=${params['username']}`);
 
 				/* Get name of the active user */
 				const current_user = sessionStorage.getItem('username');
@@ -106,10 +106,15 @@ export default () => {
 	<p data-link="/menu" class="description scale-up cursor-pointer">GO BACK</p>
 </div>
 <div class="d-flex flex-row align-items-center justify-content-around h-100" style="padding: 50px 0;">
-	<div class="d-flex flex-column rounded-border glowing-border h-100 w-100 mx-3" style="min-width: 400px; max-width:600px;">
-		<div class="p-4">
-			<div class="important-label">Game History</div>
-			<div class="description cursor-pointer">Button to redirect</div>
+	<div class="d-flex flex-column justify-content-between rounded-border glowing-border h-100 w-100 mx-3" style="min-width: 400px; max-width:600px;">
+		<div class="flex-grow-1" style="overflow-y: auto">
+			<div class="px-4 py-2">
+				<div class="important-label">Graphs / Charts</div>
+			</div>
+		</div>
+		<div class="d-flex flex-row align-items-center justify-content-between border-top px-4 py-2">
+			<div class="description">${data.username}'s Game History</div>
+			<button data-link="/history?username=${data.username}" type="submit" class="description rounded-border cursor-pointer p-2" style="background-color: blue">GO</button>
 		</div>
 	</div>
 	<div class="d-flex flex-column align-items-center justify-content-center h-100 w-100" style="min-width: 200px; max-width:250px;">
@@ -222,7 +227,7 @@ export default () => {
 							alert("Details updated!");
 							sessionStorage.setItem('display_name', response.display_name);
 							sessionStorage.setItem('profile_pic', 'http://localhost:8000/api' + response.profile_pic);
-							history.replaceState("", "", `/dashboard?username=${params['username']}`);
+							window.history.replaceState("", "", `/dashboard?username=${params['username']}`);
 							router();
 						},
 						error: function(jqXHR, textStatus, errorThrown) {
