@@ -235,35 +235,46 @@ export default () => {
 
 				$('#update-button').click(function() {
 					let newDisplayName = $('#new-display-name').val();
-					let newAvatar = $('#new-avatar')[0].files[0];
-					let fileSize = newAvatar.size / 1024;
 
-					console.log(newDisplayName);
-					console.log(newAvatar);
-					console.log(fileSize);
+					let newAvatar;
+
+					if ($('#new-avatar')[0].files.length > 0) {
+						newAvatar = $('#new-avatar')[0].files[0];
+					} else {
+						newAvatar = null
+					}
+					
+					console.log(newAvatar)
 
 					let form_data = new FormData();
 
-					form_data.append("profile_pic", newAvatar)
 					form_data.append("display_name", newDisplayName)
-					
-					// for update profile
-					if (fileSize > 50)
-						alert("Image size too large.");
-					else {
+
+					if (newAvatar !== null) {
+
+						if (newAvatar.size / 1024 > 50) {
+							alert("Image size too large.");
+							return ;
+						}
+
+						form_data.append("profile_pic", newAvatar)
+
 						$.ajax({
 							url: `http://localhost:8000/api/editUser?username=${params['username']}`,
 							type: 'POST',
 							contentType: 'multipart/form-data',
 							data: form_data,
+							contentType: false,
 							processData: false,
 							success: function(response) {
 								alert("Details updated!");
 								console.log('Details updated');
+								history.replaceState("", "", `/dashboard?username=${params['username']}`);
+								router();
 							},
 							error: function(jqXHR, textStatus, errorThrown) {
 								alert("Failed to update, fucking noob");
-								console.error('Error updating details');
+								console.error('Error updating details:', jqXHR.responseJSON);
 							}
 						});
 					}

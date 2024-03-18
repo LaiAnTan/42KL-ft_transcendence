@@ -27,14 +27,6 @@ def get_auth_config(request):
 	}
 	return Response(auth_config)
 
-class DownloadImageFailed(Exception):
-	
-	"""
-	Custom exception for images that fail to download.
-	"""
-	
-	pass
-
 @api_view(['POST'])
 def postCode(request):
 	code = request.data.get('code')
@@ -46,9 +38,11 @@ def postCode(request):
 	
 	if ft_access_token.status_code != 200:
 		# If the request failed, return an error response
-		return Response({"Error": "Failed to retrieve access token"}, status=ft_access_token.status_code)
+		return Response({"Error": "Failed to retrieve access token"},
+						status=ft_access_token.status_code)
 
-	ft_me = requests.get("https://api.intra.42.fr/v2/me", headers={"Authorization": "Bearer "+ft_access_token.json()["access_token"]})
+	ft_me = requests.get("https://api.intra.42.fr/v2/me",
+					 	 headers={"Authorization": "Bearer "+ft_access_token.json()["access_token"]})
 	ft_me_json = ft_me.json()
 
 	username = ft_me_json.get("login")
@@ -56,7 +50,9 @@ def postCode(request):
 	existing_user = User.objects.filter(username=username).first()
 
 	if existing_user:
-		return Response({"Success": "User already exists", "user_id": existing_user.id, "json": existing_user.to_json()}, status=200)
+		return Response({"Success": "User already exists",
+						 "user_id": existing_user.id,
+						 "json": existing_user.to_json()}, status=200)
 
 	versus_history = []
 	tournament_history = []
