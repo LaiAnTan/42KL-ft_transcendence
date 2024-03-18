@@ -258,27 +258,27 @@ export default () => {
 						}
 
 						form_data.append("profile_pic", newAvatar)
-
-						$.ajax({
-							url: `http://localhost:8000/api/editUser?username=${params['username']}`,
-							type: 'POST',
-							contentType: 'multipart/form-data',
-							data: form_data,
-							contentType: false,
-							processData: false,
-							success: function(response) {
-								alert("Details updated!");
-								console.log('Details updated');
-								history.replaceState("", "", `/dashboard?username=${params['username']}`);
-								router();
-							},
-							error: function(jqXHR, textStatus, errorThrown) {
-								alert("Failed to update, fucking noob");
-								console.error('Error updating details:', jqXHR.responseJSON);
-							}
-						});
 					}
-				});
+
+					$.ajax({
+						url: `http://localhost:8000/api/editUser?username=${params['username']}`,
+						type: 'POST',
+						contentType: 'multipart/form-data',
+						data: form_data,
+						contentType: false,
+						processData: false,
+						success: function(response) {
+							alert("Details updated!");
+							console.log('Details updated');
+							history.replaceState("", "", `/dashboard?username=${params['username']}`);
+							router();
+						},
+						error: function(jqXHR, textStatus, errorThrown) {
+							alert("Failed to update, fucking noob");
+							console.error('Error updating details:', jqXHR.responseJSON);
+						}
+					});
+				})
 
 				return ;
 			} else {
