@@ -46,7 +46,6 @@ export default () => {
 </div>`;
 				app.outerHTML = new_div.outerHTML;
 			} else {
-				console.log(data.versus_history);
 				return data.versus_history;
 			}
 		}).then(versus_history => {
