@@ -45,11 +45,16 @@
 	color: var(--color4);
 }
 
+#settings-button {
+	opacity: 0.8;
+	transition: opacity 0.1s ease;
+}
 #settings-button:hover {
-	animation: spin 1s linear infinite;
+	animation: spin 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+	opacity: 1;
 }
 
 @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    from {transform: rotate(0deg); }
+    to {transform: rotate(360deg); }
 }

@@ -80,7 +80,7 @@ export default () => {
 					new_div.className = 'w-100 h-100';
 					new_div.innerHTML = `
 <div class="d-flex position-absolute align-items-center unselectable ml-4" style="height: 8vh; z-index: 1">
-	<p data-link="/dashboard" class="description scale-up cursor-pointer">GO BACK</p>
+	<p data-link="/menu" class="description scale-up cursor-pointer">GO BACK</p>
 </div>
 <div class="d-flex align-items-center justify-content-center h-100">
 	<div class="important-label" style="font-size: 50px;">User ${params['username']} does not exist.</div>
@@ -91,6 +91,7 @@ export default () => {
 
 				console.log('User found.');
 				console.log(data);
+
 				/* Force a change of the URL to /dashboard?username=_username_,
 					to avoid any page reloads sending a GET to Postgres again,
 					due to loading=true present in querystring */
@@ -105,7 +106,7 @@ export default () => {
 				new_div.className = 'w-100 h-100';
 				let ret = `
 <div class="d-flex position-absolute align-items-center unselectable ml-4" style="height: 8vh; z-index: 1">
-	<p data-link="/dashboard" class="description scale-up cursor-pointer">GO BACK</p>
+	<p data-link="/menu" class="description scale-up cursor-pointer">GO BACK</p>
 </div>
 <div class="d-flex flex-row align-items-center justify-content-around h-100" style="padding: 50px 0;">
 	<div class="d-flex flex-column rounded-border glowing-border h-100 w-100 mx-3" style="min-width: 400px; max-width:600px;">
@@ -116,7 +117,7 @@ export default () => {
 	</div>
 	<div class="d-flex flex-column align-items-center justify-content-center h-100 w-100" style="min-width: 200px; max-width:250px;">
 		<div class="profile-pic" style="position: relative">
-			<img src="${data.profile_pic}" style="z-index: 0; position: absolute" />
+			<img src="${"http://localhost:8000/api" + data.profile_pic}" style="z-index: 0; position: absolute" />
 			${current_user == data.username ? '<img src="/src/assets/wojak-point.png" style="z-index: 1; opacity: 85%" />' : ''}
 		</div>
 		<div class="important-label" style="font-size: 40px;">${data.username.toUpperCase()}</div>
@@ -195,32 +196,89 @@ export default () => {
 				new_div.innerHTML = ret;
 				app.outerHTML = new_div.outerHTML;
 
-				const handleInputChange = (e) => { newDisplayName = e.target.value; }
-				const handleUpdate = async (e) => {
-					e.preventDefault();
-					console.log('Update button clicked');
-					console.log(newDisplayName);
-					const response = await fetch(`http://localhost:8000/api/editUser?username=${params['username']}`, {
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json',
-						},
-						body: JSON.stringify({ "display_name": newDisplayName }),
-					});
-					if (response.ok) {
-						console.log('Display name updated');
+				// const handleInputChange = (e) => { newDisplayName = e.target.value; }
+				// // const handleAvatarChange = (e) => { newAvatar = e.target.files[0];}
+				// const handleUpdate = async (e) => {
+				// 	e.preventDefault();
+				// 	console.log('Update button clicked');
+				// 	console.log(newDisplayName);
+				// 	// console.log(newAvatar);
+
+				// 	// const formData = new FormData();
+				// 	// newDisplayName ? formData.append('display_name', newDisplayName) : '';
+				// 	// newAvatar ? formData.append('profile_pic', newAvatar) : '';
+
+				// 	const response = await fetch(`http://localhost:8000/api/editUser?username=${params['username']}`, {
+				// 		method: 'POST',
+				// 		headers: {
+				// 			'Content-Type': 'application/json',
+				// 		},
+				// 		body: JSON.stringify({ "display_name": newDisplayName, "profile_pic": newAvatar }),
+				// 		// body: formData,
+				// 	});
+				// 	if (response.ok) {
+				// 		console.log('Update Succeeded');
+				// 	} else {
+				// 		console.error('Error Updating');
+				// 	}
+				// }
+
+				// /* EVENT HANDLER */
+				// let ptr_app = document.querySelector('#app');
+				// let newDisplayName = ptr_app.querySelector('#new-display-name');
+				// // let newAvatar = ptr_app.querySelector('#new-avatar');
+				// let updateButton = ptr_app.querySelector('#update-button');
+
+				// newDisplayName.addEventListener('input', handleInputChange);
+				// // newAvatar.addEventListener('input', handleAvatarChange);
+				// updateButton.addEventListener('click', handleUpdate);
+
+				$('#update-button').click(function() {
+					let newDisplayName = $('#new-display-name').val();
+
+					let newAvatar;
+
+					if ($('#new-avatar')[0].files.length > 0) {
+						newAvatar = $('#new-avatar')[0].files[0];
 					} else {
-						console.error('Error updating display name');
+						newAvatar = null
 					}
-				}
+					
+					console.log(newAvatar)
 
-				/* EVENT HANDLER */
-				let ptr_app = document.querySelector('#app');
-				let newDisplayName = ptr_app.querySelector('#new-display-name');
-				let updateButton = ptr_app.querySelector('#update-button');
+					let form_data = new FormData();
 
-				newDisplayName.addEventListener('input', handleInputChange);
-				updateButton.addEventListener('click', handleUpdate);
+					form_data.append("display_name", newDisplayName)
+
+					if (newAvatar !== null) {
+
+						if (newAvatar.size / 1024 > 50) {
+							alert("Image size too large.");
+							return ;
+						}
+
+						form_data.append("profile_pic", newAvatar)
+					}
+
+					$.ajax({
+						url: `http://localhost:8000/api/editUser?username=${params['username']}`,
+						type: 'POST',
+						contentType: 'multipart/form-data',
+						data: form_data,
+						contentType: false,
+						processData: false,
+						success: function(response) {
+							alert("Details updated!");
+							console.log('Details updated');
+							history.replaceState("", "", `/dashboard?username=${params['username']}`);
+							router();
+						},
+						error: function(jqXHR, textStatus, errorThrown) {
+							alert("Failed to update, fucking noob");
+							console.error('Error updating details:', jqXHR.responseJSON);
+						}
+					});
+				})
 
 				return ;
 			} else {
