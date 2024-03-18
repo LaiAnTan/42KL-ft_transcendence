@@ -89,9 +89,6 @@ export default () => {
 					return ;
 				}
 
-				console.log('User found.');
-				console.log(data);
-
 				/* Force a change of the URL to /dashboard?username=_username_,
 					to avoid any page reloads sending a GET to Postgres again,
 					due to loading=true present in querystring */
@@ -196,69 +193,23 @@ export default () => {
 				new_div.innerHTML = ret;
 				app.outerHTML = new_div.outerHTML;
 
-				// const handleInputChange = (e) => { newDisplayName = e.target.value; }
-				// // const handleAvatarChange = (e) => { newAvatar = e.target.files[0];}
-				// const handleUpdate = async (e) => {
-				// 	e.preventDefault();
-				// 	console.log('Update button clicked');
-				// 	console.log(newDisplayName);
-				// 	// console.log(newAvatar);
-
-				// 	// const formData = new FormData();
-				// 	// newDisplayName ? formData.append('display_name', newDisplayName) : '';
-				// 	// newAvatar ? formData.append('profile_pic', newAvatar) : '';
-
-				// 	const response = await fetch(`http://localhost:8000/api/editUser?username=${params['username']}`, {
-				// 		method: 'POST',
-				// 		headers: {
-				// 			'Content-Type': 'application/json',
-				// 		},
-				// 		body: JSON.stringify({ "display_name": newDisplayName, "profile_pic": newAvatar }),
-				// 		// body: formData,
-				// 	});
-				// 	if (response.ok) {
-				// 		console.log('Update Succeeded');
-				// 	} else {
-				// 		console.error('Error Updating');
-				// 	}
-				// }
-
-				// /* EVENT HANDLER */
-				// let ptr_app = document.querySelector('#app');
-				// let newDisplayName = ptr_app.querySelector('#new-display-name');
-				// // let newAvatar = ptr_app.querySelector('#new-avatar');
-				// let updateButton = ptr_app.querySelector('#update-button');
-
-				// newDisplayName.addEventListener('input', handleInputChange);
-				// // newAvatar.addEventListener('input', handleAvatarChange);
-				// updateButton.addEventListener('click', handleUpdate);
-
 				$('#update-button').click(function() {
-					let newDisplayName = $('#new-display-name').val();
-
-					let newAvatar;
-
-					if ($('#new-avatar')[0].files.length > 0) {
-						newAvatar = $('#new-avatar')[0].files[0];
-					} else {
-						newAvatar = null
-					}
-					
-					console.log(newAvatar)
-
-					let form_data = new FormData();
+					var newDisplayName = $('#new-display-name').val();
+					var newAvatar = $('#new-avatar')[0].files.length > 0 ? $('#new-avatar')[0].files[0] : null;
+					var form_data = new FormData();
 
 					form_data.append("display_name", newDisplayName)
-
 					if (newAvatar !== null) {
-
 						if (newAvatar.size / 1024 > 50) {
 							alert("Image size too large.");
 							return ;
 						}
-
 						form_data.append("profile_pic", newAvatar)
 					}
+
+					let oldDisplayName = sessionStorage.getItem('display_name');
+					if (newDisplayName == oldDisplayName && newAvatar == null)
+						return ;
 
 					$.ajax({
 						url: `http://localhost:8000/api/editUser?username=${params['username']}`,
@@ -269,7 +220,8 @@ export default () => {
 						processData: false,
 						success: function(response) {
 							alert("Details updated!");
-							console.log('Details updated');
+							sessionStorage.setItem('display_name', response.display_name);
+							sessionStorage.setItem('profile_pic', 'http://localhost:8000/api' + response.profile_pic);
 							history.replaceState("", "", `/dashboard?username=${params['username']}`);
 							router();
 						},

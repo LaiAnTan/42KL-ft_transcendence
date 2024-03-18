@@ -59,7 +59,7 @@ export function router() {
 	let view = routes[location.pathname];
 
 	if (view) {
-		if (sessionStorage.getItem('username') === null && location.pathname !== '/login' && !location.pathname.includes('/menu')) {
+		if (sessionStorage.getItem('username') === null && location.pathname !== '/' && location.pathname !== '/login' && !location.pathname.includes('/menu')) {
 			console.log(sessionStorage.getItem('username'));
 			history.replaceState("", "", "/login");
 			view = routes['/login'];
