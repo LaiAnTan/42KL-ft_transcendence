@@ -3,7 +3,8 @@ import login from "./login.js";
 import menu from "./menu.js";
 import vsai from "./vs-ai.js";
 import vsplayer from "./vs-player.js";
-import game from "./game.js";
+import pong from "./pong.js";
+import dong from "./dong.js";
 import settings from "./settings.js";
 import dashboard from "./dashboard.js";
 import history from "./history.js";
@@ -15,7 +16,8 @@ const routes = {
 	"/menu": { title: "Menu", render: menu },
 	"/vs-ai": { title: "VS AI", render: vsai },
 	"/vs-player": { title: "VS Player", render: vsplayer},
-	"/game": { title: "Game", render: game },
+	"/pong": { title: "Pong", render: pong },
+	"/dong": { title: "Dong", render: dong },
 	"/settings": { title: "Settings", render: settings },
 	"/dashboard": { title: "Dashboard", render: dashboard },
 	"/history": { title: "History", render: history }
