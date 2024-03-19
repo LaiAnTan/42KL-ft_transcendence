@@ -46,4 +46,13 @@ fclean:
 
 	@echo "$(C_RESET)$(C_GREEN)Done!$(C_RESET)\n"
 
+postgres:
+	docker-compose -f ./docker-compose.yml exec postgres /bin/bash
+
+django:
+	docker-compose -f ./docker-compose.yml exec django /bin/bash
+
+javascript:
+	docker-compose -f ./docker-compose.yml exec javascript /bin/bash
+
 re: down fclean up

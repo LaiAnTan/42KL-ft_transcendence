@@ -1,10 +1,16 @@
 from django.urls import path
-from .views import views_User, views_Matchup, views_Versus, views_Tournament, authentication, views_GameRoom
+from django.conf.urls.static import static
+from .views import views_User, views_Matchup, views_Versus, views_Tournament, authentication, views_GameRoom, alert
+from django.conf import settings
+
 
 urlpatterns = [
     path('addUser', views_User.addUser),
     path('getUser', views_User.getUser),
     path('allUsers', views_User.getAllUsers),
+    path('editUser', views_User.editUser),
+    path('deleteUser', views_User.deleteUser),
+    path('uploadProfile',  views_User.uploadProfile),
     path('addMatchup', views_Matchup.addMatchup),
     path('getMatchup', views_Matchup.getMatchup),
     path('allMatchups', views_Matchup.getAllMatchups),
@@ -15,10 +21,17 @@ urlpatterns = [
     path('getTournament', views_Tournament.getTournament),
     path('allTournaments', views_Tournament.getAllTournament),
     path('authConfig/', authentication.get_auth_config),
-	path('postCode', authentication.postCode),
-	path('matchmaking', views_GameRoom.matchmaking),
-	path('closeRoom', views_GameRoom.closeRoom),
-	path('joinRoom/<str:room_code>', views_GameRoom.joinRoom),
-	path('allRooms', views_GameRoom.allRooms),
-	path('closeAllRooms', views_GameRoom.closeAllRooms),
-]
+    path('postCode', authentication.postCode),
+    path('matchmaking', views_GameRoom.matchmaking),
+    path('closeRoom', views_GameRoom.closeRoom),
+    path('joinRoom/<str:room_code>', views_GameRoom.joinRoom),
+    path('allRooms', views_GameRoom.allRooms),
+    path('closeAllRooms', views_GameRoom.closeAllRooms),
+    path('exitRoom', views_GameRoom.exitRoom),
+    path('alert', alert.alert),
+    path('tournamentInit', views_GameRoom.tournamentInit),
+    path('tournamentAssign', views_GameRoom.tournamentAssign),
+    path('tournamentAllRooms', views_GameRoom.tournamentAllRooms),
+    path('tournamentEnd', views_GameRoom.tournamentEnd)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

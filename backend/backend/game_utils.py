@@ -15,3 +15,4 @@ class Paddle:
         self.x = x
         self.y = y - (height / 2)
         self.count = 0
+        self.score = 0

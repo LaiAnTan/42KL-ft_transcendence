@@ -1,6 +1,9 @@
 from rest_framework import serializers
 from base.models import User, Matchup, Versus, Tournament
 
+import os
+from django.conf import settings
+
 
 class UserSerializer(serializers.ModelSerializer):
 
@@ -32,3 +35,7 @@ class TournamentSerializer(serializers.ModelSerializer):
 
         model = Tournament
         fields = '__all__'
+
+class ImageSerializer(serializers.Serializer):
+
+    image = serializers.ImageField()
