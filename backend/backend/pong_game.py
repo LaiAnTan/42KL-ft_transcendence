@@ -56,6 +56,9 @@ class Pong(AsyncJsonWebsocketConsumer):
             await self.close()
             return
 
+        if self.rooms[self.room_id]['player_in_room'] == 2:
+            asyncio.create_task(self.run())
+
         await self.accept()
 
     async def disconnect(self, close_code):

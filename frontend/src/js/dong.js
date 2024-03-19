@@ -1,4 +1,20 @@
-import { loadCSS, router } from "./main.js";
+import { navigate, loadCSS } from "./main.js";
+
+function game() {
+    loadCSS("src/css/game.css");
+
+    let player_1_score = 0;
+    let player_2_score = 0;
+    let player_1_username = " ";
+    let player_2_username = " ";
+    let is_animating = false;
+    var socket;
+    let id = "1"
+    var roomID;
+    var clientID = sessionStorage.getItem('username');
+
+    let isLeftPaddleAnimating = false;
+    let isRightPaddleAnimating = false;
 
 function isJSON(str) {
 	try {
@@ -9,23 +25,80 @@ function isJSON(str) {
 	}
 }
 
-function replace_html(html_content) {
-	let app = document.querySelector('#app');
-	const new_div = document.createElement('div');
-	new_div.setAttribute('id', 'app');
-	new_div.className = 'w-100 h-100';
-	new_div.innerHTML = html_content;
-	app.outerHTML = new_div.outerHTML;
-}
-
-function game() {
-	let config_palette = localStorage.getItem("palette");
-	loadCSS("src/css/palettes/" + config_palette + ".css");
-	loadCSS("src/css/game.css");
-
-	var is_animating = false;
-	var isLeftPaddleAnimating = false;
-	var isRightPaddleAnimating = false;
+    fetch("http://localhost:8000/api/matchmaking?clientID=" + clientID + "&gameMode=dong", {
+        method: "GET"
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            throw new Error(data.error);
+        }
+        roomID = data.roomID;
+        socket = new WebSocket(`ws://localhost:8000/dong?roomID=${roomID}&clientID=${clientID}`);
+        // Set up WebSocket event listeners
+        socket.onopen = function(event) {
+            console.log("WebSocket connection opened");
+            console.log("client", clientID, "joined room", roomID);
+        };
+        socket.onmessage = function(event) {
+            // console.log( "Received message:", event.data);
+            if (isJSON(event.data)) {
+                let endElement = document.getElementById("dongball");
+                let eventData = JSON.parse(event.data);
+                if (eventData.room_id && eventData.player_1 && eventData.player_2 && eventData.player_1_score && eventData.player_2_score && eventData.match_type) {
+                    console.log("Game ended!");
+                    console.log("data:", eventData);
+                    fetch(`http://localhost:8000/api/closeRoom?room_code=${eventData.room_id}&gameMode=pong`, {
+                        method: "DELETE"
+                    })
+                    .then(response => response.json())
+                    .catch(error => {
+                        console.error('Error closing room:', error);
+                    });
+                    socket.close();
+                }
+                if (eventData.console != undefined) {
+                    console.log(eventData.console);
+                }
+                if (endElement !== null) {
+                    if (eventData.players && eventData.players.length > 0) {
+                        document.getElementById('player1name').textContent = eventData.players[0].toString();
+                        document.getElementById('player2name').textContent = eventData.players[1].toString();
+                    }
+                    tweenBallPosition(endElement, eventData.ball_x, eventData.ball_y, 1);
+                    tweenPaddlePosition(document.getElementById('paddle_left'), eventData.paddle_left_y, 2);
+                    tweenPaddlePosition(document.getElementById('paddle_right'), eventData.paddle_right_y, 2);
+                    if (eventData.hit != undefined) {
+                        if (eventData.hit == "HIT WALL") {
+                            playWallSound();
+                        }
+                        if (eventData.hit == "HIT LEFT") {
+                            player_2_score += 1;
+                            document.getElementById('player2score').textContent = player_2_score.toString();
+                        }
+                        if (eventData.hit == "HIT RIGHT") {
+                            player_1_score += 1;
+                            document.getElementById('player1score').textContent = player_1_score.toString();
+                        }
+                    }
+                    return ;
+                } 
+                else {
+                    console.error("Element with id 'end' not found.");
+                }
+            }
+        };
+        socket.onclose = function(event) {
+            console.log("WebSocket connection closed");
+        };
+        socket.onerror = function(event) {
+            console.error("WebSocket error:", event);
+            console.error("WebSocket connection closed due to room already have 2 players or room not found");
+        };
+    })
+    .catch(error => {
+        console.error("Error: ", error);
+    });
 
 	function tweenPaddlePosition(element, targetY, duration) {
 		let isAnimating = element.classList.contains('paddle-left') ? isLeftPaddleAnimating : isRightPaddleAnimating;
@@ -335,15 +408,37 @@ function game() {
 				direction = "PADDLE_STOP";
 			}
 
-			const message = {
-				id: "2",
-				direction: direction
-			};
-		
-			// Send the WebSocket message
-			socket.send(JSON.stringify(message));
-		}
-	});
+            const message = {
+                id: "2",
+                direction: direction
+            };
+    
+            // Send the WebSocket message
+            socket.send(JSON.stringify(message));
+        }
+    });
+
+    return `
+        <div class="vw-100 vh-100 p-5">
+            <div class="d-flex justify-content-between w-80 mx-auto pb-3">
+                <div class="d-flex flex-row player-text player-1-text-color justify-content-end align-items-end">
+                    <div id=player1score class="player-score-text-size pr-2">${player_1_score.toString()}</div>
+                    <div id=player1name class="player-username-text-size pb-2">${player_1_username}</div>
+                </div>
+                <div class="d-flex flex-row player-text player-2-text-color justify-content-end align-items-end">
+                    <div id=player2name class="player-username-text-size pb-2">${player_2_username}</div>
+                    <div id=player2score class="player-score-text-size pl-2">${player_2_score.toString()}</div>
+                </div>
+            </div>
+            <div class="game-container mx-auto">
+                <div class="game-box w-100">
+                    <div id="dongball"></div>
+                    <div id="paddle_left"></div>
+                    <div id="paddle_right"></div>
+                </div>
+            </div>
+        </div>
+    `;
 }
 
 export default game;
