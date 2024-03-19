@@ -5,13 +5,13 @@ function game() {
 
     let player_1_score = 0;
     let player_2_score = 0;
-    let player_1_username = "sealw4ll";
-    let player_2_username = "lwilliam";
+    let player_1_username = " ";
+    let player_2_username = " ";
     let is_animating = false;
     var socket;
     let id = "1"
     var roomID;
-    var clientID = 123;
+    var clientID = sessionStorage.getItem('username');
 
     let isLeftPaddleAnimating = false;
     let isRightPaddleAnimating = false;
@@ -30,6 +30,9 @@ function game() {
     })
     .then(response => response.json())
     .then(data => {
+        if (data.error) {
+            throw new Error(data.error);
+        }
         roomID = data.roomID;
         socket = new WebSocket(`ws://localhost:8000/dong?roomID=${roomID}&clientID=${clientID}`);
         // Set up WebSocket event listeners
@@ -42,10 +45,26 @@ function game() {
             if (isJSON(event.data)) {
                 let endElement = document.getElementById("dongball");
                 let eventData = JSON.parse(event.data);
+                if (eventData.room_id && eventData.player_1 && eventData.player_2 && eventData.player_1_score && eventData.player_2_score && eventData.match_type) {
+                    console.log("Game ended!");
+                    console.log("data:", eventData);
+                    fetch(`http://localhost:8000/api/closeRoom?room_code=${eventData.room_id}&gameMode=pong`, {
+                        method: "DELETE"
+                    })
+                    .then(response => response.json())
+                    .catch(error => {
+                        console.error('Error closing room:', error);
+                    });
+                    socket.close();
+                }
                 if (eventData.console != undefined) {
                     console.log(eventData.console);
                 }
                 if (endElement !== null) {
+                    if (eventData.players && eventData.players.length > 0) {
+                        document.getElementById('player1name').textContent = eventData.players[0].toString();
+                        document.getElementById('player2name').textContent = eventData.players[1].toString();
+                    }
                     tweenBallPosition(endElement, eventData.ball_x, eventData.ball_y, 1);
                     tweenPaddlePosition(document.getElementById('paddle_left'), eventData.paddle_left_y, 2);
                     tweenPaddlePosition(document.getElementById('paddle_right'), eventData.paddle_right_y, 2);
@@ -294,8 +313,6 @@ function game() {
                     <div id="dongball"></div>
                     <div id="paddle_left"></div>
                     <div id="paddle_right"></div>
-                    <button id="game">Start Game</button>
-                    <button id="end">End Websocket</button>
                 </div>
             </div>
         </div>
