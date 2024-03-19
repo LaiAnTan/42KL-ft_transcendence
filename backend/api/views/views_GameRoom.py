@@ -37,26 +37,6 @@ def alreadyInRoom(client_id):
 
 @api_view(['GET'])
 def matchmaking(request):
-<<<<<<< HEAD
-	client_id = request.GET.get('clientID')
-
-	# Check if client is already in a room
-	for room_code, clients in rooms.items():
-		if client_id in clients:
-			return Response({'roomID': room_code, 'players': rooms[room_code]})
-
-	# If not already in a room, look for available room
-	for room_code, clients in rooms.items():
-		if len(clients) < MAX_CLIENTS_PER_ROOM:
-			if client_id not in clients:
-				clients.append(client_id)
-			return Response({'roomID': room_code, 'players': rooms[room_code]})
-
-	# If no available room, create a new one
-	room_code = generateRoomCode()
-	rooms[room_code].append(client_id)
-	return Response({'roomID': room_code, 'players': rooms[room_code]})
-=======
     client_id = request.GET.get('clientID')
     game_mode = request.GET.get('gameMode')
 
@@ -74,7 +54,6 @@ def matchmaking(request):
 
     except ValueError as e:
         return Response({'error': str(e)}, status=400)
->>>>>>> 26ab1ace0992db6fb6eb747ad6668d1e59f3e3d6
 
 # close room when game is full (2 player)
 @api_view(['DELETE'])

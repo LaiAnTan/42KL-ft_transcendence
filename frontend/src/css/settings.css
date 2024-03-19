@@ -176,3 +176,7 @@
 .color-column {
     height: 50px; /* Set to desired height */
 }
+
+.theme-picker {
+	font-size: 15px !important;
+}
