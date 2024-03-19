@@ -20,7 +20,7 @@ class Pong(AsyncJsonWebsocketConsumer):
     ball_start_dist = 5
     ball_speed = 1.0
     ball_rampup = 0.02
-    points_to_win = 5
+    points_to_win = 10
 
     rooms = {}
 
@@ -55,7 +55,7 @@ class Pong(AsyncJsonWebsocketConsumer):
             self.rooms[self.room_id]['player_in_room'] -= 1
             await self.close()
             return
-        
+
         if self.rooms[self.room_id]['player_in_room'] == 2:
             asyncio.create_task(self.run())
 
