@@ -67,7 +67,7 @@ class Pong(AsyncJsonWebsocketConsumer):
     async def disconnect(self, close_code):
         self.rooms[self.room_id]['player_in_room'] -= 1
         self.rooms[self.room_id]['game_started'] = False
-        self.rooms[self.room_id]['players'].remove(self.client_id)
+        # self.rooms[self.room_id]['players'].remove(self.client_id)
         if self.rooms[self.room_id]['player_in_room'] == 0:
             del self.rooms[self.room_id]
 

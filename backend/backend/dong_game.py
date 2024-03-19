@@ -20,7 +20,7 @@ class Dong(AsyncJsonWebsocketConsumer):
     ball_start_dist = 5
     ball_speed = 1.0
     ball_rampup = 0.02
-    points_to_win = 10
+    points_to_win = 3
 
     rooms = {}
 
@@ -47,8 +47,9 @@ class Dong(AsyncJsonWebsocketConsumer):
                 'players': [],
             }
 
-        self.rooms[self.room_id]['player_in_room'] += 1
-        self.rooms[self.room_id]['players'].append(self.client_id)
+        if self.client_id not in self.rooms[self.room_id]['players']:
+            self.rooms[self.room_id]['player_in_room'] += 1
+            self.rooms[self.room_id]['players'].append(self.client_id)
 
         if self.rooms[self.room_id]['player_in_room'] > 2:
             await self.send_json({'message': 'ROOM FULL'})
@@ -66,7 +67,7 @@ class Dong(AsyncJsonWebsocketConsumer):
     async def disconnect(self, close_code):
         self.rooms[self.room_id]['player_in_room'] -= 1
         self.rooms[self.room_id]['game_started'] = False
-        self.rooms[self.room_id]['players'].remove(self.client_id)
+        # self.rooms[self.room_id]['players'].remove(self.client_id)
         if self.rooms[self.room_id]['player_in_room'] == 0:
             del self.rooms[self.room_id]
 
