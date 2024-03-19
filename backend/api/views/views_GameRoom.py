@@ -17,22 +17,20 @@ def generateRoomCode(rooms):
 
 def joinRoom(rooms, client_id):
     for room_code, clients in rooms.items():
+        if client_id in clients:
+            return room_code
         if len(clients) < MAX_CLIENTS_PER_ROOM:
-            if client_id in clients:
-                raise ValueError('Client already in room')
             clients.append(client_id)
             return room_code
     room_code = generateRoomCode(rooms)
     rooms[room_code] = [client_id]
     return room_code
 
-def alreadyInRoom(client_id):
-    for clients in pong_rooms.values():
+def alreadyInRoom(client_id, rooms):
+    for clients in rooms.values():
         if client_id in clients:
             return True
-    for clients in dong_rooms.values():
-        if client_id in clients:
-            return True
+
     return False
 
 @api_view(['GET'])
@@ -40,20 +38,17 @@ def matchmaking(request):
     client_id = request.GET.get('clientID')
     game_mode = request.GET.get('gameMode')
 
-    try:
-        if alreadyInRoom(client_id):
-            return Response({'error': 'Client already in room'}, status=400)
-        if game_mode == 'pong':
-            room_code = joinRoom(pong_rooms, client_id)
-        elif game_mode == 'dong':
-            room_code = joinRoom(dong_rooms, client_id)
-        else:
-            return Response({'error': 'Invalid game mode'}, status=400)
-
-        return Response({'roomID': room_code}, status=200)
-
-    except ValueError as e:
-        return Response({'error': str(e)}, status=400)
+    if game_mode == 'pong':
+        if alreadyInRoom(client_id, dong_rooms):
+            return Response({'error': 'Client in another game mode'}, status=400)
+        room_code = joinRoom(pong_rooms, client_id)
+    elif game_mode == 'dong':
+        if alreadyInRoom(client_id, pong_rooms):
+            return Response({'error': 'Client in another game mode'}, status=400)
+        room_code = joinRoom(dong_rooms, client_id)
+    else:
+        return Response({'error': 'Invalid game mode'}, status=400)
+    return Response({'roomID': room_code}, status=200)
 
 # close room when game is full (2 player)
 @api_view(['DELETE'])
@@ -89,6 +84,23 @@ def closeAllRooms(request):
 @api_view(['GET'])
 def allRooms(_request):
     return Response({'pong': pong_rooms, 'dong': dong_rooms})
+
+@api_view(['DELETE'])
+def exitRoom(request):
+    client_id = request.GET.get('clientID')
+    game_mode = request.GET.get('gameMode')
+    if game_mode == 'pong':
+        rooms = pong_rooms
+    elif game_mode == 'dong':
+        rooms = dong_rooms
+    else:
+        return Response({'error': 'Invalid game mode'}, status=400)
+    for room_code, clients in rooms.items():
+        if len(clients) == 1:
+            if client_id in clients:
+                clients.remove(client_id)
+                return Response({'message': 'Client removed from room'}, status=200)
+    return Response({'message': 'Client not found in any room'}, status=404)
 
 tournament_rooms = {}
 tournament_running = False

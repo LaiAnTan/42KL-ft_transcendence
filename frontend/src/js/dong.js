@@ -9,7 +9,7 @@ function game() {
     let player_2_username = " ";
     let is_animating = false;
     var socket;
-    let id = "1"
+    let id = sessionStorage.getItem('username');
     var roomID;
     var clientID = sessionStorage.getItem('username');
 
@@ -22,6 +22,26 @@ function game() {
             return true;
         } catch (e) {
             return false;
+        }
+    }
+
+    window.addEventListener("popstate", handlePopState);
+
+    function handlePopState(event) {
+        if (window.location.pathname !== "/dong") {
+            const confirmed = confirm("Are you sure you want to leave the game?");
+            if (!confirmed) {
+                history.pushState(null, null, window.location.href);
+            }
+            fetch(`http://localhost:8000/api/exitRoom?clientID=${clientID}&gameMode=dong`, {
+                method: "DELETE"
+            })
+            .then(response => response.json())
+            .catch(error => {
+                console.error('Error exiting room:', error);
+            });
+            socket.close();
+            window.removeEventListener("popstate", handlePopState);
         }
     }
 
@@ -48,7 +68,7 @@ function game() {
                 if (eventData.room_id && eventData.player_1 && eventData.player_2 && eventData.player_1_score && eventData.player_2_score && eventData.match_type) {
                     console.log("Game ended!");
                     console.log("data:", eventData);
-                    fetch(`http://localhost:8000/api/closeRoom?room_code=${eventData.room_id}&gameMode=pong`, {
+                    fetch(`http://localhost:8000/api/closeRoom?room_code=${eventData.room_id}&gameMode=dong`, {
                         method: "DELETE"
                     })
                     .then(response => response.json())
@@ -56,6 +76,7 @@ function game() {
                         console.error('Error closing room:', error);
                     });
                     socket.close();
+                    navigate("/vs-player");
                 }
                 if (eventData.console != undefined) {
                     console.log(eventData.console);

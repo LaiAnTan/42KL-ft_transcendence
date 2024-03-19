@@ -47,8 +47,9 @@ class Dong(AsyncJsonWebsocketConsumer):
                 'players': [],
             }
 
-        self.rooms[self.room_id]['player_in_room'] += 1
-        self.rooms[self.room_id]['players'].append(self.client_id)
+        if self.client_id not in self.rooms[self.room_id]['players']:
+            self.rooms[self.room_id]['player_in_room'] += 1
+            self.rooms[self.room_id]['players'].append(self.client_id)
 
         if self.rooms[self.room_id]['player_in_room'] > 2:
             await self.send_json({'message': 'ROOM FULL'})
@@ -57,6 +58,8 @@ class Dong(AsyncJsonWebsocketConsumer):
             return
 
         if self.rooms[self.room_id]['player_in_room'] == 2:
+            self.rooms[self.room_id]["paddle_left"] = Paddle(self.rooms[self.room_id]['players'][0], height=25, width=2, x=self.paddle_padding, y=50)
+            self.rooms[self.room_id]["paddle_right"] = Paddle(self.rooms[self.room_id]['players'][1], height=25, width=2, x=self.game_width - self.paddle_padding, y=50)
             asyncio.create_task(self.run())
 
         await self.accept()
@@ -64,7 +67,7 @@ class Dong(AsyncJsonWebsocketConsumer):
     async def disconnect(self, close_code):
         self.rooms[self.room_id]['player_in_room'] -= 1
         self.rooms[self.room_id]['game_started'] = False
-        self.rooms[self.room_id]['players'].remove(self.client_id)
+        # self.rooms[self.room_id]['players'].remove(self.client_id)
         if self.rooms[self.room_id]['player_in_room'] == 0:
             del self.rooms[self.room_id]
 
