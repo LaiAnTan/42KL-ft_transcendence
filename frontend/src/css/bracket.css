@@ -1,8 +1,29 @@
+.menu-header::after {
+	background: linear-gradient(to bottom, var(--color3), transparent);
+}
+
+.menu-header-title {
+	text-shadow: 0 0 25px var(--color3);
+}
+
+.menu-component:hover {
+	box-shadow: 0 0 40px var(--color3);
+}
+
+.menu-component-title {
+	color: var(--color3);
+}
+
+.menu-component-description {
+	margin: 0 !important;
+	padding: 0 !important;
+	color: var(--color3);
+}
 
 .wrapper {
 	display: flex;
 	flex-direction: row;
-	height: 100%;
+	height: 85%;
 	justify-content: center;
 	align-items: center;
 }
@@ -20,7 +41,6 @@
 }
 
 .box {
-	padding: 35px 10px;
 	width: 300px;
 	height: 100px;
 	margin: 20px;
@@ -31,24 +51,36 @@
 }
 
 .middle {
-	margin: 80px 108px;
+	margin: 90px 108px;
 }
 
 .line {
-	border: 3px solid white;
+	border: 3px solid var(--color3);
 	border-left: hidden;
-	z-index: -1;
+	/* z-index: -1; */
 }
 
 .end {
 	position: absolute;
-	height: 260px;
-	width: 100px;
-	margin-right: 115px;
+	height: 280px;
+	width: 370px;
+	margin-right: 385px;
 }
 
 .start {
-	margin: 60px -100px;
-	width: 160px;
-	height: 130px;
+	margin: 70px -80px 70px -290px;
+	width: 400px;
+	height: 140px;
+}
+
+.box-content {
+	height: 50%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+}
+
+.box-content-up {
+	border-bottom: 3px solid var(--color3);
 }
