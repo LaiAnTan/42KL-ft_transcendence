@@ -31,6 +31,7 @@ urlpatterns = [
     path('tournamentInit', views_GameRoom.tournamentInit),
     path('tournamentAssign', views_GameRoom.tournamentAssign),
     path('tournamentAllRooms', views_GameRoom.tournamentAllRooms),
-    path('tournamentEnd', views_GameRoom.tournamentEnd)
+    path('tournamentEnd', views_GameRoom.tournamentEnd),
+	path('tournamentLoser', views_GameRoom.tournamentLoser),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

@@ -6,6 +6,7 @@ import vsplayer from "./vs-player.js";
 import game from "./game.js";
 import settings from "./settings.js";
 import dashboard from "./dashboard.js";
+import bracket from "./bracket.js";
 
 
 
@@ -18,6 +19,7 @@ const routes = {
 	"/game": { title: "Game", render: game },
 	"/settings": { title: "Settings", render: settings },
 	"/dashboard": { title: "Dashboard", render: dashboard },
+	"/bracket": { title: "Bracket", render: bracket },
 };
 
 export function loadCSS(href) {
