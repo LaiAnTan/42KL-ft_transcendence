@@ -195,43 +195,6 @@ export default () => {
 				new_div.innerHTML = ret;
 				app.outerHTML = new_div.outerHTML;
 
-				// const handleInputChange = (e) => { newDisplayName = e.target.value; }
-				// // const handleAvatarChange = (e) => { newAvatar = e.target.files[0];}
-				// const handleUpdate = async (e) => {
-				// 	e.preventDefault();
-				// 	console.log('Update button clicked');
-				// 	console.log(newDisplayName);
-				// 	// console.log(newAvatar);
-
-				// 	// const formData = new FormData();
-				// 	// newDisplayName ? formData.append('display_name', newDisplayName) : '';
-				// 	// newAvatar ? formData.append('profile_pic', newAvatar) : '';
-
-				// 	const response = await fetch(`http://localhost:8000/api/editUser?username=${params['username']}`, {
-				// 		method: 'POST',
-				// 		headers: {
-				// 			'Content-Type': 'application/json',
-				// 		},
-				// 		body: JSON.stringify({ "display_name": newDisplayName, "profile_pic": newAvatar }),
-				// 		// body: formData,
-				// 	});
-				// 	if (response.ok) {
-				// 		console.log('Update Succeeded');
-				// 	} else {
-				// 		console.error('Error Updating');
-				// 	}
-				// }
-
-				// /* EVENT HANDLER */
-				// let ptr_app = document.querySelector('#app');
-				// let newDisplayName = ptr_app.querySelector('#new-display-name');
-				// // let newAvatar = ptr_app.querySelector('#new-avatar');
-				// let updateButton = ptr_app.querySelector('#update-button');
-
-				// newDisplayName.addEventListener('input', handleInputChange);
-				// // newAvatar.addEventListener('input', handleAvatarChange);
-				// updateButton.addEventListener('click', handleUpdate);
-
 				$('#update-button').click(function() {
 					let newDisplayName = $('#new-display-name').val();
 					let newAvatar = $('#new-avatar')[0].files[0];

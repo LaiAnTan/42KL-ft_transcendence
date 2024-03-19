@@ -60,6 +60,192 @@ export default () => {
 					</div>
 				</div>
 			</div>
+			<div class="border-left border-right h-100 w-100 p-4">
+				<p class="important-label">THEME</p>
+				<p class="description">Customise UI colours</p>
+				<div id="palette" class="flex-grow-1 grid-container rounded-border w-100 pt-2 px-4" style="overflow-y: auto">
+					<div class="grid-item">
+						<p class="description">Default</p>
+						<div class="color-button button-like rounded-border">
+							<div class="color-column" style="background-color: var(--default-1);"></div>
+							<div class="color-column" style="background-color: var(--default-2);"></div>
+							<div class="color-column" style="background-color: var(--default-3);"></div>
+							<div class="color-column" style="background-color: var(--default-4);"></div>
+							<div class="color-column" style="background-color: var(--default-5);"></div>
+						</div>
+					</div>
+					<div class="grid-item">
+						<p class="description">Ding's Dazzle</p>
+						<div class="color-button button-like rounded-border">
+							<div class="color-column" style="background-color: var(--dings-dazzle-1);"></div>
+							<div class="color-column" style="background-color: var(--dings-dazzle-2);"></div>
+							<div class="color-column" style="background-color: var(--dings-dazzle-3);"></div>
+							<div class="color-column" style="background-color: var(--dings-dazzle-4);"></div>
+							<div class="color-column" style="background-color: var(--dings-dazzle-5);"></div>
+						</div>
+					</div>
+					<div class="grid-item">
+						<p class="description">Ding's Delight</p>
+						<div class="color-button button-like rounded-border">
+							<div class="color-column" style="background-color: var(--dings-delight-1);"></div>
+							<div class="color-column" style="background-color: var(--dings-delight-2);"></div>
+							<div class="color-column" style="background-color: var(--dings-delight-3);"></div>
+							<div class="color-column" style="background-color: var(--dings-delight-4);"></div>
+							<div class="color-column" style="background-color: var(--dings-delight-5);"></div>
+						</div>
+					</div>
+					<div class="grid-item">
+						<p class="description">Electric Dream</p>
+						<div class="color-button button-like rounded-border">
+							<div class="color-column" style="background-color: var(--electric-dream-1);"></div>
+							<div class="color-column" style="background-color: var(--electric-dream-2);"></div>
+							<div class="color-column" style="background-color: var(--electric-dream-3);"></div>
+							<div class="color-column" style="background-color: var(--electric-dream-4);"></div>
+							<div class="color-column" style="background-color: var(--electric-dream-5);"></div>
+						</div>
+					</div>
+					<div class="grid-item">
+						<p class="description">Laser Lemonade</p>
+						<div class="color-button button-like rounded-border">
+							<div class="color-column" style="background-color: var(--laser-lemonade-1);"></div>
+							<div class="color-column" style="background-color: var(--laser-lemonade-2);"></div>
+							<div class="color-column" style="background-color: var(--laser-lemonade-3);"></div>
+							<div class="color-column" style="background-color: var(--laser-lemonade-4);"></div>
+							<div class="color-column" style="background-color: var(--laser-lemonade-5);"></div>
+						</div>
+					</div>
+					<div class="grid-item">
+						<p class="description">Citrus Surge</p>
+						<div class="color-button button-like rounded-border">
+							<div class="color-column" style="background-color: var(--citrus-surge-1);"></div>
+							<div class="color-column" style="background-color: var(--citrus-surge-2);"></div>
+							<div class="color-column" style="background-color: var(--citrus-surge-3);"></div>
+							<div class="color-column" style="background-color: var(--citrus-surge-4);"></div>
+							<div class="color-column" style="background-color: var(--citrus-surge-5);"></div>
+						</div>
+					</div>
+					<div class="grid-item">
+						<p class="description">Neon Bliss</p>
+						<div class="color-button button-like rounded-border">
+							<div class="color-column" style="background-color: var(--neon-bliss-1);"></div>
+							<div class="color-column" style="background-color: var(--neon-bliss-2);"></div>
+							<div class="color-column" style="background-color: var(--neon-bliss-3);"></div>
+							<div class="color-column" style="background-color: var(--neon-bliss-4);"></div>
+							<div class="color-column" style="background-color: var(--neon-bliss-5);"></div>
+						</div>
+					</div>
+					<div class="grid-item">
+						<p class="description">Radiant Rebellion</p>
+						<div class="color-button button-like rounded-border">
+							<div class="color-column" style="background-color: var(--radiant-rebellion-1);"></div>
+							<div class="color-column" style="background-color: var(--radiant-rebellion-2);"></div>
+							<div class="color-column" style="background-color: var(--radiant-rebellion-3);"></div>
+							<div class="color-column" style="background-color: var(--radiant-rebellion-4);"></div>
+							<div class="color-column" style="background-color: var(--radiant-rebellion-5);"></div>
+						</div>
+					</div>
+					<div class="grid-item">
+						<p class="description">Vivid Voltage</p>
+						<div class="color-button button-like rounded-border">
+							<div class="color-column" style="background-color: var(--vivid-voltage-1);"></div>
+							<div class="color-column" style="background-color: var(--vivid-voltage-2);"></div>
+							<div class="color-column" style="background-color: var(--vivid-voltage-3);"></div>
+							<div class="color-column" style="background-color: var(--vivid-voltage-4);"></div>
+							<div class="color-column" style="background-color: var(--vivid-voltage-5);"></div>
+						</div>
+					</div>
+					<div class="grid-item">
+						<p class="description">Ruby Radiance</p>
+						<div class="color-button button-like rounded-border">
+							<div class="color-column" style="background-color: var(--ruby-radiance-1);"></div>
+							<div class="color-column" style="background-color: var(--ruby-radiance-2);"></div>
+							<div class="color-column" style="background-color: var(--ruby-radiance-3);"></div>
+							<div class="color-column" style="background-color: var(--ruby-radiance-4);"></div>
+							<div class="color-column" style="background-color: var(--ruby-radiance-5);"></div>
+						</div>
+					</div>
+					<div class="grid-item">
+						<p class="description">Cerulean Spectra</p>
+						<div class="color-button button-like rounded-border">
+							<div class="color-column" style="background-color: var(--cerulean-spectra-1);"></div>
+							<div class="color-column" style="background-color: var(--cerulean-spectra-2);"></div>
+							<div class="color-column" style="background-color: var(--cerulean-spectra-3);"></div>
+							<div class="color-column" style="background-color: var(--cerulean-spectra-4);"></div>
+							<div class="color-column" style="background-color: var(--cerulean-spectra-5);"></div>
+						</div>
+					</div>
+					<div class="grid-item">
+					<p class="description">Jade Jubilee</p>
+						<div class="color-button button-like rounded-border">
+							<div class="color-column" style="background-color: var(--jade-jubilee-1);"></div>
+							<div class="color-column" style="background-color: var(--jade-jubilee-2);"></div>
+							<div class="color-column" style="background-color: var(--jade-jubilee-3);"></div>
+							<div class="color-column" style="background-color: var(--jade-jubilee-4);"></div>
+							<div class="color-column" style="background-color: var(--jade-jubilee-5);"></div>
+						</div>
+					</div>
+					<div class="grid-item">
+						<p class="description">Magenta Magic</p>
+						<div class="color-button button-like rounded-border">
+							<div class="color-column" style="background-color: var(--magenta-magic-1);"></div>
+							<div class="color-column" style="background-color: var(--magenta-magic-2);"></div>
+							<div class="color-column" style="background-color: var(--magenta-magic-3);"></div>
+							<div class="color-column" style="background-color: var(--magenta-magic-4);"></div>
+							<div class="color-column" style="background-color: var(--magenta-magic-5);"></div>
+						</div>
+					</div>
+					<div class="grid-item">
+						<p class="description">Sunset Glow</p>
+						<div class="color-button button-like rounded-border">
+							<div class="color-column" style="background-color: var(--sunset-glow-1);"></div>
+							<div class="color-column" style="background-color: var(--sunset-glow-2);"></div>
+							<div class="color-column" style="background-color: var(--sunset-glow-3);"></div>
+							<div class="color-column" style="background-color: var(--sunset-glow-4);"></div>
+							<div class="color-column" style="background-color: var(--sunset-glow-5);"></div>
+						</div>
+					</div>
+					<div class="grid-item">
+						<p class="description">Dusk Horizon</p>
+						<div class="color-button button-like rounded-border">
+							<div class="color-column" style="background-color: var(--dusk-horizon-1);"></div>
+							<div class="color-column" style="background-color: var(--dusk-horizon-2);"></div>
+							<div class="color-column" style="background-color: var(--dusk-horizon-3);"></div>
+							<div class="color-column" style="background-color: var(--dusk-horizon-4);"></div>
+							<div class="color-column" style="background-color: var(--dusk-horizon-5);"></div>
+						</div>
+					</div>
+					<div class="grid-item">
+						<p class="description">Iykyk</p>
+						<div class="color-button button-like rounded-border">
+							<div class="color-column" style="background-color: var(--iykyk-1);"></div>
+							<div class="color-column" style="background-color: var(--iykyk-2);"></div>
+							<div class="color-column" style="background-color: var(--iykyk-3);"></div>
+							<div class="color-column" style="background-color: var(--iykyk-4);"></div>
+							<div class="color-column" style="background-color: var(--iykyk-5);"></div>
+						</div>
+					</div>
+					<div class="grid-item">
+						<p class="description">Unicorn Vomit</p>
+						<div class="color-button button-like rounded-border">
+							<div class="color-column" style="background-color: var(--unicorn-vomit-1);"></div>
+							<div class="color-column" style="background-color: var(--unicorn-vomit-2);"></div>
+							<div class="color-column" style="background-color: var(--unicorn-vomit-3);"></div>
+							<div class="color-column" style="background-color: var(--unicorn-vomit-4);"></div>
+							<div class="color-column" style="background-color: var(--unicorn-vomit-5);"></div>
+						</div>
+					</div>
+					<div class="grid-item">
+						<p class="description">Eyesore</p>
+						<div class="color-button button-like rounded-border">
+							<div class="color-column" style="background-color: var(--eyesore-1);"></div>
+							<div class="color-column" style="background-color: var(--eyesore-2);"></div>
+							<div class="color-column" style="background-color: var(--eyesore-3);"></div>
+							<div class="color-column" style="background-color: var(--eyesore-4);"></div>
+							<div class="color-column" style="background-color: var(--eyesore-5);"></div>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>`;
