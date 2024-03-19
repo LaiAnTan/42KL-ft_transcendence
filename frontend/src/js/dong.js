@@ -9,7 +9,7 @@ function game() {
     let player_2_username = " ";
     let is_animating = false;
     var socket;
-    let id = "1"
+    let id = sessionStorage.getItem('username');
     var roomID;
     var clientID = sessionStorage.getItem('username');
 
