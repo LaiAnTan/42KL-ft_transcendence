@@ -59,20 +59,26 @@ def postCode(request):
 
 	url = ft_me_json.get("image", {}).get("link")
 
-	path, _ = urllib.request.urlretrieve(url)
+	if url is not None:
+		path, _ = urllib.request.urlretrieve(url)
+	else:
+		path = settings.DEFAULT_IMAGE_PATH
 
-	with open(path, 'rb') as f:
+	f = open(path, 'rb')
 
-		profile_pic = ImageFile(File(f), os.path.basename(url))
+	profile_pic = ImageFile(File(f), get_random_string(length=32) + "." + \
+							os.path.basename(path).split(".")[-1])
 
-		user_instance = User.objects.create(
-			username=username,
-			display_name=ft_me_json.get("displayname"),
-			email=ft_me_json.get("email"),
-			profile_pic=profile_pic,
-			versus_history=versus_history,
-			tournament_history=tournament_history
-		)
+	user_instance = User.objects.create(
+		username=username,
+		display_name=ft_me_json.get("displayname"),
+		email=ft_me_json.get("email"),
+		profile_pic=profile_pic,
+		versus_history=versus_history,
+		tournament_history=tournament_history
+	)
+
+	f.close()
 
 	return Response({"Success": "User data stored successfully",
 					 "user_id": user_instance.id,
