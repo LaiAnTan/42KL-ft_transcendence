@@ -57,8 +57,8 @@ class Matchup(models.Model):
 	player_2_score: score of player 2
 	"""
 
-	player_1_id = models.IntegerField()
-	player_2_id = models.IntegerField()
+	player_1_id = models.CharField(max_length=20)
+	player_2_id = models.CharField(max_length=20)
 	player_1_score = models.IntegerField()
 	player_2_score = models.IntegerField()
 

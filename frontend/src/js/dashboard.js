@@ -89,12 +89,10 @@ export default () => {
 					return ;
 				}
 
-				console.log('User found.');
-				console.log(data);
 				/* Force a change of the URL to /dashboard?username=_username_,
 					to avoid any page reloads sending a GET to Postgres again,
 					due to loading=true present in querystring */
-				history.replaceState("", "", `/dashboard?username=${params['username']}`);
+				window.history.replaceState("", "", `/dashboard?username=${params['username']}`);
 
 				/* Get name of the active user */
 				const current_user = sessionStorage.getItem('username');
@@ -108,15 +106,20 @@ export default () => {
 	<p data-link="/menu" class="description scale-up cursor-pointer">GO BACK</p>
 </div>
 <div class="d-flex flex-row align-items-center justify-content-around h-100" style="padding: 50px 0;">
-	<div class="d-flex flex-column rounded-border glowing-border h-100 w-100 mx-3" style="min-width: 400px; max-width:600px;">
-		<div class="p-4">
-			<div class="important-label">Game History</div>
-			<div class="description cursor-pointer">Button to redirect</div>
+	<div class="d-flex flex-column justify-content-between rounded-border glowing-border h-100 w-100 mx-3" style="min-width: 400px; max-width:600px;">
+		<div class="flex-grow-1" style="overflow-y: auto">
+			<div class="px-4 py-2">
+				<div class="important-label">Graphs / Charts</div>
+			</div>
+		</div>
+		<div class="d-flex flex-row align-items-center justify-content-between border-top px-4 py-2">
+			<div class="description">${data.username}'s Game History</div>
+			<button data-link="/history?username=${data.username}" type="submit" class="description rounded-border cursor-pointer p-2" style="background-color: blue">GO</button>
 		</div>
 	</div>
 	<div class="d-flex flex-column align-items-center justify-content-center h-100 w-100" style="min-width: 200px; max-width:250px;">
 		<div class="profile-pic" style="position: relative">
-			<img src="${data.profile_pic}" style="z-index: 0; position: absolute" />
+			<img src="${"http://localhost:8000/api" + data.profile_pic}" style="z-index: 0; position: absolute" />
 			${current_user == data.username ? '<img src="/src/assets/wojak-point.png" style="z-index: 1; opacity: 85%" />' : ''}
 		</div>
 		<div class="important-label" style="font-size: 40px;">${data.username.toUpperCase()}</div>
@@ -196,33 +199,43 @@ export default () => {
 				app.outerHTML = new_div.outerHTML;
 
 				$('#update-button').click(function() {
-					let newDisplayName = $('#new-display-name').val();
-					let newAvatar = $('#new-avatar')[0].files[0];
-					let fileSize = newAvatar.size / 1024;
+					var newDisplayName = $('#new-display-name').val();
+					var newAvatar = $('#new-avatar')[0].files.length > 0 ? $('#new-avatar')[0].files[0] : null;
+					var form_data = new FormData();
 
-					console.log(newDisplayName);
-					console.log(newAvatar);
-					console.log(fileSize);
-
-					if (fileSize > 50)
-						alert("Image size too large.");
-					else {
-						$.ajax({
-							url: `http://localhost:8000/api/editUser?username=${params['username']}`,
-							type: 'POST',
-							contentType: 'application/json',
-							data: JSON.stringify({ "display_name": newDisplayName, "profile_pic": newAvatar }),
-							success: function(response) {
-								alert("Details updated!");
-								console.log('Display name updated');
-							},
-							error: function(jqXHR, textStatus, errorThrown) {
-								alert("Failed to update, fucking noob");
-								console.error('Error updating display name');
-							}
-						});
+					form_data.append("display_name", newDisplayName)
+					if (newAvatar !== null) {
+						if (newAvatar.size / 1024 > 50) {
+							alert("Image size too large.");
+							return ;
+						}
+						form_data.append("profile_pic", newAvatar)
 					}
-				});
+
+					let oldDisplayName = sessionStorage.getItem('display_name');
+					if (newDisplayName == oldDisplayName && newAvatar == null)
+						return ;
+
+					$.ajax({
+						url: `http://localhost:8000/api/editUser?username=${params['username']}`,
+						type: 'POST',
+						contentType: 'multipart/form-data',
+						data: form_data,
+						contentType: false,
+						processData: false,
+						success: function(response) {
+							alert("Details updated!");
+							sessionStorage.setItem('display_name', response.display_name);
+							sessionStorage.setItem('profile_pic', 'http://localhost:8000/api' + response.profile_pic);
+							window.history.replaceState("", "", `/dashboard?username=${params['username']}`);
+							router();
+						},
+						error: function(jqXHR, textStatus, errorThrown) {
+							alert("Failed to update, fucking noob");
+							console.error('Error updating details:', jqXHR.responseJSON);
+						}
+					});
+				})
 
 				return ;
 			} else {

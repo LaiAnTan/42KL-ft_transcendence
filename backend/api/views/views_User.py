@@ -53,10 +53,14 @@ def addUser(request):
 	"username": "user",
 	"display_name": "User",
 	"email": "user@user.com",
+    !! "profile_pic": (JS File object)
 	"versus_history": [],
 	"tournament_history": []
 	}
 
+    !! must use contentType: multipart/form-data
+    
+    
 	versus_history, tournament_history are optional fields, if not specified
 	a default will be used.
 	"""
@@ -100,9 +104,12 @@ def editUser(request):
     "email": "user@user.com",
     "versus_history": [],
     "tournament_history": []
+    !! "profile_pic": (JS File object)
 
     ...+ any fields to be edited
     }
+    
+    !! must use contentType: multipart/form-data
     """
     
     username = request.query_params.get('username')
@@ -125,6 +132,11 @@ parameters '},
             return Response({"Error": f"Field '{field}' does not exist in User\
 model"},
                             status=status.HTTP_400_BAD_REQUEST)
+
+    if 'profile_pic' in request.FILES:
+        profile_pic = ImageFile(request.FILES['profile_pic'])
+        profile_pic.name = request.FILES['profile_pic'].name
+        request.data['profile_pic'] = profile_pic
 
     serializer = UserSerializer(user, data=request.data, partial=True)
 

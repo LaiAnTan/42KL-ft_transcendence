@@ -1,4 +1,4 @@
-import { router, loadCSS, resetCSS } from "./main.js";
+import { router, loadCSS, resetCSS, navigate } from "./main.js";
 
 export default () => {
 	let config_palette = localStorage.getItem("palette");
@@ -25,7 +25,7 @@ export default () => {
 					sessionStorage.setItem('username', data.json.username);
 					sessionStorage.setItem('display_name', data.json.display_name);
 					sessionStorage.setItem('profile_pic', "http://localhost:8000/api" + data.json.profile_pic); 
-					history.replaceState("", "", "/menu");
+					window.history.replaceState("", "", "/menu");
 					router();
 				});
 			} else {
