@@ -25,7 +25,7 @@ function game() {
         }
     }
 
-    fetch("http://localhost:8000/api/matchmaking?clientID=" + clientID, {
+    fetch("http://localhost:8000/api/matchmaking?clientID=" + clientID + "&gameMode=dong", {
         method: "GET"
     })
     .then(response => response.json())
