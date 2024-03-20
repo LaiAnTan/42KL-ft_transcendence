@@ -56,22 +56,36 @@ def joinRoom(request, room_code):
 def allRooms(_request):
     return Response({'rooms': rooms})
 
-tournament_rooms = {}
+round_1 = {}
+round_2 = {}
+round_3 = {}
 tournament_running = False
 players = []
-tourney_room_num = 4
+
+def init_round(rounds, num):
+    for x in range(num):
+        code = ''.join(random.choices('0123456789', k=6))
+        if code not in rounds:
+            rounds[x] = {'roomID': code, 'players': []}
 
 @api_view(['GET'])
 def tournamentInit(_request):
-    global tournament_running
+    client_id = _request.GET.get('clientID')
+    global tournament_running, players
     if tournament_running is True:
         return Response({"message": "tournament is running"}, status=400)
-    for x in range(tourney_room_num):
-        code = ''.join(random.choices('0123456789', k=6))
-        if code not in tournament_rooms:
-            tournament_rooms[code] = []
-    tournament_running = True
-    return Response({"message": "tournament is initialized"}, status=200)
+    if len(players) == 7:
+        tournament_running = True
+    if len(round_1) != 4:
+        init_round(round_1, 4)
+    if len(round_2) != 2:
+        init_round(round_2, 2)
+    if len(round_3) != 1:
+        init_round(round_3, 1)
+    if client_id not in players:
+        players.append(client_id)
+        return Response({"message": "tournament is initialized"}, status=200)
+    return Response({"message": "client is already in room"}, status=400)
 
 @api_view(['GET'])
 def tournamentAssign(_request):
@@ -79,55 +93,64 @@ def tournamentAssign(_request):
     client_id = _request.GET.get('clientID')
     if tournament_running is False:
         return Response({'message': 'tournament is not initialized'}, status=400)
-    for room_code, clients in tournament_rooms.items():
-        if len(players) == tourney_room_num * 2:
-            break
-        if len(clients) < MAX_CLIENTS_PER_ROOM:
-            players.append(client_id)
-            clients.append(client_id)
-            return Response({'roomID': room_code})
+    for room_code, room_data in round_1.items():
+        if len(room_data['players']) < MAX_CLIENTS_PER_ROOM:
+            if client_id not in players:
+                break;
+            room_data['players'].append(client_id)
+            return Response({'roomID': room_data['roomID']})
     return Response({'message': 'tournament is full', 'players': players}, status=400)
 
+@api_view(['DELETE'])
+def tournamentLoser(_request):
+    loser_id = _request.GET.get('loserID')
+    removed_from_room = False
+
+    for round_data in [round_1, round_2, round_3]:
+        for room_code, room_data in round_data.items():
+            if loser_id in room_data['players']:
+                if room_data.get('loser_removed') is True:
+                    continue  # Skip if loser has already been removed from this room
+                room_data['loser_removed'] = True
+                removed_from_room = True
+                if loser_id in players:
+                    players.remove(loser_id)
+                break
+        if removed_from_room:
+            break
+    return Response({'message': 'player removed', 'players': players}, status=200)
+
+
+def round_winner(rounds):
+    for p in players:
+        for room_code, room_data in rounds.items():
+            if len(room_data['players']) < MAX_CLIENTS_PER_ROOM:
+                room_data['players'].append(p)
+                break
+
 @api_view(['GET'])
-def tournamentAllRooms(_request):
-    return Response({"tourney": tournament_rooms})
+def tournamentResults(_request):
+    global round_1, round_2, round_3, players
+
+    if len(players) == 1:
+        return Response({'message': players[0] + ' has won the tournament!', 'roundStatus': "end"}, status=200)
+    elif len(players) == 4:
+        round_winner(round_2)
+    elif len(players) == 2:
+        round_winner(round_3)
+
+    result = {}
+    for round_data in [round_1, round_2, round_3]:
+        for key, value in round_data.items():
+            result[len(result)] = value
+    return Response({'message': 'tournament is running', 'results': result}, status=200)
 
 @api_view(['DELETE'])
 def tournamentEnd(_request):
-    global tournament_rooms, tournament_running, players, tourney_room_num
-    tournament_rooms.clear()
+    global round_1, round_2, round_3, tournament_running, players
+    round_1.clear()
+    round_2.clear()
+    round_3.clear()
     tournament_running = False
     players.clear()
-    tourney_room_num = 4
     return Response({'message': 'game has ended'}, status=200)
-
-def create_next_round():
-    global tournament_rooms, players, tourney_room_num
-    tourney_room_num //= 2
-    new_rooms = {}
-
-    players.clear()
-    for i in range(tourney_room_num):
-        code = ''.join(random.choices('0123456789', k=6))
-        if code not in new_rooms:
-            new_rooms[code] = []
-    tournament_rooms = new_rooms
-
-@api_view(['POST'])
-def tournamentLoser(_request):
-    global tournament_rooms, tournament_running, players, tourney_room_num
-    client_id = _request.GET.get('clientID')
-    match_id = _request.GET.get('matchID')
-    for room_code, clients in tournament_rooms.items():
-        if room_code == match_id:
-            if client_id in clients:
-                clients.remove(client_id)
-                players.remove(client_id)
-                if len(players) == 1:
-                    return Response({'message': tournament_rooms[room_code][0] + ' has won the tournament!'}, status=200)
-                if len(players) == 4 or len(players) == 2:
-                    create_next_round()
-                return Response({'message': client_id + ' has lost in ' + match_id}, status=200)
-            else:
-                return Response({'message': 'client not found'}, status=400)
-    return Response({'message': 'match not found'}, status=400)

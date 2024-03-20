@@ -1,8 +1,6 @@
 #!/bin/bash
 
-
-
-base_url="http://localhost:8000/api/tournamentInit"
+base_url="http://localhost:8000/api/tournamentAssign"
 client_ids=("test1" "test2" "test3" "test4" "test5" "test6" "test7" "test8" "test9")
 
 for client_id in "${client_ids[@]}"; do

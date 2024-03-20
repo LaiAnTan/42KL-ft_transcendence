@@ -6,13 +6,13 @@ export default () => {
   loadCSS("src/css/bracket.css");
 
   function pollBackend() {
-    fetch('http://localhost:8000/api/tournamentAllRooms')
+    fetch('http://localhost:8000/api/tournamentResults')
         .then(response => response.json())
         .then(data => {
-          const rooms = data.tourney;
+          const rooms = data.results;
           const boxes = document.querySelectorAll('.box-content');
           Object.keys(rooms).forEach((roomId, index) => {
-            const players = rooms[roomId].slice(0, 2); // Get the first two players in the room
+            const players = rooms[roomId]['players'].slice(0, 2); // Get the first two players in the room
             players.forEach((player, i) => {
               boxes[index * 2 + i].textContent = player; // Assign player to corresponding box
             });
@@ -23,8 +23,8 @@ export default () => {
         });
   }
 
-  pollBackend();
-  // setInterval(pollBackend, 5000);
+  // pollBackend();
+  setInterval(pollBackend, 5000);
 
   return `
   <button data-link="/menu" type="button" class="go-back-button scale-up ml-4" style="z-index: 1">
@@ -41,20 +41,20 @@ export default () => {
     <div class="col">
       <div class="row">
         <div class="box">
-          <div class="box-content">P1</div>
-          <div class="box-content">P2</div>
+          <div class="box-content"> </div>
+          <div class="box-content"> </div>
         </div>
         <div class="box">
-          <div class="box-content">P1</div>
-          <div class="box-content">P2</div>
+          <div class="box-content"> </div>
+          <div class="box-content"> </div>
         </div>
         <div class="box">
-          <div class="box-content">P1</div>
-          <div class="box-content">P2</div>
+          <div class="box-content"> </div>
+          <div class="box-content"> </div>
         </div>
         <div class="box">
-          <div class="box-content">P1</div>
-          <div class="box-content">P2</div>
+          <div class="box-content"> </div>
+          <div class="box-content"> </div>
         </div>
       </div>
       <div class="row">
@@ -63,12 +63,12 @@ export default () => {
       </div>
       <div class="row">
         <div class="box middle">
-          <div class="box-content">P1</div>
-          <div class="box-content">P2</div>
+          <div class="box-content"> </div>
+          <div class="box-content"> </div>
         </div>
         <div class="box middle">
-          <div class="box-content">P1</div>
-          <div class="box-content">P2</div>
+          <div class="box-content"> </div>
+          <div class="box-content"> </div>
         </div>
       </div>
       <div class="row">
@@ -76,8 +76,8 @@ export default () => {
       </div>
       <div class="row">
         <div class="box">
-          <div class="box-content box-content-up">P1</div>
-          <div class="box-content">P2</div>
+          <div class="box-content box-content-up"> </div>
+          <div class="box-content"> </div>
         </div>
       </div>
     <div>
