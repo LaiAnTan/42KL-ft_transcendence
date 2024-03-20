@@ -101,7 +101,7 @@ export default () => {
 				const new_div = document.createElement('div');
 				new_div.setAttribute('id', 'app');
 				new_div.className = 'w-100 h-100';
-				let ret = `
+				new_div.innerHTML = `
 <div class="d-flex position-absolute align-items-center unselectable ml-4" style="height: 8vh; z-index: 1">
 	<p data-link="/menu" class="description scale-up cursor-pointer">GO BACK</p>
 </div>
@@ -130,60 +130,66 @@ export default () => {
 				<div class="important-label">Game Statistics</div>
 				<div class="d-table description w-100 pt-2 px-4">
 					<div class="d-table-row">
-						<div class="d-table-cell">Games Played</div>
-						<div class="d-table-cell">0</div>
+						<div class="d-table-cell py-1">Games Played</div>
+						<div class="d-table-cell pl-3">0</div>
 					</div>
 					<div class="d-table-row">
-						<div class="d-table-cell">Games Won</div>
-						<div class="d-table-cell">0</div>
+						<div class="d-table-cell py-1">Games Won</div>
+						<div class="d-table-cell pl-3">0</div>
 					</div>
 					<div class="d-table-row">
-						<div class="d-table-cell">Games Lost</div>
-						<div class="d-table-cell">0</div>
+						<div class="d-table-cell py-1">Games Lost</div>
+						<div class="d-table-cell pl-3">0</div>
 					</div>
 					<div class="d-table-row">
-						<div class="d-table-cell">Win Rate</div>
-						<div class="d-table-cell">0%</div>
+						<div class="d-table-cell py-1">Win Rate</div>
+						<div class="d-table-cell pl-3">0%</div>
 					</div>
 					<div class="d-table-row">
-						<div class="d-table-cell">Best Score</div>
-						<div class="d-table-cell">0</div>
+						<div class="d-table-cell py-1">Best Score</div>
+						<div class="d-table-cell pl-3">0</div>
 					</div>
 					<div class="d-table-row">
-						<div class="d-table-cell">Average Score</div>
-						<div class="d-table-cell">0</div>
+						<div class="d-table-cell py-1">Average Score</div>
+						<div class="d-table-cell pl-3">0</div>
 					</div>
 					<div class="d-table-row">
-						<div class="d-table-cell">Current Streak</div>
-						<div class="d-table-cell">0</div>
+						<div class="d-table-cell py-1">Current Streak</div>
+						<div class="d-table-cell pl-3">0</div>
 					</div>
 					<div class="d-table-row">
-						<div class="d-table-cell">Longest Streak</div>
-						<div class="d-table-cell">0</div>
+						<div class="d-table-cell py-1">Longest Streak</div>
+						<div class="d-table-cell pl-3">0</div>
 					</div>
 				</div>
 			</div>
 			<div class="px-4 py-2">
-				<div class="important-label">User Info</div>
+				<div class="d-flex flex-row align-items-center" style="jutify-content: start">
+					<div class="important-label">User Info</div>
+					${current_user == data.username ?
+					`<div class="description ml-4">
+						<input id="toggle-data-visibility" type="checkbox" class="cursor-pointer mr-2" title="Change visibility of your personal data ( email )" ${data.data_is_visible ? 'checked />Shown' : '/>Hidden'}
+					</div>` : ''}
+				</div>
 				<div class="d-table description w-100 pt-2 px-4">
 					<div class="d-table-row my-2">
-						<div class="d-table-cell">Display Name</div>
+						<div class="d-table-cell py-1">Display Name</div>
 						${current_user == data.username ? /* Ternary here used to check if active user is the user being displayed. If yes, show input box */
-							`<div class="d-table-cell input-container"><input id="new-display-name" type="text" placeholder="Edit display name" class="description" value="${data.display_name}" /></div>`
-							: `<div class="d-table-cell p-0">${data.display_name}</div>`
-						}
+							`<div class="d-table-cell input-container pl-3"><input id="new-display-name" type="text" placeholder="Edit display name" class="description" value="${data.display_name}" /></div>`
+							: `<div class="d-table-cell pl-3">${data.display_name}</div>` }
 					</div>
 					${current_user == data.username ?
-						`<div class="d-table-row">
-							<div class="d-table-cell">Avatar</div>
-							<div class="d-table-cell input-container"><input id="new-avatar" type="file" accept="image/jpeg, image/png, image/jpg" /></div>
-						</div>`
-							: ``
+					`<div class="d-table-row ">
+						<div class="d-table-cell py-1">Avatar</div>
+						<div class="d-table-cell input-container pl-3"><input id="new-avatar" type="file" accept="image/jpeg, image/png, image/jpg" /></div>
+					</div>` : `` }
+					${(current_user != data.username) && (!data.data_is_visible) ? 
+						`` :
+					`<div class="d-table-row">
+						<div class="d-table-cell py-1">Email</div>
+						<div class="d-table-cell pl-3">${data.email}</div>
+					</div>`
 					}
-					<div class="d-table-row pt-3">
-						<div class="d-table-cell">Email</div>
-						<div class="d-table-cell">${data.email}</div>
-					</div>
 				</div>
 			</div>
 		</div>
@@ -198,11 +204,13 @@ export default () => {
 						</button>
 					</div>
 					<div class="modal-body description">
-						This action is irreversible, all user data will be lost. Are you sure you want to delete your account?
+						<b>This action is irreversible.</b><br/>
+						ALL user data will be lost.<br/>[ Display name, custom avatar, match history ]<br/><br/>
+						Are you sure you want to delete your account?
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
-						<button id="close-account-button" type="submit" class="btn btn-danger">Close Account</button>
+						<button id="close-account-button" type="submit" class="btn btn-danger">Confirm</button>
 					</div>
 				</div>
 			</div>
@@ -217,13 +225,7 @@ export default () => {
 		</div>` : ''}
 	</div>
 </div>`;
-				new_div.innerHTML = ret;
 				app.outerHTML = new_div.outerHTML;
-
-				$('#confirmation-modal').on('hidden.bs.modal', function (e) {
-					window.history.replaceState("", "", "/");
-					router();
-				});
 
 				$('#close-account-button').click(function() {
 					$.ajax({
@@ -231,6 +233,9 @@ export default () => {
 						type: 'DELETE',
 						success: function(response) {
 							$('#confirmation-modal').modal('hide');
+							window.history.replaceState("", "", "/");
+							router();
+
 							sessionStorage.removeItem('display_name');
 							sessionStorage.removeItem('profile_pic');
 						},
@@ -242,11 +247,14 @@ export default () => {
 				});
 
 				$('#update-button').click(function() {
+					var newDataVisibility = $('#toggle-data-visibility').is(':checked');
 					var newDisplayName = $('#new-display-name').val();
 					var newAvatar = $('#new-avatar')[0].files.length > 0 ? $('#new-avatar')[0].files[0] : null;
 					var form_data = new FormData();
 
-					form_data.append("display_name", newDisplayName)
+					form_data.append("data_is_visible", newDataVisibility);
+					console.log(newDataVisibility)
+					form_data.append("display_name", newDisplayName);
 					if (newAvatar !== null) {
 						if (newAvatar.size / 1024 > 50) {
 							alert("Image size too large.");
@@ -255,8 +263,7 @@ export default () => {
 						form_data.append("profile_pic", newAvatar)
 					}
 
-					let oldDisplayName = sessionStorage.getItem('display_name');
-					if (newDisplayName == oldDisplayName && newAvatar == null)
+					if (newDataVisibility == data.data_is_visible && newDisplayName == data.display_name && newAvatar == null)
 						return ;
 
 					$.ajax({

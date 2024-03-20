@@ -25,6 +25,7 @@ class User(models.Model):
 	profile_pic = models.ImageField(upload_to="profiles/")
 	versus_history = ArrayField(models.IntegerField(), blank=True)
 	tournament_history = ArrayField(models.IntegerField(), blank=True)
+	data_is_visible = models.BooleanField(default=False)
 	date_created = models.DateTimeField(auto_now_add=True)
 
 	def to_json(self):
@@ -39,6 +40,7 @@ class User(models.Model):
 			'profile_pic': os.path.join(settings.MEDIA_URL, self.profile_pic.name),
 			'versus_history': self.versus_history,
 			'tournament_history': self.tournament_history,
+			'data_is_visible': False,
 			'date_created': self.date_created.strftime('%Y-%m-%d %H:%M:%S')
 		}
 
