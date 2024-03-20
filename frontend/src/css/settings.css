@@ -1,3 +1,131 @@
+:root {
+	/* DEFAULT */
+	--default-1: #85EBE9;
+	--default-2: #98EB4C;
+	--default-3: #FAE84D;
+	--default-4: #D934F6;
+	--default-5: #1224F5;
+
+	/* DING'S DELIGHT */
+	--dings-delight-1: #ffd700;
+	--dings-delight-2: #00ff00;
+	--dings-delight-3: #1e90ff;
+	--dings-delight-4: #ff1493;
+	--dings-delight-5: #ff6347;
+
+	/* DING'S DAZZLE */
+	--dings-dazzle-1: #ff00ff;
+	--dings-dazzle-2: #00ffff;
+	--dings-dazzle-3: #ffff00;
+	--dings-dazzle-4: #8b008b;
+	--dings-dazzle-5: #00ff7f;
+
+	/* ELECTRIC DREAM */
+	--electric-dream-1: #ff00ff;
+	--electric-dream-2: #00ffff;
+	--electric-dream-3: #ffa500;
+	--electric-dream-4: #ffff00;
+	--electric-dream-5: #ff1493;
+
+	/* LASER LEMONADE */
+	--laser-lemonade-1: #00ff00;
+	--laser-lemonade-2: #ffd700;
+	--laser-lemonade-3: #32cd32;
+	--laser-lemonade-4: #ff4500;
+	--laser-lemonade-5: #ffff66;
+
+	/* CITRUS SURGE */
+	--citrus-surge-1: #ffd700;
+	--citrus-surge-2: #ffa500;
+	--citrus-surge-3: #ff6347;
+	--citrus-surge-4: #ffff00;
+	--citrus-surge-5: #32cd32;
+
+	/* NEON BLISS */
+	--neon-bliss-1: #9400d3;
+	--neon-bliss-2: #00ff7f;
+	--neon-bliss-3: #ff6347;
+	--neon-bliss-4: #00ced1;
+	--neon-bliss-5: #ff69b4;
+
+	/* RADIANT REBELLION */
+	--radiant-rebellion-1: #ff8c00;
+	--radiant-rebellion-2: #4b0082;
+	--radiant-rebellion-3: #ff00ff;
+	--radiant-rebellion-4: #00ff7f;
+	--radiant-rebellion-5: #ffd700;
+
+	/* VIVID VOLTAGE */
+	--vivid-voltage-1: #8a2be2;
+	--vivid-voltage-2: #00ff00;
+	--vivid-voltage-3: #ff4500;
+	--vivid-voltage-4: #1e90ff;
+	--vivid-voltage-5: #ff1493;
+
+	/* RUBY RADIANCE */
+	--ruby-radiance-1: #ff0000;
+	--ruby-radiance-2: #b22222;
+	--ruby-radiance-3: #e32636;
+	--ruby-radiance-4: #ff1493;
+	--ruby-radiance-5: #dc143c;
+
+	/* CERULEAN SPECTRA */
+	--cerulean-spectra-1: #00ced1;
+	--cerulean-spectra-2: #00ffff;
+	--cerulean-spectra-3: #87ceeb;
+	--cerulean-spectra-4: #0000ff;
+	--cerulean-spectra-5: #4169e1;
+
+	/* JADE JUBILEE */
+	--jade-jubilee-1: #008080;
+	--jade-jubilee-2: #00ff00;
+	--jade-jubilee-3: #238323;
+	--jade-jubilee-4: #7fff00;
+	--jade-jubilee-5: #00fa9a;
+
+	/* MAGENTA MAGIC */
+	--magenta-magic-1: #ff00ff;
+	--magenta-magic-2: #ff1693;
+	--magenta-magic-3: #da70d6;
+	--magenta-magic-4: #ba55d3;
+	--magenta-magic-5: #ff69b4;
+
+	/* SUNSET GLOW */
+	--sunset-glow-1: #ff6347;
+	--sunset-glow-2: #ffd700;
+	--sunset-glow-3: #ffa500;
+	--sunset-glow-4: #d83a00;
+	--sunset-glow-5: #dc143c;
+
+	/* DUSK HORIZON */
+	--dusk-horizon-1: #1e90ff;
+	--dusk-horizon-2: #dc143c;
+	--dusk-horizon-3: #ff6347;
+	--dusk-horizon-4: #4382b4;
+	--dusk-horizon-5: #ff4500;
+
+	/* IYKYK */
+	--iykyk-1: #696969;
+	--iykyk-2: #420690;
+	--iykyk-3: #420420;
+	--iykyk-4: #b80085;
+	--iykyk-5: #123456;
+
+	/* UNICORN VOMIT */
+	--unicorn-vomit-1: #ff9472;
+	--unicorn-vomit-2: #ffe769;
+	--unicorn-vomit-3: #9aeabc;
+	--unicorn-vomit-4: #a28bf5;
+	--unicorn-vomit-5: #ff7496;
+
+	/* EYESORE */
+	--eyesore-1: #ff0000;
+	--eyesore-2: #00ff00;
+	--eyesore-3: #0000ff;
+	--eyesore-4: #ffff00;
+	--eyesore-5: #ff00ff;
+}
+
 .menu-header::after {
 	background: linear-gradient(to bottom, var(--color5), transparent);
 }
@@ -29,4 +157,26 @@
 .visually-hidden:checked + .button-like {
 	background-color: var(--color5);
 	transform: scale(1.1);
+}
+
+#palette {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px; /* Adjust to desired gap size */
+}
+
+.color-button {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0px;
+    width: 100%;
+    padding: 0;
+}
+
+.color-column {
+    height: 50px; /* Set to desired height */
+}
+
+.theme-picker {
+	font-size: 15px !important;
 }
