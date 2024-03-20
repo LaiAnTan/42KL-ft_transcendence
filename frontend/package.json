@@ -4,7 +4,7 @@
 	"description": "Ding Dong frontend",
 	"main": "index.js",
 	"scripts": {
-	"start": "http-server -c-1 --proxy http://localhost:8080?"
+	"start": "http-server -c-1 -S -C ./cert.pem -K ./key.pem --proxy https://localhost:8080?"
 	},
 	"dependencies": {
 	"bootstrap": "^5.3.2",
