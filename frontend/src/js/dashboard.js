@@ -92,7 +92,7 @@ export default () => {
 				/* Force a change of the URL to /dashboard?username=_username_,
 					to avoid any page reloads sending a GET to Postgres again,
 					due to loading=true present in querystring */
-				history.replaceState("", "", `/dashboard?username=${params['username']}`);
+				window.history.replaceState("", "", `/dashboard?username=${params['username']}`);
 
 				/* Get name of the active user */
 				const current_user = sessionStorage.getItem('username');
@@ -101,15 +101,20 @@ export default () => {
 				const new_div = document.createElement('div');
 				new_div.setAttribute('id', 'app');
 				new_div.className = 'w-100 h-100';
-				let ret = `
+				new_div.innerHTML = `
 <div class="d-flex position-absolute align-items-center unselectable ml-4" style="height: 8vh; z-index: 1">
 	<p data-link="/menu" class="description scale-up cursor-pointer">GO BACK</p>
 </div>
 <div class="d-flex flex-row align-items-center justify-content-around h-100" style="padding: 50px 0;">
-	<div class="d-flex flex-column rounded-border glowing-border h-100 w-100 mx-3" style="min-width: 400px; max-width:600px;">
-		<div class="p-4">
-			<div class="important-label">Game History</div>
-			<div class="description cursor-pointer">Button to redirect</div>
+	<div class="d-flex flex-column justify-content-between rounded-border glowing-border h-100 w-100 mx-3" style="min-width: 400px; max-width:600px;">
+		<div class="flex-grow-1" style="overflow-y: auto">
+			<div class="px-4 py-2">
+				<div class="important-label">Graphs / Charts</div>
+			</div>
+		</div>
+		<div class="d-flex flex-row align-items-center justify-content-between border-top px-4 py-2">
+			<div class="description">${data.username}'s Game History</div>
+			<button data-link="/history?username=${data.username}" type="submit" class="description rounded-border scale-up cursor-pointer px-4 py-2 mx-2" style="background-color: blue">GO</button>
 		</div>
 	</div>
 	<div class="d-flex flex-column align-items-center justify-content-center h-100 w-100" style="min-width: 200px; max-width:250px;">
@@ -125,80 +130,131 @@ export default () => {
 				<div class="important-label">Game Statistics</div>
 				<div class="d-table description w-100 pt-2 px-4">
 					<div class="d-table-row">
-						<div class="d-table-cell">Games Played</div>
-						<div class="d-table-cell">0</div>
+						<div class="d-table-cell py-1">Games Played</div>
+						<div class="d-table-cell pl-3">0</div>
 					</div>
 					<div class="d-table-row">
-						<div class="d-table-cell">Games Won</div>
-						<div class="d-table-cell">0</div>
+						<div class="d-table-cell py-1">Games Won</div>
+						<div class="d-table-cell pl-3">0</div>
 					</div>
 					<div class="d-table-row">
-						<div class="d-table-cell">Games Lost</div>
-						<div class="d-table-cell">0</div>
+						<div class="d-table-cell py-1">Games Lost</div>
+						<div class="d-table-cell pl-3">0</div>
 					</div>
 					<div class="d-table-row">
-						<div class="d-table-cell">Win Rate</div>
-						<div class="d-table-cell">0%</div>
+						<div class="d-table-cell py-1">Win Rate</div>
+						<div class="d-table-cell pl-3">0%</div>
 					</div>
 					<div class="d-table-row">
-						<div class="d-table-cell">Best Score</div>
-						<div class="d-table-cell">0</div>
+						<div class="d-table-cell py-1">Best Score</div>
+						<div class="d-table-cell pl-3">0</div>
 					</div>
 					<div class="d-table-row">
-						<div class="d-table-cell">Average Score</div>
-						<div class="d-table-cell">0</div>
+						<div class="d-table-cell py-1">Average Score</div>
+						<div class="d-table-cell pl-3">0</div>
 					</div>
 					<div class="d-table-row">
-						<div class="d-table-cell">Current Streak</div>
-						<div class="d-table-cell">0</div>
+						<div class="d-table-cell py-1">Current Streak</div>
+						<div class="d-table-cell pl-3">0</div>
 					</div>
 					<div class="d-table-row">
-						<div class="d-table-cell">Longest Streak</div>
-						<div class="d-table-cell">0</div>
+						<div class="d-table-cell py-1">Longest Streak</div>
+						<div class="d-table-cell pl-3">0</div>
 					</div>
 				</div>
 			</div>
 			<div class="px-4 py-2">
-				<div class="important-label">User Info</div>
+				<div class="d-flex flex-row align-items-center" style="jutify-content: start">
+					<div class="important-label">User Info</div>
+					${current_user == data.username ?
+					`<div class="description ml-4">
+						<input id="toggle-data-visibility" type="checkbox" class="cursor-pointer mr-2" title="Change visibility of your personal data ( email )" ${data.data_is_visible ? 'checked />Shown' : '/>Hidden'}
+					</div>` : ''}
+				</div>
 				<div class="d-table description w-100 pt-2 px-4">
 					<div class="d-table-row my-2">
-						<div class="d-table-cell">Display Name</div>
+						<div class="d-table-cell py-1">Display Name</div>
 						${current_user == data.username ? /* Ternary here used to check if active user is the user being displayed. If yes, show input box */
-							`<div class="d-table-cell input-container"><input id="new-display-name" type="text" placeholder="Edit display name" class="description" value="${data.display_name}" /></div>`
-							: `<div class="d-table-cell p-0">${data.display_name}</div>`
-						}
+							`<div class="d-table-cell input-container pl-3"><input id="new-display-name" type="text" placeholder="Edit display name" class="description" value="${data.display_name}" /></div>`
+							: `<div class="d-table-cell pl-3">${data.display_name}</div>` }
 					</div>
 					${current_user == data.username ?
-						`<div class="d-table-row">
-							<div class="d-table-cell">Avatar</div>
-							<div class="d-table-cell input-container"><input id="new-avatar" type="file" accept="image/jpeg, image/png, image/jpg" /></div>
-						</div>`
-							: ``
+					`<div class="d-table-row ">
+						<div class="d-table-cell py-1">Avatar</div>
+						<div class="d-table-cell input-container pl-3"><input id="new-avatar" type="file" accept="image/jpeg, image/png, image/jpg" /></div>
+					</div>` : `` }
+					${(current_user != data.username) && (!data.data_is_visible) ? 
+						`` :
+					`<div class="d-table-row">
+						<div class="d-table-cell py-1">Email</div>
+						<div class="d-table-cell pl-3">${data.email}</div>
+					</div>`
 					}
-					<div class="d-table-row pt-3">
-						<div class="d-table-cell">Email</div>
-						<div class="d-table-cell">${data.email}</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal fade" id="confirmation-modal" tabindex="-1" role="dialog" aria-labelledby="confirmation-modal" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered" role="document">
+				<div class="modal-content background-blur rounded-border">
+					<div class="modal-header align-items-center important-label">
+						<h5 class="modal-title ml-4">Close ${params['username']}'s Account</h5>
+						<button type="button" class="close-modal" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body description">
+						<b>This action is irreversible.</b><br/>
+						ALL user data will be lost.<br/>[ Display name, custom avatar, match history ]<br/><br/>
+						Are you sure you want to delete your account?
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+						<button id="close-account-button" type="submit" class="btn btn-danger">Confirm</button>
 					</div>
 				</div>
 			</div>
 		</div>
 
 		${current_user == data.username ? /* Ternary here used to check if active user is the user being displayed. If yes, show save button */
-		`<div class="d-flex flex-row align-items-center justify-content-between border-top px-4 py-2">
-			<div class="description">Editable</div>
-			<button id="update-button" type="submit" class="description rounded-border cursor-pointer p-2" style="background-color: green">Save</button>
+		`<div class="align-items-center border-top">
+			<div class="d-flex flex-row ml-auto px-4 py-2" style="justify-content: end">
+				<button data-toggle="modal" data-target="#confirmation-modal" type="button" class="description rounded-border scale-up cursor-pointer px-4 py-2 mx-2" style="background-color: red">Delete Account</button>
+				<button id="update-button" type="submit" class="description rounded-border scale-up cursor-pointer px-4 py-2 mx-2" style="background-color: green">Save</button>
+			</div>
 		</div>` : ''}
 	</div>
 </div>`;
-				new_div.innerHTML = ret;
 				app.outerHTML = new_div.outerHTML;
 
+				$('#close-account-button').click(function() {
+					$.ajax({
+						url: `http://localhost:8000/api/deleteUser?username=${params['username']}`,
+						type: 'DELETE',
+						success: function(response) {
+							$('#confirmation-modal').modal('hide');
+							window.history.replaceState("", "", "/");
+							router();
+
+							sessionStorage.removeItem('display_name');
+							sessionStorage.removeItem('profile_pic');
+						},
+						error: function(jqXHR, textStatus, errorThrown) {
+							alert("Failed to delete, keep on living!");
+							console.error('Error deleting account:', jqXHR.responseJSON);
+						}
+					});
+				});
+
 				$('#update-button').click(function() {
+					var newDataVisibility = $('#toggle-data-visibility').is(':checked');
 					var newDisplayName = $('#new-display-name').val();
 					var newAvatar = $('#new-avatar')[0].files.length > 0 ? $('#new-avatar')[0].files[0] : null;
 					var form_data = new FormData();
 
-					form_data.append("display_name", newDisplayName)
+					form_data.append("data_is_visible", newDataVisibility);
+					console.log(newDataVisibility)
+					form_data.append("display_name", newDisplayName);
 					if (newAvatar !== null) {
 						if (newAvatar.size / 1024 > 50) {
 							alert("Image size too large.");
@@ -207,8 +263,7 @@ export default () => {
 						form_data.append("profile_pic", newAvatar)
 					}
 
-					let oldDisplayName = sessionStorage.getItem('display_name');
-					if (newDisplayName == oldDisplayName && newAvatar == null)
+					if (newDataVisibility == data.data_is_visible && newDisplayName == data.display_name && newAvatar == null)
 						return ;
 
 					$.ajax({
@@ -222,7 +277,7 @@ export default () => {
 							alert("Details updated!");
 							sessionStorage.setItem('display_name', response.display_name);
 							sessionStorage.setItem('profile_pic', 'http://localhost:8000/api' + response.profile_pic);
-							history.replaceState("", "", `/dashboard?username=${params['username']}`);
+							window.history.replaceState("", "", `/dashboard?username=${params['username']}`);
 							router();
 						},
 						error: function(jqXHR, textStatus, errorThrown) {

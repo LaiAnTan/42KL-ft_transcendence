@@ -17,7 +17,7 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 MEDIA_URL = '/media/'
 MEDIA_ROOT = '/app/media'
-
+DEFAULT_IMAGE_PATH = "/app/assets/default.png"
 
 
 # Quick-start development settings - unsuitable for production

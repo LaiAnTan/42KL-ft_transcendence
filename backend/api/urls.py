@@ -27,6 +27,7 @@ urlpatterns = [
     path('joinRoom/<str:room_code>', views_GameRoom.joinRoom),
     path('allRooms', views_GameRoom.allRooms),
     path('closeAllRooms', views_GameRoom.closeAllRooms),
+    path('exitRoom', views_GameRoom.exitRoom),
     path('alert', alert.alert),
     path('tournamentInit', views_GameRoom.tournamentInit),
     path('tournamentAssign', views_GameRoom.tournamentAssign),

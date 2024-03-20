@@ -1,0 +1,14 @@
+.d-table-cell {
+	align-items: center !important;
+	text-align: center !important;
+	border-bottom: 1px solid white !important;
+}
+
+.headers {
+	padding-bottom: 20px !important;
+}
+
+.data-display {
+	padding-top: 10px !important;
+	padding-bottom: 10px !important;
+}
