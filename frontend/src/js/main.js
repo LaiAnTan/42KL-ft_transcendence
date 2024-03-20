@@ -7,6 +7,7 @@ import pong from "./pong.js";
 import dong from "./dong.js";
 import settings from "./settings.js";
 import dashboard from "./dashboard.js";
+import bracket from "./bracket.js";
 import history from "./history.js";
 
 
@@ -20,6 +21,7 @@ const routes = {
 	"/dong": { title: "Dong", render: dong },
 	"/settings": { title: "Settings", render: settings },
 	"/dashboard": { title: "Dashboard", render: dashboard },
+	"/bracket": { title: "Bracket", render: bracket },
 	"/history": { title: "History", render: history }
 };
 
