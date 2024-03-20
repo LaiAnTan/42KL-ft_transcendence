@@ -152,8 +152,8 @@ class Dong(AsyncJsonWebsocketConsumer):
         room = self.rooms[self.room_id]
         return {
             'room_id': self.room_id,
-            'player_1': room['players'][0],
-            'player_2': room['players'][1],
+            'player_1_id': room['players'][0],
+            'player_2_id': room['players'][1],
             'player_1_score': room['paddle_left'].score,
             'player_2_score': room['paddle_right'].score,
             'match_type': 'dong'

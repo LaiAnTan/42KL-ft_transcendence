@@ -65,16 +65,28 @@ function game() {
             if (isJSON(event.data)) {
                 let endElement = document.getElementById("dongball");
                 let eventData = JSON.parse(event.data);
-                if (eventData.room_id && eventData.player_1 && eventData.player_2 && eventData.player_1_score && eventData.player_2_score && eventData.match_type) {
-                    console.log("Game ended!");
-                    console.log("data:", eventData);
-                    fetch(`http://localhost:8000/api/closeRoom?room_code=${eventData.room_id}&gameMode=dong`, {
-                        method: "DELETE"
-                    })
-                    .then(response => response.json())
-                    .catch(error => {
-                        console.error('Error closing room:', error);
-                    });
+                if (eventData.room_id && eventData.player_1_id && eventData.player_2_id && eventData.match_type) {
+                    if (eventData.player_1_score > eventData.player_2_score && eventData.player_1_id === clientID) {
+                        fetch('http://localhost:8000/api/addVersus', {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify(eventData)
+                        })
+                        .then(response => response.json())
+                        .catch(error => {
+                            console.error('Error adding versus game:', error);
+                        });
+                        fetch(`http://localhost:8000/api/closeRoom?room_code=${eventData.room_id}&gameMode=dong`, {
+                            method: "DELETE"
+                        })
+                        .then(response => response.json())
+                        .catch(error => {
+                            console.error('Error closing room:', error);
+                        });
+                        alert("You win!");
+                    }
                     socket.close();
                     navigate("/vs-player");
                 }
@@ -122,6 +134,10 @@ function game() {
     });
 
     function tweenPaddlePosition(element, targetY, duration) {
+        if (!element) {
+            return;
+        }
+
         let isAnimating = element.classList.contains('paddle-left') ? isLeftPaddleAnimating : isRightPaddleAnimating;
         
         if (isAnimating) {
