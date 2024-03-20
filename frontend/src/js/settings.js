@@ -21,7 +21,7 @@ export default () => {
 		<p class="description scale-up cursor-pointer mr-4">SIGN OUT</p>
 	</div>
 	<div class="d-flex justify-content-center unselectable" style="overflow-y: auto">
-		<div class="d-flex flex-column align-items-center justify-content-center m-4 w-50" style="min-width: 400px; max-width: 650px">
+		<div class="d-flex flex-column m-4 w-50" style="min-width: 400px; max-width: 650px">
 
 			<div class="border-left border-right h-100 w-100 p-4">
 				<p class="important-label">AUDIO</p>
