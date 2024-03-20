@@ -75,6 +75,7 @@ export default () => {
 </div>`;
 				data_html += html_str;
 			});
+
 			return data_html;
 		}).then(data_html => {
 			let app = document.querySelector('#app');
@@ -88,7 +89,7 @@ export default () => {
 <div class="menu-header unselectable">
 	<p class="text-center menu-header-title h-100 my-4">HISTORY</p>
 </div>
-<div class="d-flex align-items-center justify-content-center w-100">
+<div class="d-flex align-items-center justify-content-center w-100" ${data_html == '' ? 'style="opacity: 0.3"' : ''}>
 	<div class="d-table w-80 mt-3" style="max-width: 1200px">
 		<div class="d-table-row important-label">
 			<div class="headers d-table-cell"></div>
@@ -97,9 +98,9 @@ export default () => {
 			<div class="headers d-table-cell"><i>Score</i></div>
 			<div class="headers d-table-cell"><i>Opponent</i></div>
 		</div>
-		${data_html}
 	</div>
-</div>`;
+</div>
+${data_html == '' ? '<div class="d-flex align-items-center justify-content-center"><p class="important-label">No match history</p></div>' : data_html}`;
 			app.outerHTML = new_div.outerHTML;
 		}).catch(err => {
 			console.error('Error sending code:', err);

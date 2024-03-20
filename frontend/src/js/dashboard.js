@@ -114,7 +114,7 @@ export default () => {
 		</div>
 		<div class="d-flex flex-row align-items-center justify-content-between border-top px-4 py-2">
 			<div class="description">${data.username}'s Game History</div>
-			<button data-link="/history?username=${data.username}" type="submit" class="description rounded-border cursor-pointer p-2" style="background-color: blue">GO</button>
+			<button data-link="/history?username=${data.username}" type="submit" class="description rounded-border scale-up cursor-pointer px-4 py-2 mx-2" style="background-color: blue">GO</button>
 		</div>
 	</div>
 	<div class="d-flex flex-column align-items-center justify-content-center h-100 w-100" style="min-width: 200px; max-width:250px;">
@@ -188,15 +188,58 @@ export default () => {
 			</div>
 		</div>
 
+		<div class="modal fade" id="confirmation-modal" tabindex="-1" role="dialog" aria-labelledby="confirmation-modal" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered" role="document">
+				<div class="modal-content background-blur rounded-border">
+					<div class="modal-header align-items-center important-label">
+						<h5 class="modal-title ml-4">Close ${params['username']}'s Account</h5>
+						<button type="button" class="close-modal" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body description">
+						This action is irreversible, all user data will be lost. Are you sure you want to delete your account?
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+						<button id="close-account-button" type="submit" class="btn btn-danger">Close Account</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		${current_user == data.username ? /* Ternary here used to check if active user is the user being displayed. If yes, show save button */
-		`<div class="d-flex flex-row align-items-center justify-content-between border-top px-4 py-2">
-			<div class="description">Editable</div>
-			<button id="update-button" type="submit" class="description rounded-border cursor-pointer p-2" style="background-color: green">Save</button>
+		`<div class="align-items-center border-top">
+			<div class="d-flex flex-row ml-auto px-4 py-2" style="justify-content: end">
+				<button data-toggle="modal" data-target="#confirmation-modal" type="button" class="description rounded-border scale-up cursor-pointer px-4 py-2 mx-2" style="background-color: red">Delete Account</button>
+				<button id="update-button" type="submit" class="description rounded-border scale-up cursor-pointer px-4 py-2 mx-2" style="background-color: green">Save</button>
+			</div>
 		</div>` : ''}
 	</div>
 </div>`;
 				new_div.innerHTML = ret;
 				app.outerHTML = new_div.outerHTML;
+
+				$('#confirmation-modal').on('hidden.bs.modal', function (e) {
+					window.history.replaceState("", "", "/");
+					router();
+				});
+
+				$('#close-account-button').click(function() {
+					$.ajax({
+						url: `http://localhost:8000/api/deleteUser?username=${params['username']}`,
+						type: 'DELETE',
+						success: function(response) {
+							$('#confirmation-modal').modal('hide');
+							sessionStorage.removeItem('display_name');
+							sessionStorage.removeItem('profile_pic');
+						},
+						error: function(jqXHR, textStatus, errorThrown) {
+							alert("Failed to delete, keep on living!");
+							console.error('Error deleting account:', jqXHR.responseJSON);
+						}
+					});
+				});
 
 				$('#update-button').click(function() {
 					var newDisplayName = $('#new-display-name').val();
