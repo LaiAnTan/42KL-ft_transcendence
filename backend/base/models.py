@@ -75,10 +75,12 @@ class Versus(models.Model):
 	id: primary key, versus_id
 	date_played: date of versus match
 	matchup_id: id of match
+	game_mode: mode of game played
 	"""
 
 	date_played = models.DateTimeField(auto_now_add=True)
 	matchup_id = models.IntegerField()
+	match_type = models.CharField(max_length=20, default=' ')
 
 
 class Tournament(models.Model):
