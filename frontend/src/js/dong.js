@@ -40,7 +40,9 @@ function game() {
             .catch(error => {
                 console.error('Error exiting room:', error);
             });
-            socket.close();
+            if (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING) {
+                socket.close();
+            }
             window.removeEventListener("popstate", handlePopState);
         }
     }
@@ -66,29 +68,38 @@ function game() {
                 let endElement = document.getElementById("dongball");
                 let eventData = JSON.parse(event.data);
                 if (eventData.room_id && eventData.player_1_id && eventData.player_2_id && eventData.match_type) {
-                    if (eventData.player_1_score > eventData.player_2_score && eventData.player_1_id === clientID) {
-                        fetch('http://localhost:8000/api/addVersus', {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json"
-                            },
-                            body: JSON.stringify(eventData)
-                        })
-                        .then(response => response.json())
-                        .catch(error => {
-                            console.error('Error adding versus game:', error);
-                        });
-                        fetch(`http://localhost:8000/api/closeRoom?room_code=${eventData.room_id}&gameMode=dong`, {
-                            method: "DELETE"
-                        })
-                        .then(response => response.json())
-                        .catch(error => {
-                            console.error('Error closing room:', error);
-                        });
-                        alert("You win!");
+                    if (eventData.player_1_score !== eventData.player_2_score) {
+                        const isClientWinner = (eventData.player_1_score > eventData.player_2_score && eventData.player_1_id === clientID) ||
+                                               (eventData.player_2_score > eventData.player_1_score && eventData.player_2_id === clientID);
+
+                        console.log("isClientWinner", isClientWinner);
+                        if (isClientWinner) {
+                            fetch('http://localhost:8000/api/addVersus', {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify(eventData)
+                            })
+                            .then(response => response.json())
+                            .then(() => {
+                                return fetch(`http://localhost:8000/api/closeRoom?room_code=${eventData.room_id}&gameMode=dong`, {
+                                    method: "DELETE"
+                                });
+                            })
+                            .catch(error => {
+                                console.error('Error adding versus game or closing room:', error);
+                            });
+                            // $('#win-splash-trigger').click();
+                        } else {
+                            // $('#lose-splash-trigger').click();
+                        }
+                        if (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING) {
+                            socket.close();
+                        }
+                        navigate("/vs-player");
+                        window.removeEventListener("popstate", handlePopState);
                     }
-                    socket.close();
-                    navigate("/vs-player");
                 }
                 if (eventData.console != undefined) {
                     console.log(eventData.console);
@@ -149,7 +160,7 @@ function game() {
           
           isAnimating = true;
           
-          const start = { y: parseFloat(element.style.top) || 0 };
+        const start = { y: parseFloat(element.style.top) || 0 };
         const change = { y: targetY - start.y };
         const startTime = performance.now();
     
@@ -215,26 +226,6 @@ function game() {
         // x.play();
     }
 
-    document.addEventListener("click", (event) => {
-        if (event.target && event.target.id === "end") {
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                socket.close();
-            } else {
-                console.error("WebSocket connection not established or closed");
-            }
-        }
-        if (event.target && event.target.id === "game") {
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                let message = {
-                    "command": "START_GAME",
-                };
-                socket.send(JSON.stringify(message));
-            } else {
-                console.error("WebSocket connection not established or closed");
-            }
-        }
-    });
-
     const pressedKeys = new Set();
 
     document.addEventListener("keydown", (event) => {
@@ -259,7 +250,9 @@ function game() {
                 };
     
                 // Send the WebSocket message
-                socket.send(JSON.stringify(message));
+                if (socket.readyState === WebSocket.OPEN) {
+                    socket.send(JSON.stringify(message));
+                }
             }
         }
 
@@ -284,7 +277,9 @@ function game() {
                 };
     
                 // Send the WebSocket message
-                socket.send(JSON.stringify(message));
+                if (socket.readyState === WebSocket.OPEN) {
+                    socket.send(JSON.stringify(message));
+                }
             }
         }
     });
@@ -310,7 +305,9 @@ function game() {
             };
     
             // Send the WebSocket message
-            socket.send(JSON.stringify(message));
+            if (socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify(message));
+            }
         }
 
         if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
@@ -332,7 +329,9 @@ function game() {
             };
     
             // Send the WebSocket message
-            socket.send(JSON.stringify(message));
+            if (socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify(message));
+            }
         }
     });
 
