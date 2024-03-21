@@ -55,7 +55,8 @@ parameters '},
 
 	# consolidate data
 	data = {**matchup_data,
-			"date_played": versus_serializer.data['date_played']}
+			"date_played": versus_serializer.data['date_played'],
+			"match_type": versus_serializer.data['match_type']}
 
 	return Response(data)
 
@@ -73,28 +74,29 @@ def addVersus(request):
 	{
 	"player_1_id": "1",
 	"player_2_id": "2",
-	"player_1_score": "2",
-	"player_2_score": "3"
+	"player_1_score": 2,
+	"player_2_score": 3,
+	"match_type": "pong / dong"
 	}
 	"""
 
 	# test: all fields are present in request body
 	if all(key in request.data for key in ("player_1_id", "player_2_id",
 										   "player_1_score",
-										   "player_2_score")) is False:
+										   "player_2_score", "match_type")) is False:
 		return Response({"Error": "Incomplete request body"},
 						status=status.HTTP_400_BAD_REQUEST)
 
 	# test: users exist in database
 	try:
-		player_1 = User.objects.get(id=request.data['player_1_id'])
-		player_2 = User.objects.get(id=request.data['player_2_id'])
+		player_1 = User.objects.get(username=request.data['player_1_id'])
+		player_2 = User.objects.get(username=request.data['player_2_id'])
 	except User.DoesNotExist:
 		return Response({"Error": "User Not Found in Database"},
 						status=status.HTTP_400_BAD_REQUEST)
 
 	# extract data from request.data into dictionaries for serialization
-	matchup_data = {key: request.data[key] for key in
+	matchup_data = {key: request.data[key] for key in 
 					MatchupSerializer().fields.keys() if key in request.data}
 
 	# serialize matchup
@@ -108,7 +110,7 @@ def addVersus(request):
 						status=status.HTTP_400_BAD_REQUEST)
 
 	# serialize versus with matchup_id
-	versus_data = {"matchup_id": str(matchup.id)}
+	versus_data = {"matchup_id": str(matchup.id), "match_type": request.data['match_type']}
 	versus_serializer = VersusSerializer(data=versus_data)
 
 	if versus_serializer.is_valid():
@@ -144,8 +146,7 @@ Database"},
 	# combine all dicts into 1 object for response return
 	data = {"date_played": versus_serializer.data['date_played'],
 			**matchup_data,
-			"player_1_info": model_to_dict(player_1),
-			"player_2_info": model_to_dict(player_2)}
+			"player_1_info": player_1.to_json(),
+			"player_2_info": player_2.to_json()}
 
 	return Response(data)
-

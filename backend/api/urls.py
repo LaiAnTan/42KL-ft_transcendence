@@ -10,7 +10,11 @@ urlpatterns = [
     path('allUsers', views_User.getAllUsers),
     path('editUser', views_User.editUser),
     path('deleteUser', views_User.deleteUser),
-    path('uploadProfile',  views_User.uploadProfile),
+    path('uploadProfile', views_User.uploadProfile),
+	path('addFriend', views_User.addFriend),
+	path('removeFriend', views_User.removeFriend),
+	path('getFriends', views_User.getFriends),
+	path('setOnlineStatus', views_User.setOnlineStatus),
     path('addMatchup', views_Matchup.addMatchup),
     path('getMatchup', views_Matchup.getMatchup),
     path('allMatchups', views_Matchup.getAllMatchups),
@@ -31,7 +35,8 @@ urlpatterns = [
     path('alert', alert.alert),
     path('tournamentInit', views_GameRoom.tournamentInit),
     path('tournamentAssign', views_GameRoom.tournamentAssign),
-    path('tournamentAllRooms', views_GameRoom.tournamentAllRooms),
-    path('tournamentEnd', views_GameRoom.tournamentEnd)
+	path('tournamentResults', views_GameRoom.tournamentResults),
+    path('tournamentEnd', views_GameRoom.tournamentEnd),
+	path('tournamentLoser', views_GameRoom.tournamentLoser),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

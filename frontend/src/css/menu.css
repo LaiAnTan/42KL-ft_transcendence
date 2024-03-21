@@ -55,6 +55,19 @@
 }
 
 @keyframes spin {
-    from {transform: rotate(0deg); }
-    to {transform: rotate(360deg); }
+	from {transform: rotate(0deg); }
+	to {transform: rotate(360deg); }
+}
+
+.profile-container {
+	position: relative;
+}
+
+.status-indicator {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	width: 15px;
+	height: 15px;
+	border-radius: 50%;
 }

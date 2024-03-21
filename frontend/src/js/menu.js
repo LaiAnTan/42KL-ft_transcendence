@@ -25,6 +25,21 @@ export default () => {
 					sessionStorage.setItem('username', data.json.username);
 					sessionStorage.setItem('display_name', data.json.display_name);
 					sessionStorage.setItem('profile_pic', "http://localhost:8000/api" + data.json.profile_pic); 
+					
+					$.ajax({
+						url: `http://localhost:8000/api/setOnlineStatus`,
+						type: 'POST',
+						contentType: 'application/json',
+						data: JSON.stringify({ "username": current_user, "is_online": true }),
+						success: function(response) {
+							alert('User is now online');
+						},
+						error: function(jqXHR, textStatus, errorThrown) {
+							alert("FAILED OAOAAOO");
+							console.error('Error updating details:', jqXHR.responseJSON);
+						}
+					});
+					
 					window.history.replaceState("", "", "/menu");
 					router();
 				});
@@ -44,11 +59,40 @@ export default () => {
 </div>`;
 	};
 
-	let app = document.querySelector('#app');
-	const new_div = document.createElement('div');
-	new_div.setAttribute('id', 'app');
-	new_div.className = 'w-100 h-100';
-	new_div.innerHTML = `
+	let data_html = '';
+	fetch(`http://localhost:8000/api/getFriends?username=${sessionStorage.getItem('username')}`, {
+		method: 'GET'
+	}).then(res => {
+		return res.json();
+	}).then(data => {
+		console.log(data);
+		console.log(data.friends);
+		data.friends.forEach(friend => {
+			let statusColor = friend.is_online ? 'green' : 'red';
+			let html_str = `
+			<div class="d-flex flex-row align-items-center justify-content-around friend-profile w-100 m-2">
+				<div class="profile-container" style="position: relative;">
+					<img src="http://localhost:8000/api${friend.profile_pic}" style="height: 57px; width: 57px; border-radius: 50%" />
+					<div class="status-indicator" style="background-color: ${statusColor};"></div>
+				</div>
+				<div class="d-flex flex-column align-items-right h-100">
+					<p class="description" style="opacity: 0.7; font-size: 17px">${friend.username}</p>
+					<p class="description">${friend.display_name}</p>
+				</div>
+			</div>`;
+
+			data_html += html_str;
+		});
+
+		return data_html;
+	}).then(data_html => {
+		console.log(data_html);
+
+		let app = document.querySelector('#app');
+		const new_div = document.createElement('div');
+		new_div.setAttribute('id', 'app');
+		new_div.className = 'w-100 h-100';
+		new_div.innerHTML = `
 <div class="d-flex flex-column h-100">
 	<button data-link="/settings" type="button" class="go-back-button ml-4" style="z-index: 1">
 		<img id="settings-button" src="src/assets/settings.png" style="height: 50px; width: 50px"></img>
@@ -84,22 +128,32 @@ export default () => {
 				</div>
 			</div>
 			<div class="d-flex flex-column p-4 w-100">
-				<p class="description">FRIENDS</p>
+				<p class="description mb-4">FRIENDS</p>
+				${data_html == '' ? `
 				<p class="description" style="opacity: 0.5">
 					No friends yet<br /><br />
 					You can add someone<br />from their dashboard!
-				</p>
+				</p>`
+				: data_html}
 			</div>
 		</div>
 	</div>
 </div>`;
-	app.outerHTML = new_div.outerHTML;
+		app.outerHTML = new_div.outerHTML;
 
-	$('#dashboard-button').click(function () {
-        const username = $('#dashboard-search').val();
-        if (username)
-            navigate(`/dashboard?username=${username}`);
-    })
+		$('#dashboard-search').on('input', function(event) {
+			if (event.keyCode === 13) {
+				$('#dashboard-button').click();
+			}
+		});
+		$('#dashboard-button').click(function () {
+			const username = $('#dashboard-search').val();
+			if (username)
+				navigate(`/dashboard?username=${username}`);
+		});
+	});
+
+	
 
 	return ;
 };

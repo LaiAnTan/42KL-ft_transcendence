@@ -7,6 +7,7 @@ import pong from "./pong.js";
 import dong from "./dong.js";
 import settings from "./settings.js";
 import dashboard from "./dashboard.js";
+import bracket from "./bracket.js";
 import history from "./history.js";
 
 
@@ -20,6 +21,7 @@ const routes = {
 	"/dong": { title: "Dong", render: dong },
 	"/settings": { title: "Settings", render: settings },
 	"/dashboard": { title: "Dashboard", render: dashboard },
+	"/bracket": { title: "Bracket", render: bracket },
 	"/history": { title: "History", render: history }
 };
 
@@ -76,9 +78,21 @@ export function router() {
 	}
 };
 
+function toggleOnlineStatus(event) {
+	$.ajax({
+		url: `http://localhost:8000/api/setOnlineStatus`,
+		type: 'POST',
+		contentType: 'application/json',
+		data: JSON.stringify({ "username": current_user, "is_online": false }),
+	});
+	window.removeEventListener('beforeunload', toggleOnlineStatus);
+}
+
 window.addEventListener("click", initRedirClicks);
 window.addEventListener("popstate", router);
 window.addEventListener("DOMContentLoaded", router);
+
+window.addEventListener('beforeunload', toggleOnlineStatus);
 
 let color = localStorage.getItem('palette');
 localStorage.setItem('palette', color ?? 'default');
