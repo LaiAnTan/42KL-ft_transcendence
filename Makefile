@@ -16,7 +16,7 @@ build:
 up: build
 	@echo "$(C_CYAN)Starting containers...$(C_RESET)"
 
-	docker compose -f $(DOCKER_COMPOSE) up -d
+	docker compose -f $(DOCKER_COMPOSE) up
 
 	@echo "$(C_GREEN)Done!$(C_RESET)"
 
