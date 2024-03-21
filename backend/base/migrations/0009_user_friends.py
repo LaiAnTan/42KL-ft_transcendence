@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='user',
             name='friends',
-            field=django.contrib.postgres.fields.ArrayField(base_field=models.CharField(max_length=20), blank=True, size=None),
+            field=django.contrib.postgres.fields.ArrayField(base_field=models.CharField(max_length=20), blank=True, null=True, size=None),
         ),
     ]

@@ -29,7 +29,7 @@ ps:
 clean:
 	docker system prune -f
 
-fclean: clean
+fclean: down clean
 	@echo "$(C_CYAN)Stopping and deleting containers...$(C_RESET)"
 
 	@-docker stop $(shell docker ps -qa) 2>/dev/null || true

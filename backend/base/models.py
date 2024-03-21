@@ -25,7 +25,7 @@ class User(models.Model):
 	profile_pic = models.ImageField(upload_to="profiles/")
 	versus_history = ArrayField(models.IntegerField(), blank=True)
 	tournament_history = ArrayField(models.IntegerField(), blank=True)
-	friends = ArrayField(models.CharField(max_length=20), blank=True)
+	friends = ArrayField(models.CharField(max_length=20), blank=True, null=True)
 	data_is_visible = models.BooleanField(default=False)
 	date_created = models.DateTimeField(auto_now_add=True)
 
