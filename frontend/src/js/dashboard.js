@@ -125,7 +125,7 @@ export default () => {
 		<div class="important-label" style="font-size: 40px;">${data.username.toUpperCase()}</div>
 		${current_user != data.username ?
 		`<div class="mt-4">
-			<button id="add-friend-button" type="submit" class="description rounded-border scale-up cursor-pointer px-4 py-2 mx-2" style="background-color: yellow">BEFRIEND</button>
+			<button id="add-friend-button" type="submit" class="description rounded-border scale-up cursor-pointer px-4 py-2 mx-2" style="background-color: gray">BEFRIEND</button>
 		</div>` : ''}
 	</div>
 	<div class="d-flex flex-column justify-content-between rounded-border glowing-border h-100 w-100 mx-3" style="min-width: 400px; max-width:600px;">

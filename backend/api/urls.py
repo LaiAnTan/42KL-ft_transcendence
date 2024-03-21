@@ -15,6 +15,7 @@ urlpatterns = [
 	path('removeFriend', views_User.removeFriend),
 	path('getFriends', views_User.getFriends),
 	path('setOnlineStatus', views_User.setOnlineStatus),
+	path('getOnlineStatus', views_User.getOnlineStatus),
     path('addMatchup', views_Matchup.addMatchup),
     path('getMatchup', views_Matchup.getMatchup),
     path('allMatchups', views_Matchup.getAllMatchups),

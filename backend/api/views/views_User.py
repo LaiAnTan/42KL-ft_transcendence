@@ -261,10 +261,13 @@ def addFriend(request):
 			return Response({"Error": f"{friend_username} already added as a friend"},
 							status=status.HTTP_200_OK)
 		user.friends.append(friend_username)
+		friend.friends.append(username)
 	else:
 		user.friends = [friend_username]
+		friend.friends = [username]
 
 	user.save()
+	friend.save()
 
 	return Response({"Success": f"{friend_username} added as a friend"},
 					status=status.HTTP_200_OK)
@@ -301,7 +304,9 @@ def removeFriend(request):
 							status=status.HTTP_200_OK)
 
 		user.friends.remove(friend_username)
+		friend.friends.remove(username)
 		user.save()
+		friend.save()
 
 		return Response({"Success": f"{friend_username} removed from friend list"},
 						status=status.HTTP_200_OK)
@@ -333,15 +338,17 @@ def getFriends(request):
 	friends = user.friends
 
 	friends_details = []
-	for friend_username in friends:
-		friend = User.objects.get(username=friend_username)
-		friend_data = {
-			"username": friend.username,
-			"display_name": friend.display_name,
-			"profile_pic": friend.profile_pic.url if friend.profile_pic else "",
-			"is_online": friend.is_online
-		}
-		friends_details.append(friend_data)
+
+	if friends is not None:
+		for friend_username in friends:
+			friend = User.objects.get(username=friend_username)
+			friend_data = {
+				"username": friend.username,
+				"display_name": friend.display_name,
+				"profile_pic": friend.profile_pic.url if friend.profile_pic else "",
+				"is_online": friend.is_online
+			}
+			friends_details.append(friend_data)
 
 	return Response({"friends": friends_details}, status=status.HTTP_200_OK)
 
@@ -375,3 +382,29 @@ def setOnlineStatus(request):
 
 	return Response({"Success": f"Online status for user {username} set to {is_online}"},
 					status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def getOnlineStatus(request):
+    """
+    API endpoint that gets the online status for a user.
+
+    JSON Format:
+    {
+        "username": "user"
+    }
+    """
+
+    try:
+        username = request.query_params['username']
+    except KeyError:
+        return Response({"Error": "Username not provided in query parameters"},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return Response({"Error": "User does not exist"},
+                        status=status.HTTP_404_NOT_FOUND)
+
+    return Response({"is_online": user.is_online},
+                    status=status.HTTP_200_OK)

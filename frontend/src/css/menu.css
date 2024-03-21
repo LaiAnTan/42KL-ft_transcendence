@@ -59,6 +59,14 @@
 	to {transform: rotate(360deg); }
 }
 
+.friend-profile {
+	transition: background-color 0.2s, border-radius 0.2s;
+}
+.friend-profile:hover {
+	background-color: rgb(71, 71, 71);
+	border-radius: 10px;
+}
+
 .profile-container {
 	position: relative;
 }

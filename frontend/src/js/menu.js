@@ -19,27 +19,23 @@ export default () => {
 				body: JSON.stringify({ "code": code }),
 			});
 			if (response.ok) {
-
 				response.json().then(data => {
 					console.log(data);
 					sessionStorage.setItem('username', data.json.username);
 					sessionStorage.setItem('display_name', data.json.display_name);
 					sessionStorage.setItem('profile_pic', "http://localhost:8000/api" + data.json.profile_pic); 
-					
+
 					$.ajax({
 						url: `http://localhost:8000/api/setOnlineStatus`,
 						type: 'POST',
 						contentType: 'application/json',
-						data: JSON.stringify({ "username": current_user, "is_online": true }),
-						success: function(response) {
-							alert('User is now online');
-						},
+						data: JSON.stringify({ "username": data.json.username, "is_online": true }),
 						error: function(jqXHR, textStatus, errorThrown) {
 							alert("FAILED OAOAAOO");
 							console.error('Error updating details:', jqXHR.responseJSON);
 						}
 					});
-					
+
 					window.history.replaceState("", "", "/menu");
 					router();
 				});
@@ -59,21 +55,42 @@ export default () => {
 </div>`;
 	};
 
+	
+	var current_user = sessionStorage.getItem('username');
+
+	// This is to counter how Chrome handles beforeunload, where a page refresh
+	// triggers the beforeunload event, causing our page to set the current user's
+	// online status to offline
+	fetch(`http://localhost:8000/api/getOnlineStatus?username=${current_user}`, {
+		method: 'GET'
+	})
+	.then(res => res.json())
+	.then(data => {
+		$.ajax({
+			url: `http://localhost:8000/api/setOnlineStatus`,
+			type: 'POST',
+			contentType: 'application/json',
+			data: JSON.stringify({ "username": current_user, "is_online": true }),
+			error: function(jqXHR, textStatus, errorThrown) {
+				alert("FAILED OAOAAOO");
+				console.error('Error updating details:', jqXHR.responseJSON);
+			}
+		});
+	});
+
 	let data_html = '';
-	fetch(`http://localhost:8000/api/getFriends?username=${sessionStorage.getItem('username')}`, {
+	fetch(`http://localhost:8000/api/getFriends?username=${current_user}`, {
 		method: 'GET'
 	}).then(res => {
 		return res.json();
 	}).then(data => {
-		console.log(data);
-		console.log(data.friends);
 		data.friends.forEach(friend => {
 			let statusColor = friend.is_online ? 'green' : 'red';
 			let html_str = `
-			<div class="d-flex flex-row align-items-center justify-content-around friend-profile w-100 m-2">
+			<div data-link="/dashboard?username=${friend.username}" class="d-flex flex-row align-items-center justify-content-around friend-profile cursor-pointer w-100 m-1 py-2">
 				<div class="profile-container" style="position: relative;">
 					<img src="http://localhost:8000/api${friend.profile_pic}" style="height: 57px; width: 57px; border-radius: 50%" />
-					<div class="status-indicator" style="background-color: ${statusColor};"></div>
+					<div class="status-indicator" style="background-color: ${statusColor};" title="${friend.is_online ? 'Online' : 'Offline'}"></div>
 				</div>
 				<div class="d-flex flex-column align-items-right h-100">
 					<p class="description" style="opacity: 0.7; font-size: 17px">${friend.username}</p>
@@ -86,8 +103,6 @@ export default () => {
 
 		return data_html;
 	}).then(data_html => {
-		console.log(data_html);
-
 		let app = document.querySelector('#app');
 		const new_div = document.createElement('div');
 		new_div.setAttribute('id', 'app');
@@ -100,7 +115,7 @@ export default () => {
 	<div class="menu-header unselectable">
 		<p class="text-center menu-header-title h-100 my-4">MAIN MENU</p>
 	</div>
-	<button title="To dashboard" data-link="/dashboard?username=${sessionStorage.getItem('username')}" type="submit" class="user-profile unselectable scale-up mr-4" style="z-index: 1">
+	<button title="To dashboard" data-link="/dashboard?username=${current_user}" type="submit" class="user-profile unselectable scale-up mr-4" style="z-index: 1">
 		<div class="user-img"><img src="${sessionStorage.getItem('profile_pic')}"></img></div>
 		<p class="description cursor-pointer">${sessionStorage.getItem('display_name')}</p>
 	</button>
@@ -141,19 +156,12 @@ export default () => {
 </div>`;
 		app.outerHTML = new_div.outerHTML;
 
-		$('#dashboard-search').on('input', function(event) {
-			if (event.keyCode === 13) {
-				$('#dashboard-button').click();
-			}
-		});
 		$('#dashboard-button').click(function () {
 			const username = $('#dashboard-search').val();
 			if (username)
 				navigate(`/dashboard?username=${username}`);
 		});
 	});
-
-	
 
 	return ;
 };

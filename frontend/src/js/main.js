@@ -79,12 +79,17 @@ export function router() {
 };
 
 function toggleOnlineStatus(event) {
-	$.ajax({
-		url: `http://localhost:8000/api/setOnlineStatus`,
-		type: 'POST',
-		contentType: 'application/json',
-		data: JSON.stringify({ "username": current_user, "is_online": false }),
-	});
+	try {
+		let current_user = sessionStorage.getItem('username');
+
+		$.ajax({
+			url: `http://localhost:8000/api/setOnlineStatus`,
+			type: 'POST',
+			contentType: 'application/json',
+			data: JSON.stringify({ "username": current_user ?? asd, "is_online": false }), // Let it throw exception if current_user is null
+		});
+
+	} catch (e) { } // Catch and void the exception
 	window.removeEventListener('beforeunload', toggleOnlineStatus);
 }
 
