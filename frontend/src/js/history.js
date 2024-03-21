@@ -18,8 +18,16 @@ export default () => {
 
 	const formatDate = (dateString) => {
 		const date = new Date(dateString);
-		const formattedDate = date.toISOString().replace('T', ' ').replace(/\.\d{3}Z$/, '');
-		return formattedDate;
+		const options = {
+			year: '2-digit',
+			month: '2-digit',
+			day: '2-digit',
+			hour: '2-digit',
+			minute: '2-digit',
+			hour12: true,
+			timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+		};
+		return date.toLocaleString('en-US', options).replace(',', '');
 	};
 
 	const getMatchData = () => {
@@ -64,14 +72,27 @@ export default () => {
 			let data_html = '';
 
 			matches.forEach(data => {
-				const backgroundColor = data.player_1_score > data.player_2_score ? 'rgba(0, 255, 0, 0.3)' : 'rgba(255, 0, 0, 0.3)';
-				const html_str = `
+				console.log(data);
+				let p1 = data.player_1_id;
+				let p2 = data.player_2_id;
+				let s1 = data.player_1_score;
+				let s2 = data.player_2_score;
+				var winner = s1 > s2 ? p1 : p2;
+				const backgroundColor = params['username'] == winner ? 'rgba(0, 255, 0, 0.3)' : 'rgba(255, 0, 0, 0.3)';
+
+				if (params['username'] == p2) {
+					[p1, p2] = [p2, p1];
+					[s1, s2] = [s2, s1];
+				}
+
+				let html_str = `
 <div class="d-table-row description" style="background-color: ${backgroundColor};">
 	<div class="data-display d-table-cell">${formatDate(data.date_played)}</div>
-	<div class="data-display d-table-cell">${data.player_1_id}</div>
-	<div class="data-display d-table-cell">${data.player_1_score}</div>
-	<div class="data-display d-table-cell">${data.player_2_score}</div>
-	<div class="data-display d-table-cell">${data.player_2_id}</div>
+	<div class="data-display d-table-cell">${p1}</div>
+	<div class="data-display d-table-cell">${s1}</div>
+	<div class="data-display d-table-cell">${s2}</div>
+	<div class="data-display d-table-cell">${p2}</div>
+	<div class="data-display d-table-cell">${data.match_type.toUpperCase()}</div>
 </div>`;
 				data_html += html_str;
 			});
@@ -87,20 +108,22 @@ export default () => {
 	<p data-link="/dashboard?username=${params['username']}" class="description scale-up cursor-pointer">GO BACK</p>
 </div>
 <div class="menu-header unselectable">
-	<p class="text-center menu-header-title h-100 my-4">HISTORY</p>
+	<p class="text-center menu-header-title h-100 my-4">${params['username'].toUpperCase()}'S GAME HISTORY</p>
 </div>
 <div class="d-flex align-items-center justify-content-center w-100" ${data_html == '' ? 'style="opacity: 0.3"' : ''}>
 	<div class="d-table w-80 mt-3" style="max-width: 1200px">
 		<div class="d-table-row important-label">
 			<div class="headers d-table-cell"></div>
 			<div class="headers d-table-cell"></div>
-			<div class="headers d-table-cell"><i>Score</i></div>
-			<div class="headers d-table-cell"><i>Score</i></div>
+            <div class="headers d-table-cell"><i>Score</i></div>
+            <div class="headers d-table-cell"></div>
 			<div class="headers d-table-cell"><i>Opponent</i></div>
+			<div class="headers d-table-cell"><i>Mode</i></div>
 		</div>
+		${data_html}
 	</div>
 </div>
-${data_html == '' ? '<div class="d-flex align-items-center justify-content-center"><p class="important-label">No match history</p></div>' : data_html}`;
+${data_html == '' ? '<div class="d-flex align-items-center justify-content-center"><p class="important-label">No match history</p></div>' : ''}`;
 			app.outerHTML = new_div.outerHTML;
 		}).catch(err => {
 			console.error('Error sending code:', err);

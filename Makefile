@@ -29,7 +29,7 @@ ps:
 clean:
 	docker system prune -f
 
-fclean:
+fclean: down clean
 	@echo "$(C_CYAN)Stopping and deleting containers...$(C_RESET)"
 
 	@-docker stop $(shell docker ps -qa) 2>/dev/null || true
@@ -55,4 +55,4 @@ django:
 javascript:
 	docker-compose -f ./docker-compose.yml exec javascript /bin/bash
 
-re: down fclean up
+re: fclean up

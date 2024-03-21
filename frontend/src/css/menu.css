@@ -55,6 +55,27 @@
 }
 
 @keyframes spin {
-    from {transform: rotate(0deg); }
-    to {transform: rotate(360deg); }
+	from {transform: rotate(0deg); }
+	to {transform: rotate(360deg); }
+}
+
+.friend-profile {
+	transition: background-color 0.2s, border-radius 0.2s;
+}
+.friend-profile:hover {
+	background-color: rgb(71, 71, 71);
+	border-radius: 10px;
+}
+
+.profile-container {
+	position: relative;
+}
+
+.status-indicator {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	width: 15px;
+	height: 15px;
+	border-radius: 50%;
 }

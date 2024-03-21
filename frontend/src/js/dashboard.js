@@ -123,6 +123,10 @@ export default () => {
 			${current_user == data.username ? '<img src="/src/assets/wojak-point.png" style="z-index: 1; opacity: 85%" />' : ''}
 		</div>
 		<div class="important-label" style="font-size: 40px;">${data.username.toUpperCase()}</div>
+		${current_user != data.username ?
+		`<div class="mt-4">
+			<button id="add-friend-button" type="submit" class="description rounded-border scale-up cursor-pointer px-4 py-2 mx-2" style="background-color: gray">BEFRIEND</button>
+		</div>` : ''}
 	</div>
 	<div class="d-flex flex-column justify-content-between rounded-border glowing-border h-100 w-100 mx-3" style="min-width: 400px; max-width:600px;">
 		<div class="flex-grow-1" style="overflow-y: auto">
@@ -178,13 +182,13 @@ export default () => {
 							`<div class="d-table-cell input-container pl-3"><input id="new-display-name" type="text" placeholder="Edit display name" class="description" value="${data.display_name}" /></div>`
 							: `<div class="d-table-cell pl-3">${data.display_name}</div>` }
 					</div>
-					${current_user == data.username ?
+					${current_user != data.username ?
 					`<div class="d-table-row ">
 						<div class="d-table-cell py-1">Avatar</div>
 						<div class="d-table-cell input-container pl-3"><input id="new-avatar" type="file" accept="image/jpeg, image/png, image/jpg" /></div>
 					</div>` : `` }
-					${(current_user != data.username) && (!data.data_is_visible) ? 
-						`` :
+					${(current_user == data.username) && (!data.data_is_visible) ? 
+					`` :
 					`<div class="d-table-row">
 						<div class="d-table-cell py-1">Email</div>
 						<div class="d-table-cell pl-3">${data.email}</div>
@@ -226,6 +230,26 @@ export default () => {
 	</div>
 </div>`;
 				app.outerHTML = new_div.outerHTML;
+
+				$('#add-friend-button').click(function() {
+					console.log(current_user);
+					console.log(params['username']);
+					$.ajax({
+						url: `http://localhost:8000/api/addFriend`,
+						type: 'POST',
+						contentType: 'application/json',
+						data: JSON.stringify({ "username": current_user, "friend_username": params['username'] }),
+						success: function(response) {
+							alert("friend added");
+							window.history.replaceState("", "", "/menu");
+							router();
+						},
+						error: function(jqXHR, textStatus, errorThrown) {
+							alert("friend NOT added");
+							console.error('Error updating details:', jqXHR.responseJSON);
+						}
+					});
+				});
 
 				$('#close-account-button').click(function() {
 					$.ajax({

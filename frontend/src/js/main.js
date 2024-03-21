@@ -78,9 +78,26 @@ export function router() {
 	}
 };
 
+function toggleOnlineStatus(event) {
+	try {
+		let current_user = sessionStorage.getItem('username');
+
+		$.ajax({
+			url: `http://localhost:8000/api/setOnlineStatus`,
+			type: 'POST',
+			contentType: 'application/json',
+			data: JSON.stringify({ "username": current_user ?? asd, "is_online": false }), // Let it throw exception if current_user is null
+		});
+
+	} catch (e) { } // Catch and void the exception
+	window.removeEventListener('beforeunload', toggleOnlineStatus);
+}
+
 window.addEventListener("click", initRedirClicks);
 window.addEventListener("popstate", router);
 window.addEventListener("DOMContentLoaded", router);
+
+window.addEventListener('beforeunload', toggleOnlineStatus);
 
 let color = localStorage.getItem('palette');
 localStorage.setItem('palette', color ?? 'default');
