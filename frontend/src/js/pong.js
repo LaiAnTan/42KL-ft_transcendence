@@ -47,8 +47,6 @@ function game() {
 		}
 	}
 
-	var reloaded = false;
-
 	fetch("http://localhost:8000/api/matchmaking?clientID=" + clientID  + "&gameMode=pong", {
 		method: "GET"
 	})
@@ -64,10 +62,6 @@ function game() {
 			console.log("client", clientID, "joined room", roomID);
 		};
 		socket.onmessage = function(event) {
-			if (reloaded == false) {
-				window.location.reload()
-				reloaded = true;
-			}
 			if (isJSON(event.data)) {
 				let endElement = document.getElementById("dongball");
 				let eventData = JSON.parse(event.data);
@@ -93,10 +87,20 @@ function game() {
 						console.error('Error adding versus game or closing room:', error);
 					});
 
-					if (eventData.player_1_score > eventData.player_2_score && eventData.player_1_id === clientID) {
-						alert("You win!"); // Show alert if player 1 wins
-					} else if (eventData.player_2_score > eventData.player_1_score && eventData.player_2_id === clientID) {
-						alert("You win!"); 
+					if (eventData.player_1_score > eventData.player_2_score) {
+						if (eventData.player_1_id === clientID) {
+							$('#win-splash-trigger').click(); // Show alert if player 1 wins
+						}
+						else {
+							$('#lose-splash-trigger').click();
+						}
+					} else if (eventData.player_2_score > eventData.player_1_score) {
+						if (eventData.player_2_id === clientID) {
+							$('#win-splash-trigger').click();
+						}
+						else {
+							$('#lose-splash-trigger').click();
+						}
 					}
 				}
 				if (eventData.console != undefined) {
@@ -342,7 +346,7 @@ function game() {
 	});
 
 	return `
-<div class="vw-100 vh-100 p-5">
+<div class="w-100 h-100 p-5">
 	<div class="d-flex justify-content-between w-80 mx-auto pb-3">
 		<div class="d-flex flex-row player-text player-1-text-color justify-content-end align-items-end">
 			<div id=player1score class="player-score-text-size pr-2">${player_1_score.toString()}</div>
@@ -358,6 +362,27 @@ function game() {
 			<div id="dongball"></div>
 			<div id="paddle_left"></div>
 			<div id="paddle_right"></div>
+		</div>
+	</div>
+</div>
+
+<button id="win-splash-trigger" data-toggle="modal" data-target="#win-splash" type="button" style="display: none;"></button>
+<button id="lose-splash-trigger" data-toggle="modal" data-target="#lose-splash" type="button" style="display: none;"></button>
+<div class="modal fade" id="lose-splash" tabindex="-1" role="dialog" aria-labelledby="lose-splash" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content" style="background-color: transparent;">
+		<div class="modal-body d-flex align-items-center justify-content-center text-center important-label">
+				<b style="font-size: 50px; color: red">YOU GOT PONGED</b>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="win-splash" tabindex="-1" role="dialog" aria-labelledby="win-splash" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content" style="background-color: transparent;">
+			<div class="modal-body d-flex align-items-center justify-content-center text-center important-label">
+				<b style="font-size: 50px; color: green">NICE PONG</b>
+			</div>
 		</div>
 	</div>
 </div>`;
