@@ -98,13 +98,16 @@ function game() {
                         document.getElementById('player1name').textContent = eventData.players[0].toString();
                         document.getElementById('player2name').textContent = eventData.players[1].toString();
                     }
+                    if (eventData.sound == 1){
+                        playWallSound();
+                    }
                     tweenBallPosition(endElement, eventData.ball_x, eventData.ball_y, 1);
                     tweenPaddlePosition(document.getElementById('paddle_left'), eventData.paddle_left_y, 2);
                     tweenPaddlePosition(document.getElementById('paddle_right'), eventData.paddle_right_y, 2);
                     if (eventData.hit != undefined) {
-                        if (eventData.hit == "HIT WALL") {
-                            playWallSound();
-                        }
+                        // if (eventData.hit == "HIT WALL") {
+                        //     playWallSound();
+                        // }
                         if (eventData.hit == "HIT LEFT") {
                             player_2_score += 1;
                             document.getElementById('player2score').textContent = player_2_score.toString();
@@ -206,7 +209,7 @@ function game() {
     }
 
     function playWallSound() {
-        console.log("SOUNDDDD");
+        // console.log("SOUNDDDD");
         let beat = new Audio('../src/assets/osu-hit-sound.mp3');
         beat.play();
         // x.play();
