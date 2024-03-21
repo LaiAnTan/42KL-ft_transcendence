@@ -229,3 +229,149 @@ parameters '},
 						status=status.HTTP_400_BAD_REQUEST)
 
 	return Response(user_serializer.data)
+
+@api_view(['POST'])
+def addFriend(request):
+	"""
+	API endpoint that adds a friend for a user.
+
+	JSON Format:
+	{
+		"username": "user",
+		"friend_username": "friend"
+	}
+	"""
+
+	try:
+		username = request.data['username']
+		friend_username = request.data['friend_username']
+	except KeyError:
+		return Response({"Error": "Username or friend_username not in request body"},
+						status=status.HTTP_400_BAD_REQUEST)
+
+	try:
+		user = User.objects.get(username=username)
+		friend = User.objects.get(username=friend_username) # Check if the "friend" exists
+	except User.DoesNotExist:
+		return Response({"Error": "User does not exist"},
+						status=status.HTTP_404_NOT_FOUND)
+
+	if user.friends:
+		if friend_username in user.friends:
+			return Response({"Error": f"{friend_username} already added as a friend"},
+							status=status.HTTP_200_OK)
+		user.friends.append(friend_username)
+	else:
+		user.friends = [friend_username]
+
+	user.save()
+
+	return Response({"Success": f"{friend_username} added as a friend"},
+					status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def removeFriend(request):
+	"""
+	API endpoint that removes a friend from a user's friend list.
+
+	JSON Format:
+	{
+		"username": "user",
+		"friend_username": "friend"
+	}
+	"""
+
+	try:
+		username = request.data['username']
+		friend_username = request.data['friend_username']
+	except KeyError:
+		return Response({"Error": "Username or friend_username not in request body"},
+						status=status.HTTP_400_BAD_REQUEST)
+
+	try:
+		user = User.objects.get(username=username)
+		friend = User.objects.get(username=friend_username)
+	except User.DoesNotExist:
+		return Response({"Error": "User or friend does not exist"},
+						status=status.HTTP_404_NOT_FOUND)
+
+	if user.friends is not None:
+		if friend_username not in user.friends:
+			return Response({"Error": f"{friend_username} is not in the friend list"},
+							status=status.HTTP_200_OK)
+
+		user.friends.remove(friend_username)
+		user.save()
+
+		return Response({"Success": f"{friend_username} removed from friend list"},
+						status=status.HTTP_200_OK)
+	else:
+		return Response({"Error": "Friend list is empty"},
+						status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def getFriends(request):
+	"""
+	API endpoint that retrieves friends for a user.
+
+	Query Parameters:
+	- username: The username of the user whose friends to retrieve
+	"""
+
+	username = request.query_params.get('username')
+
+	if username is None:
+		return Response({"Error": '"username" must be included in query parameters'},
+						status=status.HTTP_400_BAD_REQUEST)
+
+	try:
+		user = User.objects.get(username=username)
+	except User.DoesNotExist:
+		return Response({"Error": "User does not exist"},
+						status=status.HTTP_404_NOT_FOUND)
+
+	friends = user.friends
+
+	friends_details = []
+	for friend_username in friends:
+		friend = User.objects.get(username=friend_username)
+		friend_data = {
+			"username": friend.username,
+			"display_name": friend.display_name,
+			"profile_pic": friend.profile_pic.url if friend.profile_pic else "",
+			"is_online": friend.is_online
+		}
+		friends_details.append(friend_data)
+
+	return Response({"friends": friends_details}, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def setOnlineStatus(request):
+	"""
+	API endpoint that sets the online status for a user.
+
+	JSON Format:
+	{
+		"username": "user",
+		"is_online": true/false
+	}
+	"""
+
+	try:
+		username = request.data['username']
+		is_online = request.data['is_online']
+	except KeyError:
+		return Response({"Error": "Username or is_online not in request body"},
+						status=status.HTTP_400_BAD_REQUEST)
+
+	try:
+		user = User.objects.get(username=username)
+	except User.DoesNotExist:
+		return Response({"Error": "User does not exist"},
+						status=status.HTTP_404_NOT_FOUND)
+
+	user.is_online = is_online
+	user.save()
+
+	return Response({"Success": f"Online status for user {username} set to {is_online}"},
+					status=status.HTTP_200_OK)

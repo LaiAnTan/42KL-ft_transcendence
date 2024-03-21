@@ -27,6 +27,7 @@ class User(models.Model):
 	tournament_history = ArrayField(models.IntegerField(), blank=True)
 	friends = ArrayField(models.CharField(max_length=20), blank=True, null=True)
 	data_is_visible = models.BooleanField(default=False)
+	is_online = models.BooleanField(default=False)
 	date_created = models.DateTimeField(auto_now_add=True)
 
 	def to_json(self):
@@ -43,6 +44,7 @@ class User(models.Model):
 			'tournament_history': self.tournament_history,
 			'friends': self.friends,
 			'data_is_visible': False,
+			'is_online': False,
 			'date_created': self.date_created.strftime('%Y-%m-%d %H:%M:%S')
 		}
 
