@@ -59,12 +59,37 @@ export default () => {
     .then(response => response.json())
     .then(data => {
       if (data.status === 'finished') {
-        console.log(data.winner);
-        fetch('http://localhost:8000/api/tournamentEnd')
-        .then(response => response.json())
-        .catch(error => {
-          console.error('Tournament End failed:', error);
-        });
+        if (data.winner === clientID) {
+          alert('Congratulations! You won the tournament!');
+          fetch ('http://localhost:8000/api/tournamentGetScore', {
+            method: "GET"})
+          .then(response => response.json())
+          .then(data => {
+            console.log(data.results);
+            fetch('http://localhost:8000/api/addTournament', {
+              method: "POST",
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(data.results)
+            })
+            .then(response => response.json())
+            .catch(error => {
+              console.error('Add Tournament failed:', error);
+            });  
+            fetch('http://localhost:8000/api/tournamentEnd')
+            .then(response => response.json())
+            .catch(error => {
+              console.error('Tournament End failed:', error);
+            });
+          })
+          .catch(error => {
+            console.error('Tournament Winner failed:', error);
+          });
+          clearInterval(intervalId);
+          window.removeEventListener("popstate", handlePopState);
+          navigate('/menu');
+        }
       }
       const rooms = data.results;
       const boxes = document.querySelectorAll('.box-content');
@@ -158,3 +183,54 @@ export default () => {
   </div>
   `;
 };
+
+// {
+//   "player_ids": [
+//     "lwilliam",
+//     "tlai-an",
+//     "tecadet",
+//     "tcadet",
+//     "cyu-xian",
+//     "rsoo",
+//     "cshi-xia",
+//     "test1"
+//   ],
+//   "matchups": [
+//     {
+//       "player_1_id": "tecadet",
+//       "player_2_id": "tcadet",
+//       "player_1_score": 3,
+//       "player_2_score": 2
+//     },
+//     {
+//       "player_1_id": "cyu-xian",
+//       "player_2_id": "rsoo",
+//       "player_1_score": 3,
+//       "player_2_score": 2
+//     },
+//     {
+//       "player_1_id": "tlai-an",
+//       "player_2_id": "lwilliam",
+//       "player_1_score": 3,
+//       "player_2_score": 2
+//     },
+//     {
+//       "player_1_id": "cshi-xia",
+//       "player_2_id": "cyu-xian",
+//       "player_1_score": 3,
+//       "player_2_score": 2
+//     },
+//     {
+//       "player_1_id": "tlai-an",
+//       "player_2_id": "tecadet",
+//       "player_1_score": 1,
+//       "player_2_score": 3
+//     },
+//     {
+//       "player_1_id": "tecadet",
+//       "player_2_id": "cshi-xia",
+//       "player_1_score": 3,
+//       "player_2_score": 1
+//     }
+//   ]
+// }

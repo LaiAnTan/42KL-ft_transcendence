@@ -68,12 +68,25 @@ function game() {
 						const isClientWinner = (eventData.player_1_score > eventData.player_2_score && eventData.player_1_id === clientID) ||
 											   (eventData.player_2_score > eventData.player_1_score && eventData.player_2_id === clientID);
 						if (isClientWinner) {
-							fetch(`http://localhost:8000/api/closeRoom?room_code=${eventData.room_id}&gameMode=pong`, {
-								method: "DELETE"
+							fetch ('http://localhost:8000/api/tournamentScore', {
+								method: "POST",
+								headers: {
+									"Content-Type": "application/json"
+								},
+								body: JSON.stringify(eventData)
 							})
 							.then(response => response.json())
+							.then(() => {
+								fetch(`http://localhost:8000/api/closeRoom?room_code=${eventData.room_id}&gameMode=pong`, {
+									method: "DELETE"
+								})
+								.then(response => response.json())
+								.catch(error => {
+									console.error('Error closing room:', error);
+								});
+							})
 							.catch(error => {
-								console.error('Error closing room:', error);
+								console.error('Error adding tournament game:', error);
 							});
 							$('#win-splash-trigger').click();
 						} else {

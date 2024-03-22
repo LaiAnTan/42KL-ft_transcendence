@@ -123,7 +123,7 @@ def addTournament(request):
 	# check if users exist in database
 	try:
 		for id in request.data['player_ids']:
-			users.append(User.objects.get(id=id))
+			users.append(User.objects.get(username=id))
 	except User.DoesNotExist:
 		return Response({"Error": "User Not Found in Database"},
 						status=status.HTTP_400_BAD_REQUEST)
@@ -164,6 +164,9 @@ def addTournament(request):
 
 	if tournament_serializer.is_valid():
 		tournament = tournament_serializer.save()
+	else:
+		return Response({"Error": "Failed to validate tournament data"},
+						status=status.HTTP_400_BAD_REQUEST)
 
 	try:
 		with transaction.atomic():  # use transaction for rollback if fail

@@ -105,7 +105,7 @@ class Tournament(models.Model):
 	"""
 
 	date_played = models.DateTimeField(auto_now_add=True)
-	player_ids = ArrayField(models.IntegerField())
+	player_ids = models.CharField(max_length=20)
 	placements = ArrayField(models.IntegerField())
 	matchup_ids = ArrayField(models.IntegerField())
 
