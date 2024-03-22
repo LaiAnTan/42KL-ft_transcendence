@@ -1,30 +1,104 @@
-import { loadCSS, router } from "./main.js";
+import { loadCSS, navigate, router } from "./main.js";
 
 export default () => {
   let config_palette = localStorage.getItem("palette");
   loadCSS("src/css/palettes/" + config_palette + ".css");
   loadCSS("src/css/bracket.css");
+  var clientID = sessionStorage.getItem('username');
+  var current = window.location.href;
+
+  window.addEventListener("popstate", handlePopState);
+
+	function handlePopState(event) {
+    console.log('Tournament leaving');
+		if (window.location.pathname !== "/tournament") {
+			const confirmed = confirm("Tournament is in progress.");
+			if (!confirmed) {
+        console.log(current);
+        history.pushState(null, null, current);
+			}
+      clearInterval(intervalId);
+			window.removeEventListener("popstate", handlePopState);
+      fetch(`http://localhost:8000/api/tournamentLeave?clientID=${clientID}`, {
+        method: "DELETE"
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Tournament Leave:', data);
+      })
+      .catch(error => {
+        console.error('Tournament Leave failed:', error);
+      });
+		}
+	}
+
+  fetch(`http://localhost:8000/api/tournamentInit?clientID=${clientID}`, {
+    method: "GET"
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log('Tournament Init:', data);
+    fetch(`http://localhost:8000/api/tournamentAssign?clientID=${clientID}`, {
+      method: "GET"
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Tournament Assign:', data);
+      pollBackend()
+    })
+    .catch(error => {
+      console.error('Tournament Assign failed:', error);
+    });
+  })
+  .catch(error => {
+    console.error('Tournament Init failed:', error);
+  });
 
   function pollBackend() {
     fetch('http://localhost:8000/api/tournamentResults')
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'finished') {
+        console.log(data.winner);
+        fetch('http://localhost:8000/api/tournamentEnd')
         .then(response => response.json())
-        .then(data => {
-          const rooms = data.results;
-          const boxes = document.querySelectorAll('.box-content');
-          Object.keys(rooms).forEach((roomId, index) => {
-            const players = rooms[roomId]['players'].slice(0, 2); // Get the first two players in the room
-            players.forEach((player, i) => {
-              boxes[index * 2 + i].textContent = player; // Assign player to corresponding box
-            });
-          });
-        })
         .catch(error => {
-            console.error('Error fetching updates:', error);
+          console.error('Tournament End failed:', error);
         });
+      }
+      const rooms = data.results;
+      const boxes = document.querySelectorAll('.box-content');
+      boxes.forEach(box => {
+        box.textContent = '';
+    });
+      Object.keys(rooms).forEach((roomId, index) => {
+        const players = rooms[roomId]['players'].slice(0, 2); // Get the first two players in the room
+        players.forEach((player, i) => {
+          boxes[index * 2 + i].textContent = player; // Assign player to corresponding box
+        });
+      });
+      fetch(`http://localhost:8000/api/tournamentRoomID?clientID=${clientID}`, {
+        method: "GET"
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Tournament Room:', data);
+        if (data.roomID)
+        {
+          clearInterval(intervalId);
+          window.removeEventListener("popstate", handlePopState);
+          setTimeout(() => {
+            navigate(`/pong?tournamentID=${data.roomID}`);
+        }, 3000);
+        }
+      })
+    })
+    .catch(error => {
+        console.error('Error fetching updates:', error);
+    });
   }
 
-  // pollBackend();
-  setInterval(pollBackend, 5000);
+  const intervalId = setInterval(pollBackend, 10000);
 
   return `
   <button data-link="/menu" type="button" class="go-back-button scale-up ml-4" style="z-index: 1">
