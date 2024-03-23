@@ -11,7 +11,7 @@ export default () => {
 
 	const postCode = async () => {
 		try {
-			const response = await fetch("http://localhost:8000/api/postCode", {
+			const response = await fetch("https://localhost:8000/api/postCode", {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -23,10 +23,10 @@ export default () => {
 					console.log(data);
 					sessionStorage.setItem('username', data.json.username);
 					sessionStorage.setItem('display_name', data.json.display_name);
-					sessionStorage.setItem('profile_pic', "http://localhost:8000/api" + data.json.profile_pic); 
+					sessionStorage.setItem('profile_pic', "https://localhost:8000/api" + data.json.profile_pic); 
 
 					$.ajax({
-						url: `http://localhost:8000/api/setOnlineStatus`,
+						url: `https://localhost:8000/api/setOnlineStatus`,
 						type: 'POST',
 						contentType: 'application/json',
 						data: JSON.stringify({ "username": data.json.username, "is_online": true }),
@@ -63,13 +63,13 @@ export default () => {
 	// online status to offline
 	const isChrome = /Chrome/.test(navigator.userAgent);
 	if (isChrome) {
-		fetch(`http://localhost:8000/api/getOnlineStatus?username=${current_user}`, {
+		fetch(`https://localhost:8000/api/getOnlineStatus?username=${current_user}`, {
 			method: 'GET'
 		})
 		.then(res => res.json())
 		.then(data => {
 			$.ajax({
-				url: `http://localhost:8000/api/setOnlineStatus`,
+				url: `https://localhost:8000/api/setOnlineStatus`,
 				type: 'POST',
 				contentType: 'application/json',
 				data: JSON.stringify({ "username": current_user, "is_online": true }),
@@ -82,7 +82,7 @@ export default () => {
 	}
 
 	let friends_display = '';
-	fetch(`http://localhost:8000/api/getFriends?username=${current_user}`, {
+	fetch(`https://localhost:8000/api/getFriends?username=${current_user}`, {
 		method: 'GET'
 	}).then(res => {
 		return res.json();
@@ -92,7 +92,7 @@ export default () => {
 			let html_str = `
 			<div data-link="/dashboard?username=${friend.username}" class="d-flex flex-row align-items-center justify-content-around friend-profile cursor-pointer w-100 m-1 py-2">
 				<div class="profile-container" style="position: relative;">
-					<img src="http://localhost:8000/api${friend.profile_pic}" style="height: 57px; width: 57px; border-radius: 50%" />
+					<img src="https://localhost:8000/api${friend.profile_pic}" style="height: 57px; width: 57px; border-radius: 50%" />
 					<div id="${friend.username}" class="unfriend-overlay" title="Remove user from your friends list"></div>
 					<div class="status-indicator" style="background-color: ${statusColor};" title="${friend.is_online ? 'Online' : 'Offline'}"></div>
 				</div>
@@ -163,7 +163,7 @@ export default () => {
 		$('.unfriend-overlay').click(function () {
 			const username = $(this).attr('id');
 			$.ajax({
-				url: `http://localhost:8000/api/removeFriend`,
+				url: `https://localhost:8000/api/removeFriend`,
 				type: 'POST',
 				contentType: 'application/json',
 				data: JSON.stringify({ "username": current_user, "friend_username": username }),

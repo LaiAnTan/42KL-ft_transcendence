@@ -35,7 +35,7 @@ function game() {
 			if (!confirmed) {
 				history.pushState(null, null, window.location.href);
 			}
-			fetch(`http://localhost:8000/api/exitRoom?clientID=${clientID}&gameMode=dong`, {
+			fetch(`https://localhost:8000/api/exitRoom?clientID=${clientID}&gameMode=dong`, {
 				method: "DELETE"
 			})
 			.then(response => response.json())
@@ -49,7 +49,7 @@ function game() {
 		}
 	}
 
-	fetch("http://localhost:8000/api/matchmaking?clientID=" + clientID + "&gameMode=dong", {
+	fetch("https://localhost:8000/api/matchmaking?clientID=" + clientID + "&gameMode=dong", {
 		method: "GET"
 	})
 	.then(response => response.json())
@@ -58,7 +58,7 @@ function game() {
 			throw new Error(data.error);
 		}
 		roomID = data.roomID;
-		socket = new WebSocket(`ws://localhost:8000/dong?roomID=${roomID}&clientID=${clientID}`);
+		socket = new WebSocket(`wss://localhost:8001/dong?roomID=${roomID}&clientID=${clientID}`);
 		// Set up WebSocket event listeners
 		socket.onopen = function(event) {
 			console.log("WebSocket connection opened");
@@ -76,7 +76,7 @@ function game() {
 
 						console.log("isClientWinner", isClientWinner);
 						if (isClientWinner) {
-							fetch('http://localhost:8000/api/addVersus', {
+							fetch('https://localhost:8000/api/addVersus', {
 								method: "POST",
 								headers: {
 									"Content-Type": "application/json"
@@ -85,16 +85,16 @@ function game() {
 							})
 							.then(response => response.json())
 							.then(() => {
-								return fetch(`http://localhost:8000/api/closeRoom?room_code=${eventData.room_id}&gameMode=dong`, {
+								return fetch(`https://localhost:8000/api/closeRoom?room_code=${eventData.room_id}&gameMode=dong`, {
 									method: "DELETE"
 								});
 							})
 							.catch(error => {
 								console.error('Error adding versus game or closing room:', error);
 							});
-							// $('#win-splash-trigger').click();
+							$('#win-splash-trigger').click();
 						} else {
-							// $('#lose-splash-trigger').click();
+							$('#lose-splash-trigger').click();
 						}
 						if (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING) {
 							socket.close();

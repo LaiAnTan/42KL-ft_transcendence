@@ -19,7 +19,7 @@ export default () => {
 			}
       clearInterval(intervalId);
 			window.removeEventListener("popstate", handlePopState);
-      fetch(`http://localhost:8000/api/tournamentLeave?clientID=${clientID}`, {
+      fetch(`https://localhost:8000/api/tournamentLeave?clientID=${clientID}`, {
         method: "DELETE"
       })
       .then(response => response.json())
@@ -32,13 +32,13 @@ export default () => {
 		}
 	}
 
-  fetch(`http://localhost:8000/api/tournamentInit?clientID=${clientID}`, {
+  fetch(`https://localhost:8000/api/tournamentInit?clientID=${clientID}`, {
     method: "GET"
   })
   .then(response => response.json())
   .then(data => {
     console.log('Tournament Init:', data);
-    fetch(`http://localhost:8000/api/tournamentAssign?clientID=${clientID}`, {
+    fetch(`https://localhost:8000/api/tournamentAssign?clientID=${clientID}`, {
       method: "GET"
     })
     .then(response => response.json())
@@ -55,18 +55,18 @@ export default () => {
   });
 
   function pollBackend() {
-    fetch('http://localhost:8000/api/tournamentResults')
+    fetch('https://localhost:8000/api/tournamentResults')
     .then(response => response.json())
     .then(data => {
       if (data.status === 'finished') {
         if (data.winner === clientID) {
           alert('Congratulations! You won the tournament!');
-          fetch ('http://localhost:8000/api/tournamentGetScore', {
+          fetch ('https://localhost:8000/api/tournamentGetScore', {
             method: "GET"})
           .then(response => response.json())
           .then(data => {
             console.log(data.results);
-            fetch('http://localhost:8000/api/addTournament', {
+            fetch('https://localhost:8000/api/addTournament', {
               method: "POST",
               headers: {
                 'Content-Type': 'application/json'
@@ -75,7 +75,7 @@ export default () => {
             })
             .then(response => response.json())
             .then(data => {
-              fetch('http://localhost:8000/api/tournamentClearScore', {
+              fetch('https://localhost:8000/api/tournamentClearScore', {
                 method: "DELETE"
               })
               .then(response => response.json())
@@ -86,7 +86,7 @@ export default () => {
             .catch(error => {
               console.error('Add Tournament failed:', error);
             });  
-            fetch('http://localhost:8000/api/tournamentEnd', {
+            fetch('https://localhost:8000/api/tournamentEnd', {
               method: "DELETE"
             })
             .then(response => response.json())
@@ -113,7 +113,7 @@ export default () => {
           boxes[index * 2 + i].textContent = player; // Assign player to corresponding box
         });
       });
-      fetch(`http://localhost:8000/api/tournamentRoomID?clientID=${clientID}`, {
+      fetch(`https://localhost:8000/api/tournamentRoomID?clientID=${clientID}`, {
         method: "GET"
       })
       .then(response => response.json())
