@@ -23,7 +23,7 @@ export default () => {
 		}
 	});
 
-	fetch("http://localhost:8000/api/authConfig")
+	fetch("https://localhost:8000/api/authConfig")
 		.then((response) => response.json())
 		.then((data) => {
 			console.log(data);

@@ -9,8 +9,10 @@ https://docs.djangoproject.com/en/4.2/howto/deployment/asgi/
 
 import os
 
-from channels.routing import ProtocolTypeRouter, URLRouter
 from django.core.asgi import get_asgi_application
+django_asgi_app = get_asgi_application()
+from channels.auth import AuthMiddlewareStack
+from channels.routing import ProtocolTypeRouter, URLRouter
 from django.urls import path
 from .dong_game import Dong
 from .pong_game import Pong
@@ -18,10 +20,9 @@ from .pong_game import Pong
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mysite.settings')
 
 application = ProtocolTypeRouter({
-	"http": get_asgi_application(),
-	"websocket": URLRouter([
+	"https": django_asgi_app,
+	"websocket": AuthMiddlewareStack(URLRouter([
 		path('dong', Dong.as_asgi()),
 		path('pong', Pong.as_asgi()),
-	])
+	]))
 })
-

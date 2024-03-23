@@ -65,7 +65,7 @@ export default () => {
 	/* This is the function that GETs the user details from our Postgres DB through API ( /api/getUser ) */
 	const getUser = async () => {
 		try {
-			const response = await fetch(`http://localhost:8000/api/getUser?username=${params['username']}`, {
+			const response = await fetch(`https://localhost:8000/api/getUser?username=${params['username']}`, {
 				method: 'GET'
 			});
 
@@ -119,7 +119,7 @@ export default () => {
 	</div>
 	<div class="d-flex flex-column align-items-center justify-content-center h-100 w-100" style="min-width: 200px; max-width:250px;">
 		<div class="profile-pic" style="position: relative">
-			<img src="${"http://localhost:8000/api" + data.profile_pic}" style="z-index: 0; position: absolute" />
+			<img src="${"https://localhost:8000/api" + data.profile_pic}" style="z-index: 0; position: absolute" />
 			${current_user == data.username ? '<img src="/src/assets/wojak-point.png" style="z-index: 1; opacity: 85%" />' : ''}
 		</div>
 		<div class="important-label" style="font-size: 40px;">${data.username.toUpperCase()}</div>
@@ -235,7 +235,7 @@ export default () => {
 					console.log(current_user);
 					console.log(params['username']);
 					$.ajax({
-						url: `http://localhost:8000/api/addFriend`,
+						url: `https://localhost:8000/api/addFriend`,
 						type: 'POST',
 						contentType: 'application/json',
 						data: JSON.stringify({ "username": current_user, "friend_username": params['username'] }),
@@ -253,7 +253,7 @@ export default () => {
 
 				$('#close-account-button').click(function() {
 					$.ajax({
-						url: `http://localhost:8000/api/deleteUser?username=${params['username']}`,
+						url: `https://localhost:8000/api/deleteUser?username=${params['username']}`,
 						type: 'DELETE',
 						success: function(response) {
 							$('#confirmation-modal').modal('hide');
@@ -291,7 +291,7 @@ export default () => {
 						return ;
 
 					$.ajax({
-						url: `http://localhost:8000/api/editUser?username=${params['username']}`,
+						url: `https://localhost:8000/api/editUser?username=${params['username']}`,
 						type: 'POST',
 						contentType: 'multipart/form-data',
 						data: form_data,
@@ -300,7 +300,7 @@ export default () => {
 						success: function(response) {
 							alert("Details updated!");
 							sessionStorage.setItem('display_name', response.display_name);
-							sessionStorage.setItem('profile_pic', 'http://localhost:8000/api' + response.profile_pic);
+							sessionStorage.setItem('profile_pic', 'https://localhost:8000/api' + response.profile_pic);
 							window.history.replaceState("", "", `/dashboard?username=${params['username']}`);
 							router();
 						},

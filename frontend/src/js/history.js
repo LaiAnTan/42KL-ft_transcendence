@@ -31,7 +31,7 @@ export default () => {
 	};
 
 	const getMatchData = () => {
-		fetch(`http://localhost:8000/api/getUser?username=${params['username']}`, {
+		fetch(`https://localhost:8000/api/getUser?username=${params['username']}`, {
 			method: 'GET'
 		}).then(res => {
 			if (res.ok) {
@@ -58,7 +58,7 @@ export default () => {
 			}
 		}).then(versus_history => {
 			return Promise.all(versus_history.map(matchID => {
-				return fetch(`http://localhost:8000/api/getVersus?id=${matchID}`, {
+				return fetch(`https://localhost:8000/api/getVersus?id=${matchID}`, {
 					method: 'GET'
 				}).then(res => {
 					if (res.ok) {

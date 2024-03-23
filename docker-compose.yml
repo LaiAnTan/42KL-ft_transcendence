@@ -15,40 +15,28 @@ services:
     build: backend
     ports:
       - "8000:8000"
+      - "8001:8001"
     depends_on:
       - postgres
     env_file:
       - .env
     volumes:
       - ./backend:/app
-
-  # javascript:
-  #   container_name: javascript
-  #   build: frontend
-  #   ports:
-  #     - "8080:8080"
-  #   depends_on:
-  #     - django
-  #   env_file:
-  #     - .env
-  #   volumes:
-  #     - ./frontend:/app
+      - django-certs:/etc/certs
 
   nginx:
     image: nginx:latest
     container_name: nginx
     ports:
-      - "80:80"
       - "443:443"
     volumes:
       - ./setup/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./frontend:/usr/share/nginx/html
-      - ./setup/nginx/entrypoint.sh:/scripts/entrypoint.sh
+      - django-certs:/etc/nginx/certs
     depends_on:
       - django
     env_file:
       - .env
-    entrypoint: /scripts/entrypoint.sh
 
   prometheus:
     image: prom/prometheus:latest
@@ -98,6 +86,8 @@ volumes:
 
   grafana-data:
     driver: local
+
+  django-certs:
 
 networks:
   default:
