@@ -55,7 +55,8 @@ parameters '},
 
 	# consolidate data
 	data = {**matchup_data,
-			"date_played": versus_serializer.data['date_played']}
+			"date_played": versus_serializer.data['date_played'],
+			"match_type": versus_serializer.data['match_type']}
 
 	return Response(data)
 
