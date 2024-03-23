@@ -59,11 +59,13 @@ function game() {
 		}
 		roomID = data.roomID;
 		socket = new WebSocket(`ws://localhost:8000/pong?roomID=${roomID}&clientID=${clientID}`);
+		// Set up WebSocket event listeners
 		socket.onopen = function(event) {
 			console.log("WebSocket connection opened");
 			console.log("client", clientID, "joined room", roomID);
 		};
 		socket.onmessage = function(event) {
+			// console.log( "Received message:", event.data);
 			if (isJSON(event.data)) {
 				let endElement = document.getElementById("dongball");
 				let eventData = JSON.parse(event.data);
@@ -108,13 +110,16 @@ function game() {
 						document.getElementById('player1name').textContent = eventData.players[0].toString();
 						document.getElementById('player2name').textContent = eventData.players[1].toString();
 					}
+					if (eventData.sound == 1){
+						playWallSound();
+					}
 					tweenBallPosition(endElement, eventData.ball_x, eventData.ball_y, 1);
 					tweenPaddlePosition(document.getElementById('paddle_left'), eventData.paddle_left_y, 2);
 					tweenPaddlePosition(document.getElementById('paddle_right'), eventData.paddle_right_y, 2);
 					if (eventData.hit != undefined) {
-						if (eventData.hit == "HIT WALL") {
-							playWallSound();
-						}
+						// if (eventData.hit == "HIT WALL") {
+						//     playWallSound();
+						// }
 						if (eventData.hit == "HIT LEFT") {
 							player_2_score += 1;
 							document.getElementById('player2score').textContent = player_2_score.toString();
@@ -211,14 +216,14 @@ function game() {
 			is_animating = false; // Animation completed, reset the flag
 			}
 		}
-
 		requestAnimationFrame(updateTween);
 	}
 
 	function playWallSound() {
-		console.log("SOUNDDDD");
+		// console.log("SOUNDDDD");
 		let beat = new Audio('../src/assets/osu-hit-sound.mp3');
 		beat.play();
+		// x.play();
 	}
 
 	const pressedKeys = new Set();
@@ -226,7 +231,7 @@ function game() {
 	document.addEventListener("keydown", (event) => {
 		if (event.key === 'w' || event.key === 's') {
 			pressedKeys.add(event.key);
-		
+	
 			// Determine the direction based on pressed keys
 			let direction;
 			if (pressedKeys.has('w') && pressedKeys.has('s')) {
@@ -237,13 +242,13 @@ function game() {
 			} else if (pressedKeys.has('s')) {
 				direction = "PADDLE_DOWN";
 			}
-		
+	
 			if (direction) {
 				const message = {
 					id: id,
 					direction: direction
 				};
-		
+	
 				// Send the WebSocket message
 				if (socket.readyState === WebSocket.OPEN) {
 					socket.send(JSON.stringify(message));
@@ -253,7 +258,7 @@ function game() {
 
 		if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
 			pressedKeys.add(event.key);
-		
+	
 			// Determine the direction based on pressed keys
 			let direction;
 			if (pressedKeys.has('ArrowUp') && pressedKeys.has('ArrowDown')) {
@@ -264,13 +269,13 @@ function game() {
 			} else if (pressedKeys.has('ArrowDown')) {
 				direction = "PADDLE_DOWN";
 			}
-		
+	
 			if (direction) {
 				const message = {
 					id: "2",
 					direction: direction
 				};
-		
+	
 				// Send the WebSocket message
 				if (socket.readyState === WebSocket.OPEN) {
 					socket.send(JSON.stringify(message));
@@ -278,12 +283,12 @@ function game() {
 			}
 		}
 	});
-		
+	
 	// Keyup event listener
 	document.addEventListener("keyup", (event) => {
 		if (event.key === 'w' || event.key === 's') {
 			pressedKeys.delete(event.key);
-		
+	
 			// Determine the direction based on remaining pressed keys
 			let direction;
 			if (pressedKeys.has('w')) {
@@ -293,12 +298,12 @@ function game() {
 			} else {
 				direction = "PADDLE_STOP";
 			}
-		
+	
 			const message = {
 				id: id,
 				direction: direction
 			};
-		
+	
 			// Send the WebSocket message
 			if (socket.readyState === WebSocket.OPEN) {
 				socket.send(JSON.stringify(message));
@@ -322,7 +327,7 @@ function game() {
 				id: "2",
 				direction: direction
 			};
-		
+	
 			// Send the WebSocket message
 			if (socket.readyState === WebSocket.OPEN) {
 				socket.send(JSON.stringify(message));
