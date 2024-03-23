@@ -114,33 +114,33 @@ class Dong(AsyncJsonWebsocketConsumer):
 			room['ball'].y = self.game_height / 2
 			room['ball'].x = self.paddle_padding + self.ball_start_dist
 			room['ball'].dx = self.ball_speed
-			room['ball'].dy = random.uniform(-2.0001, 1.9999)
+			room['ball'].dy = random.uniform(-3.0001, 2.9999)
 		
 		if side == "RIGHT":
 			room = self.rooms[self.room_id]
 			room['ball'].y = self.game_height / 2
 			room['ball'].x = self.game_width - self.ball_start_dist - self.paddle_padding - self.paddle_width
 			room['ball'].dx = self.ball_speed * -1
-			room['ball'].dy = random.uniform(-2.0001, 1.9999)
+			room['ball'].dy = random.uniform(-3.0001, 2.9999)
 
 		await asyncio.sleep(3)
 
 	async def run(self):
 		room = self.rooms[self.room_id]
 		room['ball'] = Ball(size=3, y=self.game_height / 2, x=room['paddle_left'].x + self.ball_start_dist,
-			dx=self.ball_speed, dy=random.uniform(-2.0001, 1.9999))
+			dx=self.ball_speed, dy=random.uniform(-3.0001, 2.9999))
 		room['game_started'] = True
 
 		while room['paddle_left'].score < self.points_to_win and room['paddle_right'].score < self.points_to_win:
 			await asyncio.sleep(1 / 60)
 			await self.game()
-			await self.update()
 			await self.channel_layer.group_send(
 				self.room_group_name, {
 					'type': 'send_game_data',
 					'message': await self.get_game_data()
 				}
 			)
+			await self.update()
 
 		await self.channel_layer.group_send(
 				self.room_group_name, {
