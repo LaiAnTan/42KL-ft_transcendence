@@ -13,11 +13,9 @@ logger = logging.getLogger(__name__)
 
 class GameAI:
 
-    GAME_URL = "ws://localhost:8000/pong"
-
     def __init__(self, mode="pong") -> None:
 
-        self.id = 'the_ai'
+        self.id = 'AI'
 
         if mode in ["pong", "dong"]:
             self.mode = mode
@@ -26,8 +24,7 @@ class GameAI:
 
         self.game_url = f"ws://localhost:8000/{self.mode}"
 
-        self.room_id = requests.get(f"http://localhost:8000/api/matchmaking?\
-clientID={self.id}&gameMode={self.mode}").json()['roomID']
+        self.room_id = requests.get(f"http://localhost:8000/api/matchmaking?clientID={self.id}&gameMode={self.mode}").json()['roomID']
 
         print(self.room_id)
 
@@ -72,7 +69,7 @@ clientID={self.id}&gameMode={self.mode}").json()['roomID']
 
     def running(self):
 
-        self.ws = connect(self.GAME_URL +
+        self.ws = connect(self.game_url +
                           f"?roomID={self.room_id}&clientID={self.id}")
 
         is_game_ended = False
@@ -100,5 +97,5 @@ clientID={self.id}&gameMode={self.mode}").json()['roomID']
 
 if __name__ == "__main__":
 
-    ai = GameAI()
+    ai = GameAI(mode="pong")
     ai.running()
