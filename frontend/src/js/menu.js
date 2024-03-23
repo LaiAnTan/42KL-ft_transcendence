@@ -129,7 +129,7 @@ export default () => {
 				<div class="menu-component-title">VS AI</div>
 				<div class="menu-component-description">PLAY 1V1 AGAINST AN AI</div>
 			</button>
-			<button type="button" data-link="/" id="tourney" class="menu-component tournament cursor-pointer" style="background-color: transparent">
+			<button type="button" data-link="/tournament" id="tourney" class="menu-component tournament cursor-pointer" style="background-color: transparent">
 				<div class="menu-component-title">TOURNAMENT</div>
 				<div class="menu-component-description">BRACKET-STYLED TOURNAMENT</div>
 			</button>

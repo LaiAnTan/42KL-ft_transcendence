@@ -106,7 +106,12 @@ round_1 = {}
 round_2 = {}
 round_3 = {}
 tournament_running = False
+tournament_started = False
 players = []
+tournament_results = {
+    "player_ids": [],
+    "matchups": []
+}
 
 def init_round(rounds, num):
     for x in range(num):
@@ -117,11 +122,11 @@ def init_round(rounds, num):
 @api_view(['GET'])
 def tournamentInit(_request):
     client_id = _request.GET.get('clientID')
-    global tournament_running, players
-    if tournament_running is True:
+    global tournament_running, players, tournament_started, tournament_results
+    if tournament_running is True and tournament_started is True:
         return Response({"message": "tournament is running"}, status=400)
-    if len(players) == 7:
-        tournament_running = True
+    # if len(players) == 7:
+    tournament_running = True
     if len(round_1) != 4:
         init_round(round_1, 4)
     if len(round_2) != 2:
@@ -130,8 +135,12 @@ def tournamentInit(_request):
         init_round(round_3, 1)
     if client_id not in players:
         players.append(client_id)
+        if len(players) == 8:
+            if tournament_started is False:
+                tournament_started = True
+                tournament_results["player_ids"] = players.copy()
         return Response({"message": "tournament is initialized"}, status=200)
-    return Response({"message": "client is already in room"}, status=400)
+    return Response({"message": "client is already in tournament"}, status=400)
 
 @api_view(['GET'])
 def tournamentAssign(_request):
@@ -140,12 +149,14 @@ def tournamentAssign(_request):
     if tournament_running is False:
         return Response({'message': 'tournament is not initialized'}, status=400)
     for room_code, room_data in round_1.items():
+        if client_id in room_data['players']:
+            break;
         if len(room_data['players']) < MAX_CLIENTS_PER_ROOM:
             if client_id not in players:
-                break;
+                return Response({'message': 'client not in tournament'}, status=400)
             room_data['players'].append(client_id)
-            return Response({'roomID': room_data['roomID']})
-    return Response({'message': 'tournament is full', 'players': players}, status=400)
+            return Response({'message': "assigned to " + room_data['roomID']})
+    return Response({'message': 'client in already in room', 'players': players}, status=400)
 
 @api_view(['DELETE'])
 def tournamentLoser(_request):
@@ -175,28 +186,82 @@ def round_winner(rounds):
                 break
 
 @api_view(['GET'])
+def tournamentRoomID(_request):
+    client_id = _request.GET.get('clientID')
+    for round_data in [round_1, round_2, round_3]:
+        for room_code, room_data in round_data.items():
+            if client_id in room_data['players'] and not room_data.get('loser_removed') and tournament_started is True:
+                return Response({'roomID': room_data['roomID']}, status=200)
+    return Response({'message': 'Client waiting for next round or lost'}, status=200)
+
+@api_view(['GET'])
 def tournamentResults(_request):
     global round_1, round_2, round_3, players
 
-    if len(players) == 1:
-        return Response({'message': players[0] + ' has won the tournament!', 'roundStatus': "end"}, status=200)
-    elif len(players) == 4:
-        round_winner(round_2)
-    elif len(players) == 2:
-        round_winner(round_3)
-
-    result = {}
+    result = {} 
     for round_data in [round_1, round_2, round_3]:
         for key, value in round_data.items():
             result[len(result)] = value
+
+    if len(players) == 1 and tournament_started is True:
+        return Response({'status': "finished", "winner": players[0], 'result': result}, status=200)
+    elif len(players) == 4 and tournament_started is True:
+        round_winner(round_2)
+    elif len(players) == 2 and tournament_started is True:
+        round_winner(round_3)
+
     return Response({'message': 'tournament is running', 'results': result}, status=200)
 
 @api_view(['DELETE'])
 def tournamentEnd(_request):
-    global round_1, round_2, round_3, tournament_running, players
+    global round_1, round_2, round_3, tournament_running, players, tournament_started
     round_1.clear()
     round_2.clear()
     round_3.clear()
     tournament_running = False
+    tournament_started = False
     players.clear()
     return Response({'message': 'game has ended'}, status=200)
+
+@api_view(['DELETE'])
+def tournamentLeave(_request):
+    client_id = _request.GET.get('clientID')
+
+    if len(players) < 7 and tournament_started is False:
+        if client_id in players:
+            players.remove(client_id)
+            for room_code, room_data in round_1.items():
+                if client_id in room_data['players']:
+                        room_data['players'].remove(client_id)
+            return Response({'message': 'player removed'}, status=200)
+        return Response({'message': 'player not in tournament'}, status=400)
+    return Response({'message': 'tournament is ongoing'}, status=400)
+
+@api_view(['POST'])
+def tournamentScore(request):
+    global score
+    if all(key in request.data for key in ("player_1_id", "player_2_id",
+                                            "player_1_score",
+                                            "player_2_score")) is False:
+        return Response({"Error": "Incorrect request body"}, status=400)
+    new_matchup = {
+        "player_1_id": request.data["player_1_id"],
+        "player_2_id": request.data["player_2_id"],
+        "player_1_score": request.data["player_1_score"],
+        "player_2_score": request.data["player_2_score"]
+    }
+    tournament_results["matchups"].append(new_matchup)
+    return Response({"Success": "Matchup added successfully", 'results': tournament_results}, status=200)
+
+@api_view(['DELETE'])
+def tournamentClearScore(request):
+    global tournament_results
+    tournament_results = {
+        "player_ids": [],
+        "matchups": []
+    }
+    return Response({"Success": "Matchups cleared successfully"}, status=200)
+
+@api_view(['GET'])
+def tournamentGetScore(request):
+    return Response({'results': tournament_results}, status=200)
