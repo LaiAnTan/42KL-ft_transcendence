@@ -74,10 +74,21 @@ export default () => {
               body: JSON.stringify(data.results)
             })
             .then(response => response.json())
+            .then(data => {
+              fetch('http://localhost:8000/api/tournamentClearScore', {
+                method: "DELETE"
+              })
+              .then(response => response.json())
+              .catch(error => {
+                console.error('Tournament End failed:', error);
+              });
+            })
             .catch(error => {
               console.error('Add Tournament failed:', error);
             });  
-            fetch('http://localhost:8000/api/tournamentEnd')
+            fetch('http://localhost:8000/api/tournamentEnd', {
+              method: "DELETE"
+            })
             .then(response => response.json())
             .catch(error => {
               console.error('Tournament End failed:', error);
@@ -86,10 +97,10 @@ export default () => {
           .catch(error => {
             console.error('Tournament Winner failed:', error);
           });
-          clearInterval(intervalId);
-          window.removeEventListener("popstate", handlePopState);
-          navigate('/menu');
         }
+        clearInterval(intervalId);
+        window.removeEventListener("popstate", handlePopState);
+        navigate('/menu');
       }
       const rooms = data.results;
       const boxes = document.querySelectorAll('.box-content');
@@ -183,54 +194,3 @@ export default () => {
   </div>
   `;
 };
-
-// {
-//   "player_ids": [
-//     "lwilliam",
-//     "tlai-an",
-//     "tecadet",
-//     "tcadet",
-//     "cyu-xian",
-//     "rsoo",
-//     "cshi-xia",
-//     "test1"
-//   ],
-//   "matchups": [
-//     {
-//       "player_1_id": "tecadet",
-//       "player_2_id": "tcadet",
-//       "player_1_score": 3,
-//       "player_2_score": 2
-//     },
-//     {
-//       "player_1_id": "cyu-xian",
-//       "player_2_id": "rsoo",
-//       "player_1_score": 3,
-//       "player_2_score": 2
-//     },
-//     {
-//       "player_1_id": "tlai-an",
-//       "player_2_id": "lwilliam",
-//       "player_1_score": 3,
-//       "player_2_score": 2
-//     },
-//     {
-//       "player_1_id": "cshi-xia",
-//       "player_2_id": "cyu-xian",
-//       "player_1_score": 3,
-//       "player_2_score": 2
-//     },
-//     {
-//       "player_1_id": "tlai-an",
-//       "player_2_id": "tecadet",
-//       "player_1_score": 1,
-//       "player_2_score": 3
-//     },
-//     {
-//       "player_1_id": "tecadet",
-//       "player_2_id": "cshi-xia",
-//       "player_1_score": 3,
-//       "player_2_score": 1
-//     }
-//   ]
-// }
