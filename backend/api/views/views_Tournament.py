@@ -164,9 +164,6 @@ def addTournament(request):
 
 	if tournament_serializer.is_valid():
 		tournament = tournament_serializer.save()
-	else:
-		return Response({"Error": "Failed to validate tournament data"},
-						status=status.HTTP_400_BAD_REQUEST)
 
 	try:
 		with transaction.atomic():  # use transaction for rollback if fail
