@@ -87,18 +87,19 @@ function game() {
 								body: JSON.stringify(eventData)
 							})
 							.then(response => response.json())
-							.then(() => {
-								return fetch(`https://localhost:8000/api/closeRoom?room_code=${eventData.room_id}&gameMode=dong`, {
-									method: "DELETE"
-								});
-							})
 							.catch(error => {
-								console.error('Error adding versus game or closing room:', error);
+								console.error('Error adding versus:', error);
 							});
 							$('#win-splash-trigger').click();
 						} else {
 							$('#lose-splash-trigger').click();
 						}
+						fetch(`https://localhost:8000/api/closeRoom?room_code=${eventData.room_id}&gameMode=pong`, {
+							method: "DELETE" })
+						.then(response => response.json())
+						.catch(error => {
+							console.error('Error closing room:', error);
+						});
 						if (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING) {
 							socket.close();
 						}
