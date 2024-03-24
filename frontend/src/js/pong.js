@@ -4,6 +4,8 @@ function game() {
 	let config_palette = localStorage.getItem("palette");
 	loadCSS("src/css/palettes/" + config_palette + ".css");
 	loadCSS("src/css/game.css");
+	const urlParams = new URLSearchParams(window.location.search);
+	let tournamentID = urlParams.get('tournamentID');
 
 	let player_1_score = 0;
 	let player_2_score = 0;
@@ -35,7 +37,7 @@ function game() {
 			if (!confirmed) {
 				history.pushState(null, null, window.location.href);
 			}
-			fetch(`http://localhost:8000/api/exitRoom?clientID=${clientID}&gameMode=pong`, {
+			fetch(`https://localhost:8000/api/exitRoom?clientID=${clientID}&gameMode=pong`, {
 				method: "DELETE"
 			})
 			.then(response => response.json())
@@ -49,21 +51,16 @@ function game() {
 		}
 	}
 
-	fetch("http://localhost:8000/api/matchmaking?clientID=" + clientID  + "&gameMode=pong", {
-		method: "GET"
-	})
-	.then(response => response.json())
-	.then(data => {
-		if (data.error) {
-			throw new Error(data.error);
-		}
-		roomID = data.roomID;
-		socket = new WebSocket(`ws://localhost:8000/pong?roomID=${roomID}&clientID=${clientID}`);
+	if (urlParams.has('tournamentID')) {
+		tournamentID = urlParams.get('tournamentID');
+
+		socket = new WebSocket(`wss://localhost:8001/pong?roomID=${tournamentID}&clientID=${clientID}`);
 		socket.onopen = function(event) {
 			console.log("WebSocket connection opened");
-			console.log("client", clientID, "joined room", roomID);
+			console.log("client", clientID, "joined room", tournamentID);
 		};
 		socket.onmessage = function(event) {
+			// console.log( "Received message:", event.data);
 			if (isJSON(event.data)) {
 				let endElement = document.getElementById("dongball");
 				let eventData = JSON.parse(event.data);
@@ -71,9 +68,8 @@ function game() {
 					if (eventData.player_1_score !== eventData.player_2_score) {
 						const isClientWinner = (eventData.player_1_score > eventData.player_2_score && eventData.player_1_id === clientID) ||
 											   (eventData.player_2_score > eventData.player_1_score && eventData.player_2_id === clientID);
-
 						if (isClientWinner) {
-							fetch('http://localhost:8000/api/addVersus', {
+							fetch ('https://localhost:8000/api/tournamentScore', {
 								method: "POST",
 								headers: {
 									"Content-Type": "application/json"
@@ -82,21 +78,32 @@ function game() {
 							})
 							.then(response => response.json())
 							.then(() => {
-								return fetch(`http://localhost:8000/api/closeRoom?room_code=${eventData.room_id}&gameMode=pong`, {
+								fetch(`https://localhost:8000/api/closeRoom?room_code=${eventData.room_id}&gameMode=pong`, {
 									method: "DELETE"
+								})
+								.then(response => response.json())
+								.catch(error => {
+									console.error('Error closing room:', error);
 								});
 							})
 							.catch(error => {
-								console.error('Error adding versus game or closing room:', error);
+								console.error('Error adding tournament game:', error);
 							});
 							$('#win-splash-trigger').click();
 						} else {
+							fetch(`https://localhost:8000/api/tournamentLoser?loserID=${clientID}`, {
+								method: "DELETE" })
+							.then(response => response.json())
+							.catch(error => {
+								console.error('Error marking tournament loser:', error);
+							});
 							$('#lose-splash-trigger').click();
 						}
 						if (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING) {
 							socket.close();
 						}
-						navigate("/vs-player");
+						// navigate("/vs-player");
+						navigate("/tournament");
 						window.removeEventListener("popstate", handlePopState);
 					}
 				}
@@ -108,13 +115,16 @@ function game() {
 						document.getElementById('player1name').textContent = eventData.players[0].toString();
 						document.getElementById('player2name').textContent = eventData.players[1].toString();
 					}
+					if (eventData.sound == 1){
+						playWallSound();
+					}
 					tweenBallPosition(endElement, eventData.ball_x, eventData.ball_y, 1);
 					tweenPaddlePosition(document.getElementById('paddle_left'), eventData.paddle_left_y, 2);
 					tweenPaddlePosition(document.getElementById('paddle_right'), eventData.paddle_right_y, 2);
 					if (eventData.hit != undefined) {
-						if (eventData.hit == "HIT WALL") {
-							playWallSound();
-						}
+						// if (eventData.hit == "HIT WALL") {
+						//     playWallSound();
+						// }
 						if (eventData.hit == "HIT LEFT") {
 							player_2_score += 1;
 							document.getElementById('player2score').textContent = player_2_score.toString();
@@ -138,10 +148,104 @@ function game() {
 			console.error("WebSocket error:", event);
 			console.error("WebSocket connection closed due to room already have 2 players or room not found");
 		};
-	})
-	.catch(error => {
-		console.error("Error: ", error);
-	});
+	} else {
+		fetch("https://localhost:8000/api/matchmaking?clientID=" + clientID  + "&gameMode=pong", {
+			method: "GET"
+		})
+		.then(response => response.json())
+		.then(data => {
+			if (data.error) {
+				throw new Error(data.error);
+			}
+			roomID = data.roomID;
+			socket = new WebSocket(`wss://localhost:8001/pong?roomID=${roomID}&clientID=${clientID}`);
+			socket.onopen = function(event) {
+				console.log("WebSocket connection opened");
+				console.log("client", clientID, "joined room", roomID);
+			};
+			socket.onmessage = function(event) {
+				if (isJSON(event.data)) {
+					let endElement = document.getElementById("dongball");
+					let eventData = JSON.parse(event.data);
+					if (eventData.room_id && eventData.player_1_id && eventData.player_2_id && eventData.match_type) {
+						if (eventData.player_1_score !== eventData.player_2_score) {
+							const isClientWinner = (eventData.player_1_score > eventData.player_2_score && eventData.player_1_id === clientID) ||
+												   (eventData.player_2_score > eventData.player_1_score && eventData.player_2_id === clientID);
+	
+							if (isClientWinner) {
+								fetch('https://localhost:8000/api/addVersus', {
+									method: "POST",
+									headers: {
+										"Content-Type": "application/json"
+									},
+									body: JSON.stringify(eventData)
+								})
+								.then(response => response.json())
+								.then(() => {
+									return fetch(`https://localhost:8000/api/closeRoom?room_code=${eventData.room_id}&gameMode=pong`, {
+										method: "DELETE"
+									});
+								})
+								.catch(error => {
+									console.error('Error adding versus game or closing room:', error);
+								});
+								$('#win-splash-trigger').click();
+							} else {
+								$('#lose-splash-trigger').click();
+							}
+							if (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING) {
+								socket.close();
+							}
+							navigate("/vs-player");
+							window.removeEventListener("popstate", handlePopState);
+						}
+					}
+					if (eventData.console != undefined) {
+						console.log(eventData.console);
+					}
+					if (endElement !== null) {
+						if (eventData.players && eventData.players.length > 0) {
+							document.getElementById('player1name').textContent = eventData.players[0].toString();
+							document.getElementById('player2name').textContent = eventData.players[1].toString();
+						}
+						if (eventData.sound == 1){
+							playWallSound();
+						}
+						tweenBallPosition(endElement, eventData.ball_x, eventData.ball_y, 1);
+						tweenPaddlePosition(document.getElementById('paddle_left'), eventData.paddle_left_y, 2);
+						tweenPaddlePosition(document.getElementById('paddle_right'), eventData.paddle_right_y, 2);
+						if (eventData.hit != undefined) {
+							// if (eventData.hit == "HIT WALL") {
+							// 	playWallSound();
+							// }
+							if (eventData.hit == "HIT LEFT") {
+								player_2_score += 1;
+								document.getElementById('player2score').textContent = player_2_score.toString();
+							}
+							if (eventData.hit == "HIT RIGHT") {
+								player_1_score += 1;
+								document.getElementById('player1score').textContent = player_1_score.toString();
+							}
+						}
+						return ;
+					} 
+					else {
+						console.error("Element with id 'end' not found.");
+					}
+				}
+			};
+			socket.onclose = function(event) {
+				console.log("WebSocket connection closed");
+			};
+			socket.onerror = function(event) {
+				console.error("WebSocket error:", event);
+				console.error("WebSocket connection closed due to room already have 2 players or room not found");
+			};
+		})
+		.catch(error => {
+			console.error("Error: ", error);
+		});
+	}
 
 	function tweenPaddlePosition(element, targetY, duration) {
 		if (!element) {
@@ -211,14 +315,14 @@ function game() {
 			is_animating = false; // Animation completed, reset the flag
 			}
 		}
-
 		requestAnimationFrame(updateTween);
 	}
 
 	function playWallSound() {
-		console.log("SOUNDDDD");
+		// console.log("SOUNDDDD");
 		let beat = new Audio('../src/assets/osu-hit-sound.mp3');
 		beat.play();
+		// x.play();
 	}
 
 	const pressedKeys = new Set();
@@ -226,7 +330,7 @@ function game() {
 	document.addEventListener("keydown", (event) => {
 		if (event.key === 'w' || event.key === 's') {
 			pressedKeys.add(event.key);
-		
+	
 			// Determine the direction based on pressed keys
 			let direction;
 			if (pressedKeys.has('w') && pressedKeys.has('s')) {
@@ -237,13 +341,13 @@ function game() {
 			} else if (pressedKeys.has('s')) {
 				direction = "PADDLE_DOWN";
 			}
-		
+	
 			if (direction) {
 				const message = {
 					id: id,
 					direction: direction
 				};
-		
+	
 				// Send the WebSocket message
 				if (socket.readyState === WebSocket.OPEN) {
 					socket.send(JSON.stringify(message));
@@ -253,7 +357,7 @@ function game() {
 
 		if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
 			pressedKeys.add(event.key);
-		
+	
 			// Determine the direction based on pressed keys
 			let direction;
 			if (pressedKeys.has('ArrowUp') && pressedKeys.has('ArrowDown')) {
@@ -264,13 +368,13 @@ function game() {
 			} else if (pressedKeys.has('ArrowDown')) {
 				direction = "PADDLE_DOWN";
 			}
-		
+	
 			if (direction) {
 				const message = {
 					id: "2",
 					direction: direction
 				};
-		
+	
 				// Send the WebSocket message
 				if (socket.readyState === WebSocket.OPEN) {
 					socket.send(JSON.stringify(message));
@@ -278,12 +382,12 @@ function game() {
 			}
 		}
 	});
-		
+	
 	// Keyup event listener
 	document.addEventListener("keyup", (event) => {
 		if (event.key === 'w' || event.key === 's') {
 			pressedKeys.delete(event.key);
-		
+	
 			// Determine the direction based on remaining pressed keys
 			let direction;
 			if (pressedKeys.has('w')) {
@@ -293,12 +397,12 @@ function game() {
 			} else {
 				direction = "PADDLE_STOP";
 			}
-		
+	
 			const message = {
 				id: id,
 				direction: direction
 			};
-		
+	
 			// Send the WebSocket message
 			if (socket.readyState === WebSocket.OPEN) {
 				socket.send(JSON.stringify(message));
@@ -322,7 +426,7 @@ function game() {
 				id: "2",
 				direction: direction
 			};
-		
+	
 			// Send the WebSocket message
 			if (socket.readyState === WebSocket.OPEN) {
 				socket.send(JSON.stringify(message));

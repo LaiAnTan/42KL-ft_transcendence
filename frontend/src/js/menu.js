@@ -11,7 +11,7 @@ export default () => {
 
 	const postCode = async () => {
 		try {
-			const response = await fetch("http://localhost:8000/api/postCode", {
+			const response = await fetch("https://localhost:8000/api/postCode", {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -23,10 +23,10 @@ export default () => {
 					console.log(data);
 					sessionStorage.setItem('username', data.json.username);
 					sessionStorage.setItem('display_name', data.json.display_name);
-					sessionStorage.setItem('profile_pic', "http://localhost:8000/api" + data.json.profile_pic); 
+					sessionStorage.setItem('profile_pic', "https://localhost:8000/api" + data.json.profile_pic); 
 
 					$.ajax({
-						url: `http://localhost:8000/api/setOnlineStatus`,
+						url: `https://localhost:8000/api/setOnlineStatus`,
 						type: 'POST',
 						contentType: 'application/json',
 						data: JSON.stringify({ "username": data.json.username, "is_online": true }),
@@ -55,31 +55,34 @@ export default () => {
 </div>`;
 	};
 
-	
+
 	var current_user = sessionStorage.getItem('username');
 
 	// This is to counter how Chrome handles beforeunload, where a page refresh
 	// triggers the beforeunload event, causing our page to set the current user's
 	// online status to offline
-	fetch(`http://localhost:8000/api/getOnlineStatus?username=${current_user}`, {
-		method: 'GET'
-	})
-	.then(res => res.json())
-	.then(data => {
-		$.ajax({
-			url: `http://localhost:8000/api/setOnlineStatus`,
-			type: 'POST',
-			contentType: 'application/json',
-			data: JSON.stringify({ "username": current_user, "is_online": true }),
-			error: function(jqXHR, textStatus, errorThrown) {
-				alert("FAILED OAOAAOO");
-				console.error('Error updating details:', jqXHR.responseJSON);
-			}
+	const isChrome = /Chrome/.test(navigator.userAgent);
+	if (isChrome) {
+		fetch(`https://localhost:8000/api/getOnlineStatus?username=${current_user}`, {
+			method: 'GET'
+		})
+		.then(res => res.json())
+		.then(data => {
+			$.ajax({
+				url: `https://localhost:8000/api/setOnlineStatus`,
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({ "username": current_user, "is_online": true }),
+				error: function(jqXHR, textStatus, errorThrown) {
+					alert("FAILED OAOAAOO");
+					console.error('Error updating details:', jqXHR.responseJSON);
+				}
+			});
 		});
-	});
+	}
 
-	let data_html = '';
-	fetch(`http://localhost:8000/api/getFriends?username=${current_user}`, {
+	let friends_display = '';
+	fetch(`https://localhost:8000/api/getFriends?username=${current_user}`, {
 		method: 'GET'
 	}).then(res => {
 		return res.json();
@@ -89,7 +92,8 @@ export default () => {
 			let html_str = `
 			<div data-link="/dashboard?username=${friend.username}" class="d-flex flex-row align-items-center justify-content-around friend-profile cursor-pointer w-100 m-1 py-2">
 				<div class="profile-container" style="position: relative;">
-					<img src="http://localhost:8000/api${friend.profile_pic}" style="height: 57px; width: 57px; border-radius: 50%" />
+					<img src="https://localhost:8000/api${friend.profile_pic}" style="height: 57px; width: 57px; border-radius: 50%" />
+					<div id="${friend.username}" class="unfriend-overlay" title="Remove user from your friends list"></div>
 					<div class="status-indicator" style="background-color: ${statusColor};" title="${friend.is_online ? 'Online' : 'Offline'}"></div>
 				</div>
 				<div class="d-flex flex-column align-items-right h-100">
@@ -98,11 +102,11 @@ export default () => {
 				</div>
 			</div>`;
 
-			data_html += html_str;
+			friends_display += html_str;
 		});
 
-		return data_html;
-	}).then(data_html => {
+		return friends_display;
+	}).then(friends_display => {
 		let app = document.querySelector('#app');
 		const new_div = document.createElement('div');
 		new_div.setAttribute('id', 'app');
@@ -129,7 +133,7 @@ export default () => {
 				<div class="menu-component-title">VS AI</div>
 				<div class="menu-component-description">PLAY 1V1 AGAINST AN AI</div>
 			</button>
-			<button type="button" data-link="/" id="tourney" class="menu-component tournament cursor-pointer" style="background-color: transparent">
+			<button type="button" data-link="/tournament" id="tourney" class="menu-component tournament cursor-pointer" style="background-color: transparent">
 				<div class="menu-component-title">TOURNAMENT</div>
 				<div class="menu-component-description">BRACKET-STYLED TOURNAMENT</div>
 			</button>
@@ -144,17 +148,32 @@ export default () => {
 			</div>
 			<div class="d-flex flex-column p-4 w-100">
 				<p class="description mb-4">FRIENDS</p>
-				${data_html == '' ? `
+				${friends_display == '' ? `
 				<p class="description" style="opacity: 0.5">
 					No friends yet<br /><br />
 					You can add someone<br />from their dashboard!
 				</p>`
-				: data_html}
+				: friends_display}
 			</div>
 		</div>
 	</div>
 </div>`;
 		app.outerHTML = new_div.outerHTML;
+
+		$('.unfriend-overlay').click(function () {
+			const username = $(this).attr('id');
+			$.ajax({
+				url: `https://localhost:8000/api/removeFriend`,
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify({ "username": current_user, "friend_username": username }),
+				error: function(jqXHR, textStatus, errorThrown) {
+					alert("FAILED OAOAAOO");
+					console.error('Error updating details:', jqXHR.responseJSON);
+				}
+			});
+			window.location.reload();
+		});
 
 		$('#dashboard-button').click(function () {
 			const username = $('#dashboard-search').val();

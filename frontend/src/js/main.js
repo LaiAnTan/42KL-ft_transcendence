@@ -9,6 +9,7 @@ import settings from "./settings.js";
 import dashboard from "./dashboard.js";
 import bracket from "./bracket.js";
 import history from "./history.js";
+import tournament from "./bracket.js";
 
 
 const routes = {
@@ -22,7 +23,8 @@ const routes = {
 	"/settings": { title: "Settings", render: settings },
 	"/dashboard": { title: "Dashboard", render: dashboard },
 	"/bracket": { title: "Bracket", render: bracket },
-	"/history": { title: "History", render: history }
+	"/history": { title: "History", render: history },
+	"/tournament": { title: "Tournament", render: bracket },
 };
 
 export function loadCSS(href) {
@@ -83,7 +85,7 @@ function toggleOnlineStatus(event) {
 		let current_user = sessionStorage.getItem('username');
 
 		$.ajax({
-			url: `http://localhost:8000/api/setOnlineStatus`,
+			url: `https://localhost:8000/api/setOnlineStatus`,
 			type: 'POST',
 			contentType: 'application/json',
 			data: JSON.stringify({ "username": current_user ?? asd, "is_online": false }), // Let it throw exception if current_user is null
