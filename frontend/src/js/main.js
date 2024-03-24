@@ -46,7 +46,9 @@ export function resetCSS() {
 
 function initRedirClicks(e) {
 	const parent = e.target.closest("[data-link]");
-	if (parent) {
+	const isProfileContainerClicked = $(e.target).closest('.profile-container').length > 0;
+
+	if (parent && !isProfileContainerClicked) {
 		e.preventDefault();
 		window.history.pushState("", "", parent.getAttribute("data-link"));
 		router();

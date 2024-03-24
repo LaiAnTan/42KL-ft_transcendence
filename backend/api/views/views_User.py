@@ -303,10 +303,12 @@ def removeFriend(request):
 			return Response({"Error": f"{friend_username} is not in the friend list"},
 							status=status.HTTP_200_OK)
 
-		user.friends.remove(friend_username)
-		friend.friends.remove(username)
-		user.save()
-		friend.save()
+		if friend_username in user.friends:
+			user.friends.remove(friend_username)
+			user.save()
+		if username in friend.friends:
+			friend.friends.remove(username)
+			friend.save()
 
 		return Response({"Success": f"{friend_username} removed from friend list"},
 						status=status.HTTP_200_OK)
