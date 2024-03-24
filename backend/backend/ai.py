@@ -3,10 +3,10 @@ import requests
 import logging
 import time
 import random
+import ssl
+import asyncio
 
-from websockets.sync.client import connect
-
-
+from websockets.client import connect
 
 logger = logging.getLogger(__name__)
 
@@ -22,9 +22,11 @@ class GameAI:
         else:
             raise ValueError("Invalid mode specified")
 
-        self.game_url = f"ws://localhost:8000/{self.mode}"
+        self.game_url = f"wss://localhost:8001/{self.mode}"
 
-        self.room_id = requests.get(f"http://localhost:8000/api/matchmaking?clientID={self.id}&gameMode={self.mode}").json()['roomID']
+        self.room_id = requests.get(f"https://localhost:8000/api/matchmaking\
+?clientID={self.id}&gameMode={self.mode}", verify='/etc/certs/cert.pem')\
+            .json()['roomID']
 
         print(self.room_id)
 
@@ -42,6 +44,9 @@ class GameAI:
             'id': self.id,
             'direction': 'PADDLE_STOP'
         }
+
+        self.ssl_context = ssl.create_default_context()
+        self.ssl_context.load_verify_locations('/etc/certs/cert.pem')
 
     def game_ended(self, message_data):
 
@@ -64,38 +69,41 @@ class GameAI:
 
     def close_room(self):
 
-        requests.delete(f"http://localhost:8000/api/closeRoom?room_code=\
-{self.room_id}&gameMode={self.mode}")
+        requests.delete(f"https://localhost:8000/api/closeRoom?room_code=\
+{self.room_id}&gameMode={self.mode}",
+                        verify='/etc/certs/cert.pem')
 
-    def running(self):
+    async def running(self):
 
-        self.ws = connect(self.game_url +
-                          f"?roomID={self.room_id}&clientID={self.id}")
+        async with connect(self.game_url +
+                           f"?roomID={self.room_id}&clientID={self.id}",
+                           ssl=self.ssl_context) as websocket:
 
-        is_game_ended = False
+            self.ws = websocket
+            is_game_ended = False
 
-        while is_game_ended is False:
-            start_time = time.time()
+            while is_game_ended is False:
+                start_time = time.time()
 
-            # only poll from ws every 1 second
-            while time.time() - start_time < 1:
-                message = self.ws.recv()
+                # only poll from ws every 1 second
+                while time.time() - start_time < 1:
+                    message = await self.ws.recv()
 
-                message_data = json.loads(message)
+                    message_data = json.loads(message)
 
-                if self.game_ended(message_data) is True:
-                    is_game_ended = True
-                    break
+                    if self.game_ended(message_data) is True:
+                        is_game_ended = True
+                        break
 
-            response = self.decide_action(message_data)
+                response = self.decide_action(message_data)
 
-            self.ws.send(json.dumps(response))
+                await self.ws.send(json.dumps(response))
 
-        self.ws.close()
-        self.close_room()
+            await self.ws.close()
+            self.close_room()
 
 
 if __name__ == "__main__":
 
     ai = GameAI(mode="pong")
-    ai.running()
+    asyncio.run(ai.running())
