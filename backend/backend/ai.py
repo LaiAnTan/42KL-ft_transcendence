@@ -13,12 +13,15 @@ logger = logging.getLogger(__name__)
 
 class GameAI:
 
-    RIGHT_PADDLE_X = 93
+    LEFT_PADDLE_X = 5
+    RIGHT_PADDLE_X = 95
     TOP_WALL_Y = 0
     BOTTOM_WALL_Y = 100
     HALF_PADDLE_HEIGHT = 13
-    MAX_BOUNCES = 2
-    WS_POLL_SPEED = 1
+    PADDLE_HEIGHT = 25
+    MAX_BOUNCES = 3
+    WS_POLL_SPEED = 0.25
+    PADDLE_MOVE_RATE = 0.0051
 
     def __init__(self, mode="pong") -> None:
 
@@ -70,36 +73,15 @@ class GameAI:
 
         return True
 
-    def decide_action(self, game_data):
+    def predict_bounce(self, m, c, paddle_x):
 
-        self.prev = self.curr
-        self.curr = (game_data['ball_x'], game_data['ball_y'])
-        paddle_right_y = game_data['paddle_right_y'] + self.HALF_PADDLE_HEIGHT
-
-        if ('hit', 'HIT LEFT') in game_data.items() or \
-                ('hit', 'HIT RIGHT') in game_data.items() or self.prev is None:
-            return None, None
-
-        # is ball moving towards AI
-        if self.curr[0] - self.prev[0] <= 0:
-            return None, None
-
-        print(f"Curr: {self.curr}\nPrev: {self.prev}")
-
-        # find line
-        m = (self.curr[1] - self.prev[1]) / (self.curr[0] - self.prev[0])
-        c = self.curr[1] - (m * self.curr[0])
-
-        print(m, c)
-
-        # predict bounce
         max_bounces = self.MAX_BOUNCES
         while max_bounces:
 
-            predicted_y = m * self.RIGHT_PADDLE_X + c
+            predicted_y = m * paddle_x + c
 
             # predicted in range of playable area
-            if predicted_y > self.TOP_WALL_Y or \
+            if predicted_y > self.TOP_WALL_Y and \
                     predicted_y < self.BOTTOM_WALL_Y:
                 break
 
@@ -117,22 +99,68 @@ class GameAI:
 
             max_bounces -= 1
 
+        return m, c, predicted_y
+
+    def clamp(self, value, min_value, max_value):
+        return max(min_value, min(value, max_value))
+
+    def decide_action(self, game_data):
+
+        if ('hit', 'HIT LEFT') in game_data.items() or \
+                ('hit', 'HIT RIGHT') in game_data.items():
+            return None, None
+
+        self.prev = self.curr
+        self.curr = (game_data['ball_x'], game_data['ball_y'])
+        paddle_right_y = game_data['paddle_right_y'] + self.HALF_PADDLE_HEIGHT
+
+        if self.prev is None:
+            return None, None
+
+        # find initial line
+
+        if (self.curr[0] - self.prev[0]) != 0:
+            m = (self.curr[1] - self.prev[1]) / (self.curr[0] - self.prev[0])
+        else:
+            m = 0
+
+        c = self.curr[1] - (m * self.curr[0])
+
+        # ball moving towards player
+        if self.curr[0] - self.prev[0] < 0:
+
+            # calculate new trajectory assuming player hits the ball
+            player_hit_y = m * self.LEFT_PADDLE_X + c
+
+            print(f"will hit player at {player_hit_y}")
+
+            m = -m
+            c = player_hit_y - m * self.LEFT_PADDLE_X
+
+            if player_hit_y < self.TOP_WALL_Y or \
+                    player_hit_y > self.BOTTOM_WALL_Y:
+                # predict bounce towards player
+                m, c, _ = self.predict_bounce(-m, player_hit_y,
+                                              self.LEFT_PADDLE_X)
+
+        # predict bounce towards AI
+        _, _, predicted_y = self.predict_bounce(m, c, self.RIGHT_PADDLE_X)
+
+        # print(f"will hit ai at: {predicted_y}")
+
         # in seconds
-        interval = (abs(predicted_y - paddle_right_y) + 10) * 0.004
-
-        print(f"Predicted y: {predicted_y}")
-        print(f"Curr paddle location: {paddle_right_y}")
-        print(f"Interval: {interval}")
-
-        # replace this later
+        interval = abs(predicted_y - paddle_right_y +
+                       self.HALF_PADDLE_HEIGHT) * self.PADDLE_MOVE_RATE
 
         # tolerance for the paddle to stop twitching
-        if abs(predicted_y - paddle_right_y) > self.HALF_PADDLE_HEIGHT:
+        if abs(predicted_y - paddle_right_y) > (self.HALF_PADDLE_HEIGHT - 3):
 
             if predicted_y < paddle_right_y and predicted_y > self.TOP_WALL_Y:
+                print(f"move up {interval} seconds")
                 return self.up_response, interval
             elif predicted_y > paddle_right_y and \
                     predicted_y < self.BOTTOM_WALL_Y:
+                print(f"move down {interval} seconds")
                 return self.down_response, interval
 
         return None, None
