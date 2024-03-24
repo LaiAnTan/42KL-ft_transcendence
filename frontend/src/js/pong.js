@@ -64,6 +64,9 @@ function game() {
 			if (isJSON(event.data)) {
 				let endElement = document.getElementById("dongball");
 				let eventData = JSON.parse(event.data);
+				if (eventData.status == "ALL PLAYERS JOINED") {
+					console.log("start countdown");
+				}
 				if (eventData.room_id && eventData.player_1_id && eventData.player_2_id && eventData.match_type) {
 					if (eventData.player_1_score !== eventData.player_2_score) {
 						const isClientWinner = (eventData.player_1_score > eventData.player_2_score && eventData.player_1_id === clientID) ||
@@ -167,6 +170,9 @@ function game() {
 				if (isJSON(event.data)) {
 					let endElement = document.getElementById("dongball");
 					let eventData = JSON.parse(event.data);
+					if (eventData.status === "ALL PLAYERS JOINED") {
+						console.log("start countdown");
+					}
 					if (eventData.room_id && eventData.player_1_id && eventData.player_2_id && eventData.match_type) {
 						if (eventData.player_1_score !== eventData.player_2_score) {
 							const isClientWinner = (eventData.player_1_score > eventData.player_2_score && eventData.player_1_id === clientID) ||
