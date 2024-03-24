@@ -19,7 +19,7 @@ class GameAI:
     BOTTOM_WALL_Y = 100
     HALF_PADDLE_HEIGHT = 13
     PADDLE_HEIGHT = 25
-    MAX_BOUNCES = 3
+    MAX_BOUNCES = 5
     WS_POLL_SPEED = 0.25
     PADDLE_MOVE_RATE = 0.0051
 
@@ -101,10 +101,7 @@ class GameAI:
 
         return m, c, predicted_y
 
-    def clamp(self, value, min_value, max_value):
-        return max(min_value, min(value, max_value))
-
-    def decide_action(self, game_data):
+    async def decide_action(self, game_data):
 
         if ('hit', 'HIT LEFT') in game_data.items() or \
                 ('hit', 'HIT RIGHT') in game_data.items():
@@ -170,6 +167,19 @@ class GameAI:
         requests.delete(f"https://localhost:8000/api/closeRoom?room_code=\
 {self.room_id}&gameMode={self.mode}",
                         verify='/etc/certs/cert.pem')
+        
+    async def send_action(self, response, interval):
+        
+        await self.ws.send(json.dumps(response))
+
+        await asyncio.sleep(interval)
+
+        await self.ws.send(json.dumps(self.stop_response))
+        
+    async def get_data(self):
+        
+        
+        
 
     async def running(self):
 
@@ -193,15 +203,11 @@ class GameAI:
                         is_game_ended = True
                         break
 
-                response, interval = self.decide_action(message_data)
+                response, interval = await asyncio.create_task(self.decide_action(message_data))
 
                 if response is not None:
 
-                    await self.ws.send(json.dumps(response))
-
-                    await asyncio.sleep(interval)
-
-                    await self.ws.send(json.dumps(self.stop_response))
+                    asyncio.create_task(self.send_action(response, interval))
 
             await self.ws.close()
             self.close_room()
