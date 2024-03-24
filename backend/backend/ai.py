@@ -13,6 +13,13 @@ logger = logging.getLogger(__name__)
 
 class GameAI:
 
+    RIGHT_PADDLE_X = 93
+    TOP_WALL_Y = 0
+    BOTTOM_WALL_Y = 100
+    HALF_PADDLE_HEIGHT = 13
+    MAX_BOUNCES = 2
+    WS_POLL_SPEED = 1
+
     def __init__(self, mode="pong") -> None:
 
         self.id = 'AI'
@@ -48,6 +55,9 @@ class GameAI:
         self.ssl_context = ssl.create_default_context()
         self.ssl_context.load_verify_locations('/etc/certs/cert.pem')
 
+        self.prev = None
+        self.curr = None
+
     def game_ended(self, message_data):
 
         try:
@@ -62,10 +72,70 @@ class GameAI:
 
     def decide_action(self, game_data):
 
-        print(game_data)
+        self.prev = self.curr
+        self.curr = (game_data['ball_x'], game_data['ball_y'])
+        paddle_right_y = game_data['paddle_right_y'] + self.HALF_PADDLE_HEIGHT
 
-        return self.up_response if random.randint(1, 2) == 1 else \
-            self.down_response
+        if ('hit', 'HIT LEFT') in game_data.items() or \
+                ('hit', 'HIT RIGHT') in game_data.items() or self.prev is None:
+            return None, None
+
+        # is ball moving towards AI
+        if self.curr[0] - self.prev[0] <= 0:
+            return None, None
+
+        print(f"Curr: {self.curr}\nPrev: {self.prev}")
+
+        # find line
+        m = (self.curr[1] - self.prev[1]) / (self.curr[0] - self.prev[0])
+        c = self.curr[1] - (m * self.curr[0])
+
+        print(m, c)
+
+        # predict bounce
+        max_bounces = self.MAX_BOUNCES
+        while max_bounces:
+
+            predicted_y = m * self.RIGHT_PADDLE_X + c
+
+            # predicted in range of playable area
+            if predicted_y > self.TOP_WALL_Y or \
+                    predicted_y < self.BOTTOM_WALL_Y:
+                break
+
+            # predicted above playable area
+            if m > 0 and predicted_y < self.TOP_WALL_Y:
+                bounce_x = (self.TOP_WALL_Y - c) / m
+                m = -m  # change direction
+                c = self.TOP_WALL_Y - m * bounce_x
+
+            # predicted below playable area
+            elif m < 0 and predicted_y > self.BOTTOM_WALL_Y:
+                bounce_x = (self.BOTTOM_WALL_Y - c) / m
+                m = -m  # change direction
+                c = self.BOTTOM_WALL_Y - m * bounce_x
+
+            max_bounces -= 1
+
+        # in seconds
+        interval = (abs(predicted_y - paddle_right_y) + 10) * 0.004
+
+        print(f"Predicted y: {predicted_y}")
+        print(f"Curr paddle location: {paddle_right_y}")
+        print(f"Interval: {interval}")
+
+        # replace this later
+
+        # tolerance for the paddle to stop twitching
+        if abs(predicted_y - paddle_right_y) > self.HALF_PADDLE_HEIGHT:
+
+            if predicted_y < paddle_right_y and predicted_y > self.TOP_WALL_Y:
+                return self.up_response, interval
+            elif predicted_y > paddle_right_y and \
+                    predicted_y < self.BOTTOM_WALL_Y:
+                return self.down_response, interval
+
+        return None, None
 
     def close_room(self):
 
@@ -86,7 +156,7 @@ class GameAI:
                 start_time = time.time()
 
                 # only poll from ws every 1 second
-                while time.time() - start_time < 1:
+                while time.time() - start_time < self.WS_POLL_SPEED:
                     message = await self.ws.recv()
 
                     message_data = json.loads(message)
@@ -95,9 +165,15 @@ class GameAI:
                         is_game_ended = True
                         break
 
-                response = self.decide_action(message_data)
+                response, interval = self.decide_action(message_data)
 
-                await self.ws.send(json.dumps(response))
+                if response is not None:
+
+                    await self.ws.send(json.dumps(response))
+
+                    await asyncio.sleep(interval)
+
+                    await self.ws.send(json.dumps(self.stop_response))
 
             await self.ws.close()
             self.close_room()
