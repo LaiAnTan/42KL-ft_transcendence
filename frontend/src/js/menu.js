@@ -93,7 +93,7 @@ export default () => {
 			<div data-link="/dashboard?username=${friend.username}" class="d-flex flex-row align-items-center justify-content-around friend-profile cursor-pointer w-100 m-1 py-2">
 				<div class="profile-container" style="position: relative;">
 					<img src="https://localhost:8000/api${friend.profile_pic}" style="height: 57px; width: 57px; border-radius: 50%" />
-					<div id="${friend.username}" class="unfriend-overlay" title="Remove user from your friends list"></div>
+					<button data-toggle="modal" data-target="#confirm-unfriend-modal" type="button" title="Remove user from your friends list" id="${friend.username}" class="unfriend-overlay"></button>
 					<div class="status-indicator" style="background-color: ${statusColor};" title="${friend.is_online ? 'Online' : 'Offline'}"></div>
 				</div>
 				<div class="d-flex flex-column align-items-right h-100">
@@ -157,22 +157,52 @@ export default () => {
 			</div>
 		</div>
 	</div>
+</div>
+
+<div class="modal fade" id="confirm-unfriend-modal" tabindex="-1" role="dialog" aria-labelledby="confirm-unfriend-modal" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content background-blur rounded-border">
+			<div class="modal-header align-items-center important-label">
+				<h5 class="modal-title ml-4">Unfriend Confirmation</h5>
+				<button type="button" class="close-modal" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body description">
+				<b id="unfriend-warning-text"></b><br/>
+				Are you sure you want remove them from your friends list?
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+				<button type="submit" class="btn btn-danger unfriend-button">Confirm</button>
+			</div>
+		</div>
+	</div>
 </div>`;
 		app.outerHTML = new_div.outerHTML;
 
+		var toUnfriend = '';
 		$('.unfriend-overlay').click(function () {
-			const username = $(this).attr('id');
+			toUnfriend = $(this).attr('id');
+			console.log('HERE', toUnfriend);
+			$('#unfriend-warning-text').text(`User: ${toUnfriend}`);
+		});
+
+		$('.unfriend-button').click(function () {
 			$.ajax({
 				url: `https://localhost:8000/api/removeFriend`,
 				type: 'POST',
 				contentType: 'application/json',
-				data: JSON.stringify({ "username": current_user, "friend_username": username }),
+				data: JSON.stringify({ "username": current_user, "friend_username": toUnfriend }),
+				success: function(res) {
+					toUnfriend = '';
+					window.location.reload();
+				},
 				error: function(jqXHR, textStatus, errorThrown) {
 					alert("FAILED OAOAAOO");
 					console.error('Error updating details:', jqXHR.responseJSON);
 				}
 			});
-			window.location.reload();
 		});
 
 		$('#dashboard-button').click(function () {
