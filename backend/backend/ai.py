@@ -13,15 +13,15 @@ logger = logging.getLogger(__name__)
 
 class GameAI:
 
-    LEFT_PADDLE_X = 5
-    RIGHT_PADDLE_X = 95
+    LEFT_PADDLE_X = 3
+    RIGHT_PADDLE_X = 97
     TOP_WALL_Y = 0
     BOTTOM_WALL_Y = 100
-    HALF_PADDLE_HEIGHT = 13
+    HALF_PADDLE_HEIGHT = 13.5
     PADDLE_HEIGHT = 25
     MAX_BOUNCES = 5
-    WS_POLL_SPEED = 0.25
-    PADDLE_MOVE_RATE = 0.0051
+    WS_POLL_SPEED = 1
+    PADDLE_MOVE_RATE = 0.005
 
     def __init__(self, mode="pong") -> None:
 
@@ -109,13 +109,13 @@ class GameAI:
 
         self.prev = self.curr
         self.curr = (game_data['ball_x'], game_data['ball_y'])
+
         paddle_right_y = game_data['paddle_right_y'] + self.HALF_PADDLE_HEIGHT
 
         if self.prev is None:
             return None, None
 
         # find initial line
-
         if (self.curr[0] - self.prev[0]) != 0:
             m = (self.curr[1] - self.prev[1]) / (self.curr[0] - self.prev[0])
         else:
@@ -129,7 +129,7 @@ class GameAI:
             # calculate new trajectory assuming player hits the ball
             player_hit_y = m * self.LEFT_PADDLE_X + c
 
-            print(f"will hit player at {player_hit_y}")
+            # print(f"will hit player at {player_hit_y}")
 
             m = -m
             c = player_hit_y - m * self.LEFT_PADDLE_X
@@ -143,14 +143,14 @@ class GameAI:
         # predict bounce towards AI
         _, _, predicted_y = self.predict_bounce(m, c, self.RIGHT_PADDLE_X)
 
-        # print(f"will hit ai at: {predicted_y}")
+        print(f"will hit ai at: {predicted_y}")
 
         # in seconds
-        interval = abs(predicted_y - paddle_right_y +
-                       self.HALF_PADDLE_HEIGHT) * self.PADDLE_MOVE_RATE
+        interval = (abs(predicted_y - paddle_right_y) +
+                    self.HALF_PADDLE_HEIGHT) * self.PADDLE_MOVE_RATE
 
-        # tolerance for the paddle to stop twitching
-        if abs(predicted_y - paddle_right_y) > (self.HALF_PADDLE_HEIGHT - 3):
+        # # tolerance for the paddle to stop twitching
+        if abs(predicted_y - paddle_right_y) > (self.HALF_PADDLE_HEIGHT - 5):
 
             if predicted_y < paddle_right_y and predicted_y > self.TOP_WALL_Y:
                 print(f"move up {interval} seconds")
@@ -167,19 +167,14 @@ class GameAI:
         requests.delete(f"https://localhost:8000/api/closeRoom?room_code=\
 {self.room_id}&gameMode={self.mode}",
                         verify='/etc/certs/cert.pem')
-        
+
     async def send_action(self, response, interval):
-        
+
         await self.ws.send(json.dumps(response))
 
         await asyncio.sleep(interval)
 
         await self.ws.send(json.dumps(self.stop_response))
-        
-    async def get_data(self):
-        
-        
-        
 
     async def running(self):
 
@@ -188,22 +183,22 @@ class GameAI:
                            ssl=self.ssl_context) as websocket:
 
             self.ws = websocket
-            is_game_ended = False
 
-            while is_game_ended is False:
+            while True:
                 start_time = time.time()
 
                 # only poll from ws every 1 second
-                while time.time() - start_time < self.WS_POLL_SPEED:
+                if time.time() - start_time < self.WS_POLL_SPEED:
                     message = await self.ws.recv()
 
                     message_data = json.loads(message)
 
                     if self.game_ended(message_data) is True:
-                        is_game_ended = True
                         break
 
-                response, interval = await asyncio.create_task(self.decide_action(message_data))
+                if message_data is not None:
+
+                    response, interval = await asyncio.create_task(self.decide_action(message_data))
 
                 if response is not None:
 
