@@ -173,11 +173,17 @@ export default () => {
 		<div class="flex-grow-1" style="overflow-y: auto">
 			<div class="px-4 py-2">
 				<div class="important-label" style="text-shadow: 0 0 30px var(--color2)">Games Played</div>
-				${games_played == 0 ? '<p class="description">No games played yet.</p>' : `<svg id="graph1" class="mt-4" style="width: 100%"></svg>`}
+				${games_played == 0 ? '<p class="description mt-4">No games played yet.</p>' : 
+				`<div class="d-flex align-items-center border w-100 mt-2" style="height: 200px">
+					<svg id="graph1" style="width: 100%"></svg>
+				</div>`}
 			</div>
 			<div class="px-4 py-2">
 				<div class="important-label" style="text-shadow: 0 0 30px var(--color2)">Wins / Losses</div>
-				${games_played == 0 ? '<p class="description">No games played yet.</p>' : `<svg id="graph2" class="mt-4" style="width: 100%"></svg>`}
+				${games_played == 0 ? '<p class="description mt-4">No games played yet.</p>' : 
+				`<div class="d-flex align-items-center border w-100 mt-2" style="height: 200px">
+					<svg id="graph2" style="width: 100%"></svg>
+				</div>`}
 			</div>
 		</div>
 		<div class="d-flex flex-row align-items-center justify-content-between border-top px-4 py-2">
@@ -300,36 +306,89 @@ export default () => {
 					app.outerHTML = new_div.outerHTML;
 
 					const graph1Data = [
-						{ "name": "Total", "value": games_played },
-						{ "name": "Pong", "value": pong_played },
-						{ "name": "Dong", "value": dong_played }
+						{ label: "Total", value: games_played },
+						{ label: "Pong", value: pong_played },
+						{ label: "Dong", value: dong_played }
 					];
-
 					const graph1Svg = d3.select('#graph1');
-					const graph1Width = graph1Svg.node().getBoundingClientRect().width;
-					const graph1Height = 30;
-					const graph1Padding = 10;
+					if (graph1Svg.node()) {
+						const graph1Width = graph1Svg.node().getBoundingClientRect().width;
+						const graph1Height = 30;
+						const graph1Padding = 10;
+						const maxBarValue = Math.max(...graph1Data.map(d => d.value));
+						const totalHeight = graph1Data.length * (graph1Height + graph1Padding); // Total height occupied by all bars and paddings
+						const startY = (graph1Svg.node().getBoundingClientRect().height - totalHeight) / 2; // Calculate the starting y-coordinate
+						const maxWidth = graph1Width * 0.8; // Maximum width for the bars, say 80% of the SVG width
+						graph1Svg.selectAll("g")
+							.data(graph1Data)
+							.enter()
+							.append("g")
+							.attr("transform", (d, i) => `translate(0, ${startY + i * (graph1Height + graph1Padding) + (graph1Height / 2)})`)
+							.append("rect")
+							.attr("x", 0)
+							.attr("y", -graph1Height / 2) // Center the bar vertically
+							.attr("width", d => (d.value / maxBarValue) * maxWidth)
+							.attr("height", graph1Height)
+							.attr("fill", "steelblue")
+							.append("title") // Append title element for tooltip
+							.text(d => `${d.label}: ${d.value}`);
+						graph1Svg.selectAll("text")
+							.data(graph1Data)
+							.enter()
+							.append("text")
+							.attr("x", d => ((d.value / maxBarValue) * maxWidth) + 5) // Adjusted x-coordinate calculation
+							.attr("y", (d, i) => startY + i * (graph1Height + graph1Padding) + graph1Height / 2)
+							.text(d => d.label)
+							.attr("alignment-baseline", "middle")
+							.attr("fill", "white")
+							.append("title") // Append title element for tooltip
+							.text(d => `${d.label}: ${d.value}`);
+					}
+					
 
-					graph1Svg.selectAll("rect")
-						.data(graph1Data)
-						.enter()
-						.append("rect")
-						.attr("x", 0)
-						.attr("y", (d, i) => i * (graph1Height + graph1Padding))
-						.attr("width", d => d.value * graph1Width / 100)
-						.attr("height", graph1Height)
-						.attr("fill", "steelblue");
-
-					graph1Svg.selectAll("text")
-						.data(graph1Data)
-						.enter()
-						.append("text")
-						.attr("x", d => d.value + 5)
-						.attr("y", (d, i) => i * (graph1Height + graph1Padding) + graph1Height / 2)
-						.text(d => d.name)
-						.attr("alignment-baseline", "middle")
-						.attr("fill", "white");
-
+					const graph2Data = [
+						{ label: "Wins", value: matches_won },
+						{ label: "Losses", value: matches_lost },
+						{ label: "Longest Streak", value: longest_streak }
+					];
+					const graph2Svg = d3.select('#graph2');
+					if (graph2Svg.node()) {
+						const graph2Width = graph2Svg.node().getBoundingClientRect().width;
+						const graph2Height = 200; // Adjust height as needed
+						const lineXScale = d3.scaleBand()
+							.domain(graph2Data.map(d => d.label))
+							.range([0, graph2Width])
+							.padding(0.1);
+						const lineYScale = d3.scaleLinear()
+							.domain([0, d3.max(graph2Data, d => d.value)])
+							.range([graph2Height, 0]);
+						const line = d3.line()
+							.x(d => lineXScale(d.label) + lineXScale.bandwidth() / 2)
+							.y(d => lineYScale(d.value));
+						graph2Svg.append("path")
+							.datum(graph2Data)
+							.attr("fill", "none")
+							.attr("stroke", "steelblue")
+							.attr("stroke-width", 2)
+							.attr("d", line);
+						graph2Svg.selectAll("circle")
+							.data(graph2Data)
+							.enter()
+							.append("circle")
+							.attr("cx", d => lineXScale(d.label) + lineXScale.bandwidth() / 2)
+							.attr("cy", d => lineYScale(d.value))
+							.attr("r", 5)
+							.attr("fill", "steelblue");
+						graph2Svg.selectAll("text")
+							.data(graph2Data)
+							.enter()
+							.append("text")
+							.attr("x", d => lineXScale(d.label) + lineXScale.bandwidth() / 2)
+							.attr("y", d => lineYScale(d.value) - 10)
+							.text(d => d.value)
+							.attr("text-anchor", "middle")
+							.attr("fill", "white");
+					}
 
 
 					$('#add-friend-button').click(function() {
