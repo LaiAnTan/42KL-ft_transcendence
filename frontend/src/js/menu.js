@@ -62,7 +62,8 @@ export default () => {
 	// triggers the beforeunload event, causing our page to set the current user's
 	// online status to offline
 	const isChrome = /Chrome/.test(navigator.userAgent);
-	if (isChrome) {
+	const isOpera = /OPR\//.test(navigator.userAgent) && /Opera/.test(navigator.userAgent);
+	if (isChrome || isOpera) {
 		fetch(`https://localhost:8000/api/getOnlineStatus?username=${current_user}`, {
 			method: 'GET'
 		})

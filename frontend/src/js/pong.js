@@ -134,17 +134,17 @@ function game() {
 				let eventData = JSON.parse(event.data);
 				if (eventData.status == "ALL PLAYERS JOINED") {
 					isMatchmaking = false;
-					$('#matchmaking-cancel').text("");
+					$('#matchmaking-cancel').html(`<b>${eventData.p1}</b>   VS   <b>${eventData.p2}</b>`);
 					$('#countdown-text').text("READY");
 					setTimeout(function() {
 						$('#countdown-text').text("2");
-					}, 600);
+					}, 750);
 					setTimeout(function() {
 						$('#countdown-text').text("1");
-					}, 1200);
+					}, 1500);
 					setTimeout(function() {
 						$('#matchmaking').modal('hide');
-					}, 1800);
+					}, 2150);
 				}
 				if (eventData.room_id && eventData.player_1_id && eventData.player_2_id && eventData.match_type) {
 					if (eventData.player_1_score !== eventData.player_2_score) {
@@ -249,17 +249,17 @@ function game() {
 					let eventData = JSON.parse(event.data);
 					if (eventData.status === "ALL PLAYERS JOINED") {
 						isMatchmaking = false;
-						$('#matchmaking-cancel').text("");
+						$('#matchmaking-cancel').html(`<b>${eventData.p1}</b>   VS   <b>${eventData.p2}</b>`);
 						$('#countdown-text').text("READY");
 						setTimeout(function() {
 							$('#countdown-text').text("2");
-						}, 600);
+						}, 750);
 						setTimeout(function() {
 							$('#countdown-text').text("1");
-						}, 1200);
+						}, 1500);
 						setTimeout(function() {
 							$('#matchmaking').modal('hide');
-						}, 1800);
+						}, 2150);
 					}
 					if (eventData.room_id && eventData.player_1_id && eventData.player_2_id && eventData.match_type) {
 						if (eventData.player_1_score !== eventData.player_2_score) {

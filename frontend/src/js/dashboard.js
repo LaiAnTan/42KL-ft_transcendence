@@ -121,7 +121,12 @@ export default () => {
 					} else {
 						throw new Error('Something went wrong');
 					}
-				}).then(data => {
+				}).then(statistic => {
+					let win_rate = ((statistic.matches_won / statistic.games_played) * 100).toFixed(2);
+					if (isNaN(win_rate)) {
+						win_rate = 0;
+					}
+
 					let app = document.querySelector('#app');
 					const new_div = document.createElement('div');
 					new_div.setAttribute('id', 'app');
@@ -135,16 +140,16 @@ export default () => {
 		<div class="flex-grow-1" style="overflow-y: auto">
 			<div class="px-4 py-2">
 				<div class="important-label" style="text-shadow: 0 0 30px var(--color2)">Games Played</div>
-				${data.games_played == 0 ? '<p class="description mt-4">No games played yet.</p>' : 
+				${statistic.games_played == 0 ? '<p class="description mt-4">No games played yet.</p>' : 
 				`<div class="d-flex align-items-center border w-100 mt-2" style="height: 200px">
 					<svg id="graph1" style="width: 100%"></svg>
 				</div>`}
 			</div>
 			<div class="px-4 py-2">
 				<div class="important-label" style="text-shadow: 0 0 30px var(--color2)">Wins / Losses</div>
-				${data.games_played == 0 ? '<p class="description mt-4">No games played yet.</p>' : 
-				`<div class="d-flex align-items-center border w-100 mt-2" style="height: 200px">
-					<svg id="graph2" style="width: 100%"></svg>
+				${statistic.games_played == 0 ? '<p class="description mt-4">No games played yet.</p>' : 
+				`<div class="d-flex align-items-center justify-content-center border w-100 mt-2" style="height: 350px">
+					<svg id="graph2"></svg>
 				</div>`}
 			</div>
 		</div>
@@ -171,35 +176,35 @@ export default () => {
 				<div class="d-table description w-100 pt-2 px-4">
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">Games Played</div>
-						<div class="d-table-cell pl-3">${data.games_played}</div>
+						<div class="d-table-cell pl-3">${statistic.games_played}</div>
 					</div>
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">* Pong</div>
-						<div class="d-table-cell pl-3">${data.pong_played}</div>
+						<div class="d-table-cell pl-3">${statistic.pong_played}</div>
 					</div>
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">* Dong</div>
-						<div class="d-table-cell pl-3">${data.dong_played}</div>
+						<div class="d-table-cell pl-3">${statistic.dong_played}</div>
 					</div>
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">Games Won</div>
-						<div class="d-table-cell pl-3">${data.matches_won}</div>
+						<div class="d-table-cell pl-3">${statistic.matches_won}</div>
 					</div>
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">Games Lost</div>
-						<div class="d-table-cell pl-3">${data.matches_lost}</div>
+						<div class="d-table-cell pl-3">${statistic.matches_lost}</div>
 					</div>
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">Win Rate</div>
-						<div class="d-table-cell pl-3">${data.win_rate}%</div>
+						<div class="d-table-cell pl-3">${win_rate}%</div>
 					</div>
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">Current Streak</div>
-						<div class="d-table-cell pl-3">${data.current_streak}</div>
+						<div class="d-table-cell pl-3">${statistic.current_streak}</div>
 					</div>
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">Longest Streak</div>
-						<div class="d-table-cell pl-3">${data.longest_streak}</div>
+						<div class="d-table-cell pl-3">${statistic.longest_streak}</div>
 					</div>
 				</div>
 			</div>
@@ -268,9 +273,9 @@ export default () => {
 					app.outerHTML = new_div.outerHTML;
 
 					const graph1Data = [
-						{ label: "Total", value: games_played },
-						{ label: "Pong", value: pong_played },
-						{ label: "Dong", value: dong_played }
+						{ label: "Total", value: statistic.games_played },
+						{ label: "Pong", value: statistic.pong_played },
+						{ label: "Dong", value: statistic.dong_played }
 					];
 					const graph1Svg = d3.select('#graph1');
 					if (graph1Svg.node()) {
@@ -309,47 +314,43 @@ export default () => {
 					
 
 					const graph2Data = [
-						{ label: "Wins", value: matches_won },
-						{ label: "Losses", value: matches_lost },
-						{ label: "Longest Streak", value: longest_streak }
+						{ label: "Wins", value: statistic.matches_won },
+						{ label: "Losses", value: statistic.matches_lost }
 					];
 					const graph2Svg = d3.select('#graph2');
 					if (graph2Svg.node()) {
-						const graph2Width = graph2Svg.node().getBoundingClientRect().width;
-						const graph2Height = 200; // Adjust height as needed
-						const lineXScale = d3.scaleBand()
+						const graph2Width = 300;
+						const graph2Height = 300;
+						const graph2Radius = Math.min(graph2Width, graph2Height) / 2;
+						const pie = d3.pie()
+							.value(d => d.value)
+							.sort(null);
+						const g = graph2Svg
+							.attr('width', graph2Width)
+							.attr('height', graph2Height)
+							.append('g')
+							.attr('transform', `translate(${graph2Width / 2}, ${graph2Height / 2})`);
+						const arc = d3.arc()
+							.innerRadius(0)
+							.outerRadius(graph2Radius);
+						const color = d3.scaleOrdinal()
 							.domain(graph2Data.map(d => d.label))
-							.range([0, graph2Width])
-							.padding(0.1);
-						const lineYScale = d3.scaleLinear()
-							.domain([0, d3.max(graph2Data, d => d.value)])
-							.range([graph2Height, 0]);
-						const line = d3.line()
-							.x(d => lineXScale(d.label) + lineXScale.bandwidth() / 2)
-							.y(d => lineYScale(d.value));
-						graph2Svg.append("path")
-							.datum(graph2Data)
-							.attr("fill", "none")
-							.attr("stroke", "steelblue")
-							.attr("stroke-width", 2)
-							.attr("d", line);
-						graph2Svg.selectAll("circle")
-							.data(graph2Data)
+							.range(["#98abc5", "#8a89a6"]);
+						const arcs = g.selectAll('arc')
+							.data(pie(graph2Data))
 							.enter()
-							.append("circle")
-							.attr("cx", d => lineXScale(d.label) + lineXScale.bandwidth() / 2)
-							.attr("cy", d => lineYScale(d.value))
-							.attr("r", 5)
-							.attr("fill", "steelblue");
-						graph2Svg.selectAll("text")
-							.data(graph2Data)
-							.enter()
-							.append("text")
-							.attr("x", d => lineXScale(d.label) + lineXScale.bandwidth() / 2)
-							.attr("y", d => lineYScale(d.value) - 10)
-							.text(d => d.value)
-							.attr("text-anchor", "middle")
-							.attr("fill", "white");
+							.append('g')
+							.attr('class', 'arc');
+						arcs.append('path')
+							.attr('d', arc)
+							.attr('fill', d => color(d.data.label));
+						arcs.filter(d => d.data.value !== 0) // Filter out data with value 0
+							.append('text')
+							.attr('transform', d => `translate(${arc.centroid(d)})`)
+							.attr('text-anchor', 'middle')
+							.attr('fill', 'white')
+							.attr('font-weight', 'bold')
+							.text(d => d.data.label);
 					}
 
 

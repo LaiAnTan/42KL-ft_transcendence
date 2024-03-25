@@ -92,13 +92,9 @@ parameters '},
 		longest_streak = 0
 		pong_played = 0
 		dong_played = 0
-		win_rate = 0
-
 
 		for versus_id in versus_history:
-			print('Trying out ' + str(versus_id))
 			versus = Versus.objects.get(pk=versus_id)
-			# versus_serializer = VersusSerializer(versus)
 			matchup = Matchup.objects.get(pk=versus.matchup_id)
 
 			curr = 1 if matchup.player_1_id == user.username else 2
@@ -120,7 +116,6 @@ parameters '},
 				dong_played += 1
 
 		games_played = pong_played + dong_played
-		win_rate = round((matches_won / games_played) * 100, 2)
 
 		data = {
 			"games_played": games_played,
@@ -129,8 +124,7 @@ parameters '},
 			"matches_won": matches_won,
 			"matches_lost": matches_lost,
 			"current_streak": current_streak,
-			"longest_streak": longest_streak,
-			"win_rate": win_rate
+			"longest_streak": longest_streak
 		}
 
 	except User.DoesNotExist:
