@@ -113,7 +113,7 @@ export default () => {
 				var longest_streak = 0;
 				var win_rate = 0;
 
-				fetch(`https://localhost:8000/api/getVersus?id=${versus_history}`, {
+				fetch(`https://localhost:8000/api/getStatistics?username=${params['username']}`, {
 					method: 'GET'
 				}).then(res => {
 					if (res.ok) {
@@ -121,45 +121,7 @@ export default () => {
 					} else {
 						throw new Error('Something went wrong');
 					}
-				}).then(matches => {
-					games_played = matches.length;
-					if (!games_played) {
-						games_played = 0;
-						return ;
-					}
-
-					matches.forEach(data => {
-						let curr = data.player_1_id == current_user ? 1 : 2;
-						let opp = curr == 1 ? 2 : 1;
-
-						console.log('curr', curr);
-						console.log('opp', opp);
-
-						console.log('you:', data[`player_${curr}_id`]);
-						console.log('opponent:', data[`player_${opp}_id`]);
-
-						console.log('score:', data[`player_${curr}_score`], '-', data[`player_${opp}_score`]);
-
-						let win = (data[`player_${curr}_score`] > data[`player_${opp}_score`]) ? 1 : 0;
-						win ? matches_won++ : matches_lost++;
-						win ? current_streak++ : current_streak = 0;
-						longest_streak = current_streak > longest_streak ? current_streak : longest_streak;
-
-						data.match_type == "pong" ? pong_played++ : dong_played++;
-
-						console.log("streak:", current_streak);
-					});
-
-					console.log("games played", games_played);
-					console.log("pong played", pong_played);
-					console.log("dong played", dong_played);
-					console.log("matches won", matches_won);
-					console.log("matches lost", matches_lost);
-					console.log("longest", longest_streak);
-
-					win_rate = Math.ceil((matches_won / games_played) * 100);
-					console.log('win rate', win_rate + '%');
-				}).then(() => {
+				}).then(data => {
 					let app = document.querySelector('#app');
 					const new_div = document.createElement('div');
 					new_div.setAttribute('id', 'app');
@@ -173,14 +135,14 @@ export default () => {
 		<div class="flex-grow-1" style="overflow-y: auto">
 			<div class="px-4 py-2">
 				<div class="important-label" style="text-shadow: 0 0 30px var(--color2)">Games Played</div>
-				${games_played == 0 ? '<p class="description mt-4">No games played yet.</p>' : 
+				${data.games_played == 0 ? '<p class="description mt-4">No games played yet.</p>' : 
 				`<div class="d-flex align-items-center border w-100 mt-2" style="height: 200px">
 					<svg id="graph1" style="width: 100%"></svg>
 				</div>`}
 			</div>
 			<div class="px-4 py-2">
 				<div class="important-label" style="text-shadow: 0 0 30px var(--color2)">Wins / Losses</div>
-				${games_played == 0 ? '<p class="description mt-4">No games played yet.</p>' : 
+				${data.games_played == 0 ? '<p class="description mt-4">No games played yet.</p>' : 
 				`<div class="d-flex align-items-center border w-100 mt-2" style="height: 200px">
 					<svg id="graph2" style="width: 100%"></svg>
 				</div>`}
@@ -209,35 +171,35 @@ export default () => {
 				<div class="d-table description w-100 pt-2 px-4">
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">Games Played</div>
-						<div class="d-table-cell pl-3">${games_played}</div>
+						<div class="d-table-cell pl-3">${data.games_played}</div>
 					</div>
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">* Pong</div>
-						<div class="d-table-cell pl-3">${pong_played}</div>
+						<div class="d-table-cell pl-3">${data.pong_played}</div>
 					</div>
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">* Dong</div>
-						<div class="d-table-cell pl-3">${dong_played}</div>
+						<div class="d-table-cell pl-3">${data.dong_played}</div>
 					</div>
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">Games Won</div>
-						<div class="d-table-cell pl-3">${matches_won}</div>
+						<div class="d-table-cell pl-3">${data.matches_won}</div>
 					</div>
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">Games Lost</div>
-						<div class="d-table-cell pl-3">${matches_lost}</div>
+						<div class="d-table-cell pl-3">${data.matches_lost}</div>
 					</div>
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">Win Rate</div>
-						<div class="d-table-cell pl-3">${win_rate}%</div>
+						<div class="d-table-cell pl-3">${data.win_rate}%</div>
 					</div>
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">Current Streak</div>
-						<div class="d-table-cell pl-3">${current_streak}</div>
+						<div class="d-table-cell pl-3">${data.current_streak}</div>
 					</div>
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">Longest Streak</div>
-						<div class="d-table-cell pl-3">${longest_streak}</div>
+						<div class="d-table-cell pl-3">${data.longest_streak}</div>
 					</div>
 				</div>
 			</div>

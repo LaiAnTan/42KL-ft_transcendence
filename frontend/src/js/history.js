@@ -57,7 +57,7 @@ export default () => {
 				return data.versus_history;
 			}
 		}).then(versus_history => {
-			return fetch(`https://localhost:8000/api/getVersus?id=${versus_history.join(',')}`, {
+			return fetch(`https://localhost:8000/api/getVersus?username=${params['username']}`, {
 				method: 'GET'
 			}).then(res => {
 				if (res.ok) {
