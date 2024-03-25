@@ -1,3 +1,4 @@
+import game from "./dong.js";
 import { loadCSS, router } from "./main.js"
 
 export default () => {
@@ -98,6 +99,16 @@ export default () => {
 				const current_user = sessionStorage.getItem('username');
 
 				let versus_history = data.versus_history;
+
+				var games_played = 0;
+				var pong_played = 0;
+				var dong_played = 0;
+				var matches_won = 0;
+				var matches_lost = 0;
+				var current_streak = 0;
+				var longest_streak = 0;
+				var win_rate = 0;
+
 				fetch(`https://localhost:8000/api/getVersus?id=${versus_history.join(',')}`, {
 					method: 'GET'
 				}).then(res => {
@@ -107,18 +118,47 @@ export default () => {
 						throw new Error('Something went wrong');
 					}
 				}).then(matches => {
-					var games_played = 0;
-					var pong_played = 0;
-					var dong_played = 0;
-					var matches_won = 0;
-					var matches_lost = 0;
-					var current_streak = 0;
-					var longest_streak = 0;
+
+					console.log('match data', matches);
+					games_played = matches.length;
 
 					matches.forEach(data => {
 						console.log('Do something here');
 						console.log(data);
+						
+						console.log(current_user);
+						let curr = data.player_1_id == current_user ? 1 : 2;
+						let opp = curr == 1 ? 2 : 1;
+
+						console.log('curr', curr);
+						console.log('opp', opp);
+
+						console.log('you:', data[`player_${curr}_id`]);
+						console.log('opponent:', data[`player_${opp}_id`]);
+
+						console.log('score:', data[`player_${curr}_score`], '-', data[`player_${opp}_score`]);
+
+						let win = (data[`player_${curr}_score`] > data[`player_${opp}_score`]) ? 1 : 0;
+						win ? matches_won++ : matches_lost++;
+						win ? current_streak++ : current_streak = 0;
+						longest_streak = current_streak > longest_streak ? current_streak : longest_streak;
+
+						data.match_type ? pong_played++ : dong_played++;
+
+						console.log("streak:", current_streak);
 					});
+
+					console.log("games played", games_played);
+					console.log("pong played", pong_played);
+					console.log("dong played", dong_played);
+					console.log("matches won", matches_won);
+					console.log("matches lost", matches_lost);
+					console.log("longest", longest_streak);
+
+					win_rate = Math.ceil((matches_won / games_played) * 100);
+					console.log('win rate', win_rate + '%');
+
+
 				}).then(() => {
 					let app = document.querySelector('#app');
 					const new_div = document.createElement('div');
@@ -158,35 +198,35 @@ export default () => {
 				<div class="d-table description w-100 pt-2 px-4">
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">Games Played</div>
-						<div class="d-table-cell pl-3">0</div>
+						<div class="d-table-cell pl-3">${games_played}</div>
 					</div>
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">* Pong</div>
-						<div class="d-table-cell pl-3">0</div>
+						<div class="d-table-cell pl-3">${pong_played}</div>
 					</div>
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">* Dong</div>
-						<div class="d-table-cell pl-3">0</div>
+						<div class="d-table-cell pl-3">${dong_played}</div>
 					</div>
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">Games Won</div>
-						<div class="d-table-cell pl-3">0</div>
+						<div class="d-table-cell pl-3">${matches_won}</div>
 					</div>
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">Games Lost</div>
-						<div class="d-table-cell pl-3">0</div>
+						<div class="d-table-cell pl-3">${matches_lost}</div>
 					</div>
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">Win Rate</div>
-						<div class="d-table-cell pl-3">0%</div>
+						<div class="d-table-cell pl-3">${win_rate}%</div>
 					</div>
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">Current Streak</div>
-						<div class="d-table-cell pl-3">0</div>
+						<div class="d-table-cell pl-3">${current_streak}</div>
 					</div>
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">Longest Streak</div>
-						<div class="d-table-cell pl-3">0</div>
+						<div class="d-table-cell pl-3">${longest_streak}</div>
 					</div>
 				</div>
 			</div>
