@@ -139,9 +139,10 @@ class Dong(AsyncJsonWebsocketConsumer):
 
 	async def run(self):
 		room = self.rooms[self.room_id]
-		room['ball'] = Ball(size=3, y=self.game_height / 2, x=room['paddle_left'].x + self.ball_start_dist,
-			dx=self.ball_speed, dy=random.uniform(-3.0001, 2.9999))
-		room['game_started'] = True
+		if not room['game_started']:
+			room['ball'] = Ball(size=3, y=self.game_height / 2, x=room['paddle_left'].x + self.ball_start_dist,
+				dx=self.ball_speed, dy=random.uniform(-2.0001, 1.9999))
+			room['game_started'] = True
 
 		while room['paddle_left'].score < self.points_to_win and room['paddle_right'].score < self.points_to_win:
 			await asyncio.sleep(1 / 60)
