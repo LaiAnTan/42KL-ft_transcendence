@@ -98,8 +98,8 @@ function game() {
 	<div class="modal-dialog modal-dialog-centered" role="document">
 		<div class="modal-content" style="background-color: transparent;">
 			<div class="modal-body d-flex flex-column align-items-center justify-content-center text-center important-label">
-				<b style="font-size: 70px; color: red">YOU GOT PONGED</b>
-				<p>Press any key to continue</p>
+				<b style="font-size: 70px; text-shadow: 0 0 25px red">YOU GOT PONGED</b>
+				<p>Press any key to  return</p>
 			</div>
 		</div>
 	</div>
@@ -108,8 +108,8 @@ function game() {
 	<div class="modal-dialog modal-dialog-centered" role="document">
 		<div class="modal-content" style="background-color: transparent;">
 			<div class="modal-body d-flex flex-column align-items-center justify-content-center text-center important-label">
-				<b style="font-size: 70px; color: green">NICE PONG</b>
-				<p>Press any key to continue</p>
+				<b style="font-size: 70px; text-shadow: 0 0 25px green">NICE PONG</b>
+				<p>Press any key to return</p>
 			</div>
 		</div>
 	</div>
