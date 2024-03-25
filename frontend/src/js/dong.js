@@ -94,7 +94,7 @@ function game() {
 						} else {
 							$('#lose-splash-trigger').click();
 						}
-						fetch(`https://localhost:8000/api/closeRoom?room_code=${eventData.room_id}&gameMode=pong`, {
+						fetch(`https://localhost:8000/api/closeRoom?room_code=${eventData.room_id}&gameMode=dong`, {
 							method: "DELETE" })
 						.then(response => response.json())
 						.catch(error => {
