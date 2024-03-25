@@ -2,7 +2,6 @@ import json
 import requests
 import logging
 import time
-import random
 import ssl
 import asyncio
 
@@ -38,6 +37,7 @@ class GameAI:
 ?clientID={self.id}&gameMode={self.mode}", verify='/etc/certs/cert.pem')\
             .json()['roomID']
 
+        logger.info(f"Room ID: {self.room_id}")
         print(self.room_id)
 
         self.up_response = {
@@ -102,6 +102,8 @@ class GameAI:
         return m, c, predicted_y
 
     async def decide_action(self, game_data):
+        
+        logger.info(game_data)
 
         if ('hit', 'HIT LEFT') in game_data.items() or \
                 ('hit', 'HIT RIGHT') in game_data.items():
@@ -187,8 +189,8 @@ class GameAI:
             while True:
                 start_time = time.time()
 
-                # only poll from ws every 1 second
-                if time.time() - start_time < self.WS_POLL_SPEED:
+                # only poll from ws in intervals
+                if time.time() - start_time > self.WS_POLL_SPEED:
                     message = await self.ws.recv()
 
                     message_data = json.loads(message)
@@ -198,11 +200,14 @@ class GameAI:
 
                 if message_data is not None:
 
-                    response, interval = await asyncio.create_task(self.decide_action(message_data))
+                    response, interval = await asyncio.create_task(
+                                            self.decide_action(message_data))
 
                 if response is not None:
 
                     asyncio.create_task(self.send_action(response, interval))
+
+            logger.info("game ended")
 
             await self.ws.close()
             self.close_room()
