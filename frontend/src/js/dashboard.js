@@ -252,91 +252,89 @@ export default () => {
 	</div>
 </div>`;
 					app.outerHTML = new_div.outerHTML;
+
+					$('#add-friend-button').click(function() {
+						console.log(current_user);
+						console.log(params['username']);
+						$.ajax({
+							url: `https://localhost:8000/api/addFriend`,
+							type: 'POST',
+							contentType: 'application/json',
+							data: JSON.stringify({ "username": current_user, "friend_username": params['username'] }),
+							success: function(response) {
+								alert("friend added");
+								window.history.replaceState("", "", "/menu");
+								router();
+							},
+							error: function(jqXHR, textStatus, errorThrown) {
+								alert("friend NOT added");
+								console.error('Error updating details:', jqXHR.responseJSON);
+							}
+						});
+					});
+	
+					$('#close-account-button').click(function() {
+						$.ajax({
+							url: `https://localhost:8000/api/deleteUser?username=${params['username']}`,
+							type: 'DELETE',
+							success: function(response) {
+								$('#confirmation-modal').modal('hide');
+								window.history.replaceState("", "", "/");
+								router();
+	
+								sessionStorage.removeItem('display_name');
+								sessionStorage.removeItem('profile_pic');
+							},
+							error: function(jqXHR, textStatus, errorThrown) {
+								alert("Failed to delete, keep on living!");
+								console.error('Error deleting account:', jqXHR.responseJSON);
+							}
+						});
+					});
+	
+					$('#update-button').click(function() {
+						var newDataVisibility = $('#toggle-data-visibility').is(':checked');
+						var newDisplayName = $('#new-display-name').val();
+						var newAvatar = $('#new-avatar')[0].files.length > 0 ? $('#new-avatar')[0].files[0] : null;
+						var form_data = new FormData();
+	
+						form_data.append("data_is_visible", newDataVisibility);
+						console.log(newDataVisibility)
+						form_data.append("display_name", newDisplayName);
+						if (newAvatar !== null) {
+							if (newAvatar.size / 1024 > 50) {
+								alert("Image size too large.");
+								return ;
+							}
+							form_data.append("profile_pic", newAvatar)
+						}
+	
+						if (newDataVisibility == data.data_is_visible && newDisplayName == data.display_name && newAvatar == null)
+							return ;
+	
+						$.ajax({
+							url: `https://localhost:8000/api/editUser?username=${params['username']}`,
+							type: 'POST',
+							contentType: 'multipart/form-data',
+							data: form_data,
+							contentType: false,
+							processData: false,
+							success: function(response) {
+								alert("Details updated!");
+								sessionStorage.setItem('display_name', response.display_name);
+								sessionStorage.setItem('profile_pic', 'https://localhost:8000/api' + response.profile_pic);
+								window.history.replaceState("", "", `/dashboard?username=${params['username']}`);
+								router();
+							},
+							error: function(jqXHR, textStatus, errorThrown) {
+								alert("Failed to update, fucking noob");
+								console.error('Error updating details:', jqXHR.responseJSON);
+							}
+						});
+					});
 				}).catch(err => {
 					console.error('Something went wrong:', err);
 				});
-
-				$('#add-friend-button').click(function() {
-					console.log(current_user);
-					console.log(params['username']);
-					$.ajax({
-						url: `https://localhost:8000/api/addFriend`,
-						type: 'POST',
-						contentType: 'application/json',
-						data: JSON.stringify({ "username": current_user, "friend_username": params['username'] }),
-						success: function(response) {
-							alert("friend added");
-							window.history.replaceState("", "", "/menu");
-							router();
-						},
-						error: function(jqXHR, textStatus, errorThrown) {
-							alert("friend NOT added");
-							console.error('Error updating details:', jqXHR.responseJSON);
-						}
-					});
-				});
-
-				$('#close-account-button').click(function() {
-					$.ajax({
-						url: `https://localhost:8000/api/deleteUser?username=${params['username']}`,
-						type: 'DELETE',
-						success: function(response) {
-							$('#confirmation-modal').modal('hide');
-							window.history.replaceState("", "", "/");
-							router();
-
-							sessionStorage.removeItem('display_name');
-							sessionStorage.removeItem('profile_pic');
-						},
-						error: function(jqXHR, textStatus, errorThrown) {
-							alert("Failed to delete, keep on living!");
-							console.error('Error deleting account:', jqXHR.responseJSON);
-						}
-					});
-				});
-
-				$('#update-button').click(function() {
-					var newDataVisibility = $('#toggle-data-visibility').is(':checked');
-					var newDisplayName = $('#new-display-name').val();
-					var newAvatar = $('#new-avatar')[0].files.length > 0 ? $('#new-avatar')[0].files[0] : null;
-					var form_data = new FormData();
-
-					form_data.append("data_is_visible", newDataVisibility);
-					console.log(newDataVisibility)
-					form_data.append("display_name", newDisplayName);
-					if (newAvatar !== null) {
-						if (newAvatar.size / 1024 > 50) {
-							alert("Image size too large.");
-							return ;
-						}
-						form_data.append("profile_pic", newAvatar)
-					}
-
-					if (newDataVisibility == data.data_is_visible && newDisplayName == data.display_name && newAvatar == null)
-						return ;
-
-					$.ajax({
-						url: `https://localhost:8000/api/editUser?username=${params['username']}`,
-						type: 'POST',
-						contentType: 'multipart/form-data',
-						data: form_data,
-						contentType: false,
-						processData: false,
-						success: function(response) {
-							alert("Details updated!");
-							sessionStorage.setItem('display_name', response.display_name);
-							sessionStorage.setItem('profile_pic', 'https://localhost:8000/api' + response.profile_pic);
-							window.history.replaceState("", "", `/dashboard?username=${params['username']}`);
-							router();
-						},
-						error: function(jqXHR, textStatus, errorThrown) {
-							alert("Failed to update, fucking noob");
-							console.error('Error updating details:', jqXHR.responseJSON);
-						}
-					});
-				})
-
-				return ;
 			} else {
 				console.error(error);
 			}
