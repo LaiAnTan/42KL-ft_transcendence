@@ -40,3 +40,7 @@
 	border: 1px solid white;
 	color: white;
 }
+
+.modal-backdrop {
+	opacity: 1 !important;
+}
