@@ -36,3 +36,27 @@
 .close-modal:hover {
 	background-color: rgba(255, 255, 255, 0.1);
 }
+
+.delete {
+	background-color: rgba(255, 0, 0, 0.75);
+}
+
+.delete:hover {
+	background-color: rgba(255, 0, 0, 1);
+}
+
+.save {
+	background-color: rgba(0, 255, 0, 0.5);
+}
+
+.save:hover {
+	background-color: rgba(0, 255, 0, 1);
+}
+
+.friend {
+	background-color: transparent;
+}
+
+.friend:hover {
+	background-color: rgba(0, 255, 0, 0.75);
+}

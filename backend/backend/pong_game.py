@@ -65,7 +65,7 @@ class Pong(AsyncJsonWebsocketConsumer):
 			await self.channel_layer.group_send(
 				self.room_group_name, {
 					'type': 'send_game_data',
-					'message': {'status': 'ALL PLAYERS JOINED'}
+					'message': {'status': 'ALL PLAYERS JOINED', 'p1': self.rooms[self.room_id]['players'][0], 'p2': self.rooms[self.room_id]['players'][1]}
 				}
 			)
 			asyncio.create_task(self.start_game_timer())

@@ -57,7 +57,7 @@ export default () => {
 				return data.versus_history;
 			}
 		}).then(versus_history => {
-			return fetch(`https://localhost:8000/api/getVersus?id=${versus_history.join(',')}`, {
+			return fetch(`https://localhost:8000/api/getVersus?username=${params['username']}`, {
 				method: 'GET'
 			}).then(res => {
 				if (res.ok) {
@@ -88,7 +88,7 @@ export default () => {
 	<div class="data-display d-table-cell">${p1}</div>
 	<div class="data-display d-table-cell">${s1}</div>
 	<div class="data-display d-table-cell">${s2}</div>
-	<div class="data-display d-table-cell">${p2}</div>
+	<div data-link="/dashboard?username=${p2}" class="data-display d-table-cell cursor-pointer" title="Visit ${p2}'s dashboard">${p2}</div>
 	<div class="data-display d-table-cell">${data.match_type.toUpperCase()}</div>
 </div>`;
 				data_html += html_str;

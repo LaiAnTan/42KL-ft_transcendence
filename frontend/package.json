@@ -4,13 +4,13 @@
 	"description": "Ding Dong frontend",
 	"main": "index.js",
 	"scripts": {
-	"start": "http-server -c-1 --proxy http://localhost:8080?"
+		"start": "http-server -c-1 --proxy http://localhost:8080?"
 	},
 	"dependencies": {
-	"bootstrap": "^5.3.2",
-	"http-server": "^14.1.1"
+		"bootstrap": "^5.3.2",
+		"d3": "^7.9.0",
+		"http-server": "^14.1.1"
 	},
 	"author": "",
 	"license": "ISC"
 }
-

@@ -1,12 +1,13 @@
-import game from "./dong.js";
 import { loadCSS, router } from "./main.js"
 
 export default () => {
+	let config_palette = localStorage.getItem("palette");
+	loadCSS("src/css/palettes/" + config_palette + ".css");
 	loadCSS("src/css/dashboard.css");
 
 	/* Get querystring from URL ( url?var1=something&var2=123 ) */
 	const queryString = window.location.search;
-	
+
 	/* If no query string, user must be on the search page */
 	if (!queryString) {
 		var inputVal = '';
@@ -43,7 +44,7 @@ export default () => {
 </div>`;
 		/* Replace the original #app's entire HTML with the new #app */
 		app.outerHTML = new_div.outerHTML;
-		
+
 		/* The entire reason we create a new #app is to be able to hook event listener to specified element IDs */
 		let ptr_app = document.querySelector('#app');
 		/* Text input field ~ like Display Name input box */
@@ -98,7 +99,10 @@ export default () => {
 				/* Get name of the active user */
 				const current_user = sessionStorage.getItem('username');
 
-				let versus_history = data.versus_history;
+				let versus_history = [0];
+				if (data.versus_history.length) {
+					versus_history = data.versus_history.join(',');
+				}
 
 				var games_played = 0;
 				var pong_played = 0;
@@ -109,7 +113,7 @@ export default () => {
 				var longest_streak = 0;
 				var win_rate = 0;
 
-				fetch(`https://localhost:8000/api/getVersus?id=${versus_history.join(',')}`, {
+				fetch(`https://localhost:8000/api/getStatistics?username=${params['username']}`, {
 					method: 'GET'
 				}).then(res => {
 					if (res.ok) {
@@ -117,49 +121,12 @@ export default () => {
 					} else {
 						throw new Error('Something went wrong');
 					}
-				}).then(matches => {
+				}).then(statistic => {
+					let win_rate = ((statistic.matches_won / statistic.games_played) * 100).toFixed(2);
+					if (isNaN(win_rate)) {
+						win_rate = 0;
+					}
 
-					console.log('match data', matches);
-					games_played = matches.length;
-
-					matches.forEach(data => {
-						console.log('Do something here');
-						console.log(data);
-						
-						console.log(current_user);
-						let curr = data.player_1_id == current_user ? 1 : 2;
-						let opp = curr == 1 ? 2 : 1;
-
-						console.log('curr', curr);
-						console.log('opp', opp);
-
-						console.log('you:', data[`player_${curr}_id`]);
-						console.log('opponent:', data[`player_${opp}_id`]);
-
-						console.log('score:', data[`player_${curr}_score`], '-', data[`player_${opp}_score`]);
-
-						let win = (data[`player_${curr}_score`] > data[`player_${opp}_score`]) ? 1 : 0;
-						win ? matches_won++ : matches_lost++;
-						win ? current_streak++ : current_streak = 0;
-						longest_streak = current_streak > longest_streak ? current_streak : longest_streak;
-
-						data.match_type ? pong_played++ : dong_played++;
-
-						console.log("streak:", current_streak);
-					});
-
-					console.log("games played", games_played);
-					console.log("pong played", pong_played);
-					console.log("dong played", dong_played);
-					console.log("matches won", matches_won);
-					console.log("matches lost", matches_lost);
-					console.log("longest", longest_streak);
-
-					win_rate = Math.ceil((matches_won / games_played) * 100);
-					console.log('win rate', win_rate + '%');
-
-
-				}).then(() => {
 					let app = document.querySelector('#app');
 					const new_div = document.createElement('div');
 					new_div.setAttribute('id', 'app');
@@ -172,12 +139,23 @@ export default () => {
 	<div class="d-flex flex-column justify-content-between rounded-border glowing-border h-100 w-100 mx-3" style="min-width: 400px; max-width:600px;">
 		<div class="flex-grow-1" style="overflow-y: auto">
 			<div class="px-4 py-2">
-				<div class="important-label">Graphs / Charts</div>
+				<div class="important-label" style="text-shadow: 0 0 30px var(--color2)">Games Played</div>
+				${statistic.games_played == 0 ? '<p class="description mt-4">No games played yet.</p>' : 
+				`<div class="d-flex align-items-center border w-100 mt-2" style="height: 200px">
+					<svg id="graph1" style="width: 100%"></svg>
+				</div>`}
+			</div>
+			<div class="px-4 py-2">
+				<div class="important-label" style="text-shadow: 0 0 30px var(--color2)">Wins / Losses</div>
+				${statistic.games_played == 0 ? '<p class="description mt-4">No games played yet.</p>' : 
+				`<div class="d-flex align-items-center justify-content-center border w-100 mt-2" style="height: 350px">
+					<svg id="graph2"></svg>
+				</div>`}
 			</div>
 		</div>
 		<div class="d-flex flex-row align-items-center justify-content-between border-top px-4 py-2">
 			<div class="description">${data.username}'s Game History</div>
-			<button data-link="/history?username=${data.username}" type="submit" class="description rounded-border scale-up cursor-pointer px-4 py-2 mx-2" style="background-color: blue">GO</button>
+			<button data-link="/history?username=${data.username}" type="submit" class="description rounded-border scale-up cursor-pointer px-4 py-2 mx-2" style="background-color: var(--color4)">GO</button>
 		</div>
 	</div>
 	<div class="d-flex flex-column align-items-center justify-content-center h-100 w-100" style="min-width: 200px; max-width:250px;">
@@ -188,33 +166,33 @@ export default () => {
 		<div class="important-label" style="font-size: 40px;">${data.username.toUpperCase()}</div>
 		${current_user != data.username ?
 		`<div class="mt-4">
-			<button id="add-friend-button" type="submit" class="description rounded-border scale-up cursor-pointer px-4 py-2 mx-2" style="background-color: gray">BEFRIEND</button>
+			<button id="add-friend-button" type="submit" class="description rounded-border scale-up cursor-pointer px-4 py-2 mx-2 friend">ADD FRIEND</button>
 		</div>` : ''}
 	</div>
 	<div class="d-flex flex-column justify-content-between rounded-border glowing-border h-100 w-100 mx-3" style="min-width: 400px; max-width:600px;">
 		<div class="flex-grow-1" style="overflow-y: auto">
 			<div class="px-4 py-2">
-				<div class="important-label">Game Statistics</div>
+				<div class="important-label" style="text-shadow: 0 0 25px var(--color3)">Game Statistics</div>
 				<div class="d-table description w-100 pt-2 px-4">
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">Games Played</div>
-						<div class="d-table-cell pl-3">${games_played}</div>
+						<div class="d-table-cell pl-3">${statistic.games_played}</div>
 					</div>
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">* Pong</div>
-						<div class="d-table-cell pl-3">${pong_played}</div>
+						<div class="d-table-cell pl-3">${statistic.pong_played}</div>
 					</div>
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">* Dong</div>
-						<div class="d-table-cell pl-3">${dong_played}</div>
+						<div class="d-table-cell pl-3">${statistic.dong_played}</div>
 					</div>
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">Games Won</div>
-						<div class="d-table-cell pl-3">${matches_won}</div>
+						<div class="d-table-cell pl-3">${statistic.matches_won}</div>
 					</div>
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">Games Lost</div>
-						<div class="d-table-cell pl-3">${matches_lost}</div>
+						<div class="d-table-cell pl-3">${statistic.matches_lost}</div>
 					</div>
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">Win Rate</div>
@@ -222,17 +200,17 @@ export default () => {
 					</div>
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">Current Streak</div>
-						<div class="d-table-cell pl-3">${current_streak}</div>
+						<div class="d-table-cell pl-3">${statistic.current_streak}</div>
 					</div>
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">Longest Streak</div>
-						<div class="d-table-cell pl-3">${longest_streak}</div>
+						<div class="d-table-cell pl-3">${statistic.longest_streak}</div>
 					</div>
 				</div>
 			</div>
 			<div class="px-4 py-2">
 				<div class="d-flex flex-row align-items-center" style="jutify-content: start">
-					<div class="important-label">User Info</div>
+					<div class="important-label" style="text-shadow: 0 0 25px var(--color5)">User Info</div>
 					${current_user == data.username ?
 					`<div class="description ml-4">
 						<input id="toggle-data-visibility" type="checkbox" class="cursor-pointer mr-2" title="Change visibility of your personal data ( email )" ${data.data_is_visible ? 'checked />Shown' : '/>Hidden'}
@@ -271,7 +249,8 @@ export default () => {
 					</div>
 					<div class="modal-body description">
 						<b>This action is irreversible.</b><br/>
-						ALL user data will be lost.<br/>[ Display name, custom avatar, match history ]<br/><br/>
+						ALL user data will be lost.<br/>
+						[ Display name, custom avatar, match history ]<br/><br/>
 						Are you sure you want to delete your account?
 					</div>
 					<div class="modal-footer">
@@ -285,13 +264,95 @@ export default () => {
 		${current_user == data.username ? /* Ternary here used to check if active user is the user being displayed. If yes, show save button */
 		`<div class="align-items-center border-top">
 			<div class="d-flex flex-row ml-auto px-4 py-2" style="justify-content: end">
-				<button data-toggle="modal" data-target="#confirmation-modal" type="button" class="description rounded-border scale-up cursor-pointer px-4 py-2 mx-2" style="background-color: red">Delete Account</button>
-				<button id="update-button" type="submit" class="description rounded-border scale-up cursor-pointer px-4 py-2 mx-2" style="background-color: green">Save</button>
+				<button data-toggle="modal" data-target="#confirmation-modal" type="button" class="description rounded-border scale-up cursor-pointer px-4 py-2 mx-2 delete">Delete Account</button>
+				<button id="update-button" type="submit" class="description rounded-border scale-up cursor-pointer px-4 py-2 mx-2 save">Save</button>
 			</div>
 		</div>` : ''}
 	</div>
 </div>`;
 					app.outerHTML = new_div.outerHTML;
+
+					const graph1Data = [
+						{ label: "Total", value: statistic.games_played },
+						{ label: "Pong", value: statistic.pong_played },
+						{ label: "Dong", value: statistic.dong_played }
+					];
+					const graph1Svg = d3.select('#graph1');
+					if (graph1Svg.node()) {
+						const graph1Width = graph1Svg.node().getBoundingClientRect().width;
+						const graph1Height = 30;
+						const graph1Padding = 10;
+						const maxBarValue = Math.max(...graph1Data.map(d => d.value));
+						const totalHeight = graph1Data.length * (graph1Height + graph1Padding); // Total height occupied by all bars and paddings
+						const startY = (graph1Svg.node().getBoundingClientRect().height - totalHeight) / 2; // Calculate the starting y-coordinate
+						const maxWidth = graph1Width * 0.8; // Maximum width for the bars, say 80% of the SVG width
+						graph1Svg.selectAll("g")
+							.data(graph1Data)
+							.enter()
+							.append("g")
+							.attr("transform", (d, i) => `translate(0, ${startY + i * (graph1Height + graph1Padding) + (graph1Height / 2)})`)
+							.append("rect")
+							.attr("x", 0)
+							.attr("y", -graph1Height / 2) // Center the bar vertically
+							.attr("width", d => (d.value / maxBarValue) * maxWidth)
+							.attr("height", graph1Height)
+							.attr("fill", "steelblue")
+							.append("title") // Append title element for tooltip
+							.text(d => `${d.label}: ${d.value}`);
+						graph1Svg.selectAll("text")
+							.data(graph1Data)
+							.enter()
+							.append("text")
+							.attr("x", d => ((d.value / maxBarValue) * maxWidth) + 5) // Adjusted x-coordinate calculation
+							.attr("y", (d, i) => startY + i * (graph1Height + graph1Padding) + graph1Height / 2)
+							.text(d => d.label)
+							.attr("alignment-baseline", "middle")
+							.attr("fill", "white")
+							.append("title") // Append title element for tooltip
+							.text(d => `${d.label}: ${d.value}`);
+					}
+					
+
+					const graph2Data = [
+						{ label: "Wins", value: statistic.matches_won },
+						{ label: "Losses", value: statistic.matches_lost }
+					];
+					const graph2Svg = d3.select('#graph2');
+					if (graph2Svg.node()) {
+						const graph2Width = 300;
+						const graph2Height = 300;
+						const graph2Radius = Math.min(graph2Width, graph2Height) / 2;
+						const pie = d3.pie()
+							.value(d => d.value)
+							.sort(null);
+						const g = graph2Svg
+							.attr('width', graph2Width)
+							.attr('height', graph2Height)
+							.append('g')
+							.attr('transform', `translate(${graph2Width / 2}, ${graph2Height / 2})`);
+						const arc = d3.arc()
+							.innerRadius(0)
+							.outerRadius(graph2Radius);
+						const color = d3.scaleOrdinal()
+							.domain(graph2Data.map(d => d.label))
+							.range(["#98abc5", "#8a89a6"]);
+						const arcs = g.selectAll('arc')
+							.data(pie(graph2Data))
+							.enter()
+							.append('g')
+							.attr('class', 'arc');
+						arcs.append('path')
+							.attr('d', arc)
+							.attr('fill', d => color(d.data.label));
+						arcs.filter(d => d.data.value !== 0) // Filter out data with value 0
+							.append('text')
+							.attr('transform', d => `translate(${arc.centroid(d)})`)
+							.attr('text-anchor', 'middle')
+							.attr('fill', 'white')
+							.attr('font-weight', 'bold')
+							.text(d => d.data.label);
+					}
+
 
 					$('#add-friend-button').click(function() {
 						console.log(current_user);
