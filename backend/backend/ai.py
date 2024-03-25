@@ -4,6 +4,8 @@ import logging
 import time
 import ssl
 import asyncio
+import os
+import signal
 
 from websockets.client import connect
 
@@ -33,12 +35,10 @@ class GameAI:
 
         self.game_url = f"wss://localhost:8001/{self.mode}"
 
-        self.room_id = requests.get(f"https://localhost:8000/api/matchmaking\
-?clientID={self.id}&gameMode={self.mode}", verify='/etc/certs/cert.pem')\
+        self.room_id = requests.get(f"https://localhost:8000/api/matchmaking?clientID={self.id}&gameMode={self.mode}", verify='/etc/certs/cert.pem')\
             .json()['roomID']
 
-        logger.info(f"Room ID: {self.room_id}")
-        print(self.room_id)
+        print(f"Room ID: {self.room_id}")
 
         self.up_response = {
             'id': self.id,
@@ -102,8 +102,6 @@ class GameAI:
         return m, c, predicted_y
 
     async def decide_action(self, game_data):
-        
-        logger.info(game_data)
 
         if ('hit', 'HIT LEFT') in game_data.items() or \
                 ('hit', 'HIT RIGHT') in game_data.items():
@@ -173,47 +171,60 @@ class GameAI:
     async def send_action(self, response, interval):
 
         await self.ws.send(json.dumps(response))
-
         await asyncio.sleep(interval)
-
         await self.ws.send(json.dumps(self.stop_response))
 
     async def running(self):
 
-        async with connect(self.game_url +
-                           f"?roomID={self.room_id}&clientID={self.id}",
-                           ssl=self.ssl_context) as websocket:
+        try:
+            self.ws = await connect(self.game_url + 
+                                    f"?roomID={self.room_id}&clientID={self.id}",
+                                    ssl=self.ssl_context)
+        except ConnectionError:
+            return
 
-            self.ws = websocket
+        logger.info(f"Connected to: {self.game_url}?roomID={self.room_id}&clientID={self.id}")
 
-            while True:
+        message = None
+        message_data = None
+        response = None
+
+        while True:
+
+            start_time = time.time()
+            logger.info("In loop")
+
+            # only poll from ws in intervals
+            if time.time() - start_time > self.WS_POLL_SPEED:
+
+                message = await self.ws.recv()
+
                 start_time = time.time()
 
-                # only poll from ws in intervals
-                if time.time() - start_time > self.WS_POLL_SPEED:
-                    message = await self.ws.recv()
+                message_data = json.loads(message) if message else None
 
-                    message_data = json.loads(message)
+                if message_data and self.game_ended(message_data) is True:
+                    logger.info("game ended")
+                    break
 
-                    if self.game_ended(message_data) is True:
-                        break
+            response, interval = await asyncio.create_task(self.decide_action(message_data)) if message_data else None, None
 
-                if message_data is not None:
+            if response:
 
-                    response, interval = await asyncio.create_task(
-                                            self.decide_action(message_data))
+                asyncio.create_task(self.send_action(response, interval))
 
-                if response is not None:
+        await self.ws.close()
+        self.close_room()
 
-                    asyncio.create_task(self.send_action(response, interval))
 
-            logger.info("game ended")
-
-            await self.ws.close()
-            self.close_room()
+def stop():
+    os.kill(os.getpid(), signal.SIGTERM)
 
 
 if __name__ == "__main__":
 
     ai = GameAI(mode="pong")
-    asyncio.run(ai.running())
+    try:
+        asyncio.run(ai.running())
+    except KeyboardInterrupt:
+        stop()

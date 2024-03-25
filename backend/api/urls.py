@@ -45,5 +45,6 @@ urlpatterns = [
 	path('tournamentClearScore', views_GameRoom.tournamentClearScore),
 	path('tournamentGetScore', views_GameRoom.tournamentGetScore),
     path('startGameAI', views_AI.startGameAI),
+    path('stopGameAI', views_AI.stopGameAI),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
