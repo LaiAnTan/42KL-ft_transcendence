@@ -47,6 +47,9 @@ def getVersus(request):
 		versus_id_list = [int(id) for id in versus_ids.split(',')]
 		print(versus_id_list)
 
+		if 0 in versus_id_list:
+			return JsonResponse({}, safe=False)
+		
 		for versus_id in versus_id_list:
 			print('Trying out ' + str(versus_id))
 			versus = Versus.objects.get(pk=versus_id)
