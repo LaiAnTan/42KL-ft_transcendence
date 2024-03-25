@@ -57,22 +57,19 @@ export default () => {
 				return data.versus_history;
 			}
 		}).then(versus_history => {
-			return Promise.all(versus_history.map(matchID => {
-				return fetch(`https://localhost:8000/api/getVersus?id=${matchID}`, {
-					method: 'GET'
-				}).then(res => {
-					if (res.ok) {
-						return res.json();
-					} else {
-						throw new Error('Network response was not ok.');
-					}
-				});
-			}));
+			return fetch(`https://localhost:8000/api/getVersus?id=${versus_history.join(',')}`, {
+				method: 'GET'
+			}).then(res => {
+				if (res.ok) {
+					return res.json();
+				} else {
+					throw new Error('Network response was not ok.');
+				}
+			});
 		}).then(matches => {
 			let data_html = '';
 
 			matches.forEach(data => {
-				console.log(data);
 				let p1 = data.player_1_id;
 				let p2 = data.player_2_id;
 				let s1 = data.player_1_score;

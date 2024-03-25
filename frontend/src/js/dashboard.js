@@ -97,11 +97,34 @@ export default () => {
 				/* Get name of the active user */
 				const current_user = sessionStorage.getItem('username');
 
-				let app = document.querySelector('#app');
-				const new_div = document.createElement('div');
-				new_div.setAttribute('id', 'app');
-				new_div.className = 'w-100 h-100';
-				new_div.innerHTML = `
+				let versus_history = data.versus_history;
+				fetch(`https://localhost:8000/api/getVersus?id=${versus_history.join(',')}`, {
+					method: 'GET'
+				}).then(res => {
+					if (res.ok) {
+						return res.json();
+					} else {
+						throw new Error('Something went wrong');
+					}
+				}).then(matches => {
+					var games_played = 0;
+					var pong_played = 0;
+					var dong_played = 0;
+					var matches_won = 0;
+					var matches_lost = 0;
+					var current_streak = 0;
+					var longest_streak = 0;
+
+					matches.forEach(data => {
+						console.log('Do something here');
+						console.log(data);
+					});
+				}).then(() => {
+					let app = document.querySelector('#app');
+					const new_div = document.createElement('div');
+					new_div.setAttribute('id', 'app');
+					new_div.className = 'w-100 h-100';
+					new_div.innerHTML = `
 <div class="d-flex position-absolute align-items-center unselectable ml-4" style="height: 8vh; z-index: 1">
 	<p data-link="/menu" class="description scale-up cursor-pointer">GO BACK</p>
 </div>
@@ -138,6 +161,14 @@ export default () => {
 						<div class="d-table-cell pl-3">0</div>
 					</div>
 					<div class="d-table-row">
+						<div class="d-table-cell py-1">* Pong</div>
+						<div class="d-table-cell pl-3">0</div>
+					</div>
+					<div class="d-table-row">
+						<div class="d-table-cell py-1">* Dong</div>
+						<div class="d-table-cell pl-3">0</div>
+					</div>
+					<div class="d-table-row">
 						<div class="d-table-cell py-1">Games Won</div>
 						<div class="d-table-cell pl-3">0</div>
 					</div>
@@ -148,14 +179,6 @@ export default () => {
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">Win Rate</div>
 						<div class="d-table-cell pl-3">0%</div>
-					</div>
-					<div class="d-table-row">
-						<div class="d-table-cell py-1">Best Score</div>
-						<div class="d-table-cell pl-3">0</div>
-					</div>
-					<div class="d-table-row">
-						<div class="d-table-cell py-1">Average Score</div>
-						<div class="d-table-cell pl-3">0</div>
 					</div>
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">Current Streak</div>
@@ -228,7 +251,10 @@ export default () => {
 		</div>` : ''}
 	</div>
 </div>`;
-				app.outerHTML = new_div.outerHTML;
+					app.outerHTML = new_div.outerHTML;
+				}).catch(err => {
+					console.error('Something went wrong:', err);
+				});
 
 				$('#add-friend-button').click(function() {
 					console.log(current_user);

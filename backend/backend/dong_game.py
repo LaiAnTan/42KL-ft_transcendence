@@ -20,7 +20,7 @@ class Dong(AsyncJsonWebsocketConsumer):
 	ball_start_dist = 5
 	ball_speed = 1.0
 	ball_rampup = 0.02
-	points_to_win = 10
+	points_to_win = 3
 
 	rooms = {}
 
