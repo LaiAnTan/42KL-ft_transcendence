@@ -1,3 +1,4 @@
+from numpy import convolve
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -6,6 +7,8 @@ from rest_framework.exceptions import ValidationError
 from base.models import Versus, User, Matchup
 from django.forms.models import model_to_dict
 from api.serializer import VersusSerializer, MatchupSerializer
+from django.http import JsonResponse
+from django.core.exceptions import ObjectDoesNotExist
 
 
 @api_view(['GET'])
@@ -26,39 +29,46 @@ def getAllVersus(_request):
 def getVersus(request):
 
 	"""
-	API endpoint that returns data of a versus match, queried from the
+	API endpoint that returns data of versus matches, queried from the
 	database.
-	Data regarding matchup is also returned together.
+	Data regarding matchups is also returned together.
 	"""
 
-	versus_id = request.query_params.get('id')
+	versus_ids = request.query_params.get('id')  # Retrieve comma-separated string of IDs
+	print(versus_ids)
 
-	if versus_id is None:
-		return Response({"Error": '"id" must be included in query\
-parameters '},
-						status=status.HTTP_400_BAD_REQUEST)
+	if not versus_ids:  # Check if the list of IDs is empty
+		return JsonResponse({"Error": '"id" must be included in query parameters'}, status=status.HTTP_400_BAD_REQUEST)
+
+	versus_data = []
 
 	try:
-		versus = Versus.objects.get(pk=versus_id)
-		versus_serializer = VersusSerializer(versus)
-		matchup = Matchup.objects.get(pk=versus_serializer.data['matchup_id'])
-	except (Versus.DoesNotExist, Matchup.DoesNotExist):
-		return Response({"Error": "Entries Not Found in Database"},
-						status=status.HTTP_400_BAD_REQUEST)
+		# Split the comma-separated string of IDs into a list of integers
+		versus_id_list = [int(id) for id in versus_ids.split(',')]
+		print(versus_id_list)
 
-	matchup_serializer = MatchupSerializer(matchup)
+		for versus_id in versus_id_list:
+			print('Trying out ' + str(versus_id))
+			versus = Versus.objects.get(pk=versus_id)
+			versus_serializer = VersusSerializer(versus)
+			matchup = Matchup.objects.get(pk=versus_serializer.data['matchup_id'])
+			matchup_serializer = MatchupSerializer(matchup)
+			
+			matchup_data = matchup_serializer.data
+			matchup_data["matchup_id"] = matchup_data.pop('id', 0)
+			
+			data = {
+				**matchup_data,
+				"date_played": versus_serializer.data['date_played'],
+				"match_type": versus_serializer.data['match_type']
+			}
+			versus_data.append(data)
 
-	matchup_data = matchup_serializer.data
+	except (ObjectDoesNotExist, ValueError):
+		return JsonResponse({"Error": "Entries Not Found in Database or Invalid ID provided"}, status=status.HTTP_400_BAD_REQUEST)
 
-	# 0 will never be returned
-	matchup_data["matchup_id"] = matchup_data.pop('id', 0)
+	return JsonResponse(versus_data, safe=False)
 
-	# consolidate data
-	data = {**matchup_data,
-			"date_played": versus_serializer.data['date_played'],
-			"match_type": versus_serializer.data['match_type']}
-
-	return Response(data)
 
 
 # API endpoint abstraction that handles the updating of Versus, Matchup and
