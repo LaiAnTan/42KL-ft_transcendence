@@ -2,6 +2,9 @@ import game from "./dong.js";
 import { loadCSS, router } from "./main.js"
 
 export default () => {
+	
+	let config_palette = localStorage.getItem("palette");
+	loadCSS("src/css/palettes/" + config_palette + ".css");
 	loadCSS("src/css/dashboard.css");
 
 	/* Get querystring from URL ( url?var1=something&var2=123 ) */
@@ -98,7 +101,10 @@ export default () => {
 				/* Get name of the active user */
 				const current_user = sessionStorage.getItem('username');
 
-				let versus_history = data.versus_history;
+				let versus_history = [0];
+				if (data.versus_history.length) {
+					versus_history = data.versus_history.join(',');
+				}
 
 				var games_played = 0;
 				var pong_played = 0;
@@ -109,7 +115,7 @@ export default () => {
 				var longest_streak = 0;
 				var win_rate = 0;
 
-				fetch(`https://localhost:8000/api/getVersus?id=${versus_history.join(',')}`, {
+				fetch(`https://localhost:8000/api/getVersus?id=${versus_history}`, {
 					method: 'GET'
 				}).then(res => {
 					if (res.ok) {
@@ -122,6 +128,8 @@ export default () => {
 					console.log('match data', matches);
 					games_played = matches.length;
 
+					if (!games_played)
+						return;
 					matches.forEach(data => {
 						console.log('Do something here');
 						console.log(data);
@@ -143,7 +151,7 @@ export default () => {
 						win ? current_streak++ : current_streak = 0;
 						longest_streak = current_streak > longest_streak ? current_streak : longest_streak;
 
-						data.match_type ? pong_played++ : dong_played++;
+						data.match_type == "pong" ? pong_played++ : dong_played++;
 
 						console.log("streak:", current_streak);
 					});
@@ -172,12 +180,12 @@ export default () => {
 	<div class="d-flex flex-column justify-content-between rounded-border glowing-border h-100 w-100 mx-3" style="min-width: 400px; max-width:600px;">
 		<div class="flex-grow-1" style="overflow-y: auto">
 			<div class="px-4 py-2">
-				<div class="important-label">Graphs / Charts</div>
+				<div class="important-label" style="text-shadow: 0 0 30px var(--color2)">Graphs / Charts</div>
 			</div>
 		</div>
 		<div class="d-flex flex-row align-items-center justify-content-between border-top px-4 py-2">
 			<div class="description">${data.username}'s Game History</div>
-			<button data-link="/history?username=${data.username}" type="submit" class="description rounded-border scale-up cursor-pointer px-4 py-2 mx-2" style="background-color: blue">GO</button>
+			<button data-link="/history?username=${data.username}" type="submit" class="description rounded-border scale-up cursor-pointer px-4 py-2 mx-2" style="background-color: var(--color4)">GO</button>
 		</div>
 	</div>
 	<div class="d-flex flex-column align-items-center justify-content-center h-100 w-100" style="min-width: 200px; max-width:250px;">
@@ -194,7 +202,7 @@ export default () => {
 	<div class="d-flex flex-column justify-content-between rounded-border glowing-border h-100 w-100 mx-3" style="min-width: 400px; max-width:600px;">
 		<div class="flex-grow-1" style="overflow-y: auto">
 			<div class="px-4 py-2">
-				<div class="important-label">Game Statistics</div>
+				<div class="important-label" style="text-shadow: 0 0 30px var(--color3)">Game Statistics</div>
 				<div class="d-table description w-100 pt-2 px-4">
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">Games Played</div>
@@ -232,7 +240,7 @@ export default () => {
 			</div>
 			<div class="px-4 py-2">
 				<div class="d-flex flex-row align-items-center" style="jutify-content: start">
-					<div class="important-label">User Info</div>
+					<div class="important-label" style="text-shadow: 0 0 30px var(--color5)">User Info</div>
 					${current_user == data.username ?
 					`<div class="description ml-4">
 						<input id="toggle-data-visibility" type="checkbox" class="cursor-pointer mr-2" title="Change visibility of your personal data ( email )" ${data.data_is_visible ? 'checked />Shown' : '/>Hidden'}
@@ -285,8 +293,8 @@ export default () => {
 		${current_user == data.username ? /* Ternary here used to check if active user is the user being displayed. If yes, show save button */
 		`<div class="align-items-center border-top">
 			<div class="d-flex flex-row ml-auto px-4 py-2" style="justify-content: end">
-				<button data-toggle="modal" data-target="#confirmation-modal" type="button" class="description rounded-border scale-up cursor-pointer px-4 py-2 mx-2" style="background-color: red">Delete Account</button>
-				<button id="update-button" type="submit" class="description rounded-border scale-up cursor-pointer px-4 py-2 mx-2" style="background-color: green">Save</button>
+				<button data-toggle="modal" data-target="#confirmation-modal" type="button" class="description rounded-border scale-up cursor-pointer px-4 py-2 mx-2 delete">Delete Account</button>
+				<button id="update-button" type="submit" class="description rounded-border scale-up cursor-pointer px-4 py-2 mx-2 save">Save</button>
 			</div>
 		</div>` : ''}
 	</div>
