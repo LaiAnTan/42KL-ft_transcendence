@@ -199,13 +199,13 @@ export default () => {
 		<div class="important-label" style="font-size: 40px;">${data.username.toUpperCase()}</div>
 		${current_user != data.username ?
 		`<div class="mt-4">
-			<button id="add-friend-button" type="submit" class="description rounded-border scale-up cursor-pointer px-4 py-2 mx-2" style="background-color: gray">BEFRIEND</button>
+			<button id="add-friend-button" type="submit" class="description rounded-border scale-up cursor-pointer px-4 py-2 mx-2 friend">ADD FRIEND</button>
 		</div>` : ''}
 	</div>
 	<div class="d-flex flex-column justify-content-between rounded-border glowing-border h-100 w-100 mx-3" style="min-width: 400px; max-width:600px;">
 		<div class="flex-grow-1" style="overflow-y: auto">
 			<div class="px-4 py-2">
-				<div class="important-label" style="text-shadow: 0 0 30px var(--color3)">Game Statistics</div>
+				<div class="important-label" style="text-shadow: 0 0 25px var(--color3)">Game Statistics</div>
 				<div class="d-table description w-100 pt-2 px-4">
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">Games Played</div>
@@ -243,7 +243,7 @@ export default () => {
 			</div>
 			<div class="px-4 py-2">
 				<div class="d-flex flex-row align-items-center" style="jutify-content: start">
-					<div class="important-label" style="text-shadow: 0 0 30px var(--color5)">User Info</div>
+					<div class="important-label" style="text-shadow: 0 0 25px var(--color5)">User Info</div>
 					${current_user == data.username ?
 					`<div class="description ml-4">
 						<input id="toggle-data-visibility" type="checkbox" class="cursor-pointer mr-2" title="Change visibility of your personal data ( email )" ${data.data_is_visible ? 'checked />Shown' : '/>Hidden'}
