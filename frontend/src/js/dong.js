@@ -98,7 +98,7 @@ function game() {
 		<div class="modal-content" style="background-color: transparent;">
 			<div class="modal-body d-flex flex-column align-items-center justify-content-center text-center important-label">
 				<b style="font-size: 70px; color: red">YOU GOT DONGED</b>
-				<p>Press any key to continue</p>
+				<p>Click anywhere to continue</p>
 			</div>
 		</div>
 	</div>
@@ -108,7 +108,7 @@ function game() {
 		<div class="modal-content" style="background-color: transparent;">
 			<div class="modal-body d-flex flex-column align-items-center justify-content-center text-center important-label">
 				<b style="font-size: 70px; color: green">NICE DONG</b>
-				<p>Press any key to continue</p>
+				<p>Click anywhere to continue</p>
 			</div>
 		</div>
 	</div>

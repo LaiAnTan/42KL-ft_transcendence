@@ -1,15 +1,13 @@
-import game from "./dong.js";
 import { loadCSS, router } from "./main.js"
 
 export default () => {
-	
 	let config_palette = localStorage.getItem("palette");
 	loadCSS("src/css/palettes/" + config_palette + ".css");
 	loadCSS("src/css/dashboard.css");
 
 	/* Get querystring from URL ( url?var1=something&var2=123 ) */
 	const queryString = window.location.search;
-	
+
 	/* If no query string, user must be on the search page */
 	if (!queryString) {
 		var inputVal = '';
@@ -46,7 +44,7 @@ export default () => {
 </div>`;
 		/* Replace the original #app's entire HTML with the new #app */
 		app.outerHTML = new_div.outerHTML;
-		
+
 		/* The entire reason we create a new #app is to be able to hook event listener to specified element IDs */
 		let ptr_app = document.querySelector('#app');
 		/* Text input field ~ like Display Name input box */
@@ -124,17 +122,13 @@ export default () => {
 						throw new Error('Something went wrong');
 					}
 				}).then(matches => {
-
-					console.log('match data', matches);
 					games_played = matches.length;
+					if (!games_played) {
+						games_played = 0;
+						return ;
+					}
 
-					if (!games_played)
-						return;
 					matches.forEach(data => {
-						console.log('Do something here');
-						console.log(data);
-						
-						console.log(current_user);
 						let curr = data.player_1_id == current_user ? 1 : 2;
 						let opp = curr == 1 ? 2 : 1;
 
@@ -165,8 +159,6 @@ export default () => {
 
 					win_rate = Math.ceil((matches_won / games_played) * 100);
 					console.log('win rate', win_rate + '%');
-
-
 				}).then(() => {
 					let app = document.querySelector('#app');
 					const new_div = document.createElement('div');
@@ -180,7 +172,12 @@ export default () => {
 	<div class="d-flex flex-column justify-content-between rounded-border glowing-border h-100 w-100 mx-3" style="min-width: 400px; max-width:600px;">
 		<div class="flex-grow-1" style="overflow-y: auto">
 			<div class="px-4 py-2">
-				<div class="important-label" style="text-shadow: 0 0 30px var(--color2)">Graphs / Charts</div>
+				<div class="important-label" style="text-shadow: 0 0 30px var(--color2)">Games Played</div>
+				${games_played == 0 ? '<p class="description">No games played yet.</p>' : `<svg id="graph1" class="mt-4" style="width: 100%"></svg>`}
+			</div>
+			<div class="px-4 py-2">
+				<div class="important-label" style="text-shadow: 0 0 30px var(--color2)">Wins / Losses</div>
+				${games_played == 0 ? '<p class="description">No games played yet.</p>' : `<svg id="graph2" class="mt-4" style="width: 100%"></svg>`}
 			</div>
 		</div>
 		<div class="d-flex flex-row align-items-center justify-content-between border-top px-4 py-2">
@@ -279,7 +276,8 @@ export default () => {
 					</div>
 					<div class="modal-body description">
 						<b>This action is irreversible.</b><br/>
-						ALL user data will be lost.<br/>[ Display name, custom avatar, match history ]<br/><br/>
+						ALL user data will be lost.<br/>
+						[ Display name, custom avatar, match history ]<br/><br/>
 						Are you sure you want to delete your account?
 					</div>
 					<div class="modal-footer">
@@ -300,6 +298,39 @@ export default () => {
 	</div>
 </div>`;
 					app.outerHTML = new_div.outerHTML;
+
+					const graph1Data = [
+						{ "name": "Total", "value": games_played },
+						{ "name": "Pong", "value": pong_played },
+						{ "name": "Dong", "value": dong_played }
+					];
+
+					const graph1Svg = d3.select('#graph1');
+					const graph1Width = graph1Svg.node().getBoundingClientRect().width;
+					const graph1Height = 30;
+					const graph1Padding = 10;
+
+					graph1Svg.selectAll("rect")
+						.data(graph1Data)
+						.enter()
+						.append("rect")
+						.attr("x", 0)
+						.attr("y", (d, i) => i * (graph1Height + graph1Padding))
+						.attr("width", d => d.value * graph1Width / 100)
+						.attr("height", graph1Height)
+						.attr("fill", "steelblue");
+
+					graph1Svg.selectAll("text")
+						.data(graph1Data)
+						.enter()
+						.append("text")
+						.attr("x", d => d.value + 5)
+						.attr("y", (d, i) => i * (graph1Height + graph1Padding) + graph1Height / 2)
+						.text(d => d.name)
+						.attr("alignment-baseline", "middle")
+						.attr("fill", "white");
+
+
 
 					$('#add-friend-button').click(function() {
 						console.log(current_user);
