@@ -91,27 +91,8 @@ export default () => {
 					return ;
 				}
 
-				/* Force a change of the URL to /dashboard?username=_username_,
-					to avoid any page reloads sending a GET to Postgres again,
-					due to loading=true present in querystring */
-				window.history.replaceState("", "", `/dashboard?username=${params['username']}`);
-
 				/* Get name of the active user */
 				const current_user = sessionStorage.getItem('username');
-
-				let versus_history = [0];
-				if (data.versus_history.length) {
-					versus_history = data.versus_history.join(',');
-				}
-
-				var games_played = 0;
-				var pong_played = 0;
-				var dong_played = 0;
-				var matches_won = 0;
-				var matches_lost = 0;
-				var current_streak = 0;
-				var longest_streak = 0;
-				var win_rate = 0;
 
 				fetch(`https://localhost:8000/api/getStatistics?username=${params['username']}`, {
 					method: 'GET'
