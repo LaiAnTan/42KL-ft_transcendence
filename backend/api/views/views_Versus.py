@@ -1,3 +1,5 @@
+from datetime import date
+from gc import get_stats
 from numpy import convolve
 from rest_framework import status
 from rest_framework.response import Response
@@ -34,32 +36,28 @@ def getVersus(request):
 	Data regarding matchups is also returned together.
 	"""
 
-	versus_ids = request.query_params.get('id')  # Retrieve comma-separated string of IDs
-	print(versus_ids)
+	username = request.query_params.get('username')
 
-	if not versus_ids:  # Check if the list of IDs is empty
-		return JsonResponse({"Error": '"id" must be included in query parameters'}, status=status.HTTP_400_BAD_REQUEST)
-
-	versus_data = []
+	if username is None:
+		return Response({"Error": '"username" must be included in query\
+parameters '},
+						status=status.HTTP_400_BAD_REQUEST)
 
 	try:
-		# Split the comma-separated string of IDs into a list of integers
-		versus_id_list = [int(id) for id in versus_ids.split(',')]
-		print(versus_id_list)
+		user = User.objects.get(username=username)
+		versus_history = user.versus_history
+		versus_data = []
 
-		if 0 in versus_id_list:
-			return JsonResponse({}, safe=False)
-		
-		for versus_id in versus_id_list:
+		for versus_id in versus_history:
 			print('Trying out ' + str(versus_id))
 			versus = Versus.objects.get(pk=versus_id)
 			versus_serializer = VersusSerializer(versus)
 			matchup = Matchup.objects.get(pk=versus_serializer.data['matchup_id'])
 			matchup_serializer = MatchupSerializer(matchup)
-			
+
 			matchup_data = matchup_serializer.data
 			matchup_data["matchup_id"] = matchup_data.pop('id', 0)
-			
+
 			data = {
 				**matchup_data,
 				"date_played": versus_serializer.data['date_played'],
@@ -67,14 +65,76 @@ def getVersus(request):
 			}
 			versus_data.append(data)
 
+	except User.DoesNotExist:
+		return Response({"username": ""},
+						status=status.HTTP_200_OK)
 	except (ObjectDoesNotExist, ValueError):
 		return JsonResponse({"Error": "Entries Not Found in Database or Invalid ID provided"}, status=status.HTTP_400_BAD_REQUEST)
 
 	return JsonResponse(versus_data, safe=False)
 
+@api_view(['GET'])
+def getStatistics(request):
+	username = request.query_params.get('username')
 
+	if username is None:
+		return Response({"Error": '"username" must be included in query\
+parameters '},
+						status=status.HTTP_400_BAD_REQUEST)
 
-# API endpoint abstraction that handles the updating of Versus, Matchup and
+	try:
+		user = User.objects.get(username=username)
+		versus_history = user.versus_history
+
+		matches_won = 0
+		matches_lost = 0
+		current_streak = 0
+		longest_streak = 0
+		pong_played = 0
+		dong_played = 0
+
+		for versus_id in versus_history:
+			versus = Versus.objects.get(pk=versus_id)
+			matchup = Matchup.objects.get(pk=versus.matchup_id)
+
+			curr = 1 if matchup.player_1_id == user.username else 2
+			opp = 2 if curr == 1 else 1
+			win = 1 if (getattr(matchup, f'player_{curr}_score') > getattr(matchup, f'player_{opp}_score')) else 0
+
+			if win == 1:
+				matches_won += 1
+				current_streak += 1
+			else:
+				matches_lost += 1
+				current_streak = 0
+
+			longest_streak = current_streak if (current_streak > longest_streak) else longest_streak
+
+			if versus.match_type == 'pong':
+				pong_played += 1
+			else:
+				dong_played += 1
+
+		games_played = pong_played + dong_played
+
+		data = {
+			"games_played": games_played,
+			"pong_played": pong_played,
+			"dong_played": dong_played,
+			"matches_won": matches_won,
+			"matches_lost": matches_lost,
+			"current_streak": current_streak,
+			"longest_streak": longest_streak
+		}
+
+	except User.DoesNotExist:
+		return Response({"username": ""},
+						status=status.HTTP_200_OK)
+	except (ObjectDoesNotExist, ValueError):
+		return JsonResponse({"Error": "Entries Not Found in Database or Invalid ID provided"}, status=status.HTTP_400_BAD_REQUEST)
+
+	return JsonResponse(data, safe=False)
+
 # User entries to ease usage / debug process
 @api_view(['POST'])
 def addVersus(request):
