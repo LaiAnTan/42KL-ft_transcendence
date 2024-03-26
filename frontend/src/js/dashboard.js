@@ -7,7 +7,6 @@ export default () => {
 
 	/* Get querystring from URL ( url?var1=something&var2=123 ) */
 	const queryString = window.location.search;
-
 	/* If no query string, user must be on the search page */
 	if (!queryString) {
 		var inputVal = '';
@@ -44,7 +43,6 @@ export default () => {
 </div>`;
 		/* Replace the original #app's entire HTML with the new #app */
 		app.outerHTML = new_div.outerHTML;
-
 		/* The entire reason we create a new #app is to be able to hook event listener to specified element IDs */
 		let ptr_app = document.querySelector('#app');
 		/* Text input field ~ like Display Name input box */

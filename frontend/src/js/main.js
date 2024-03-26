@@ -8,7 +8,7 @@ import settings from "./settings.js";
 import dashboard from "./dashboard.js";
 import bracket from "./bracket.js";
 import history from "./history.js";
-import tournament from "./bracket.js";
+import pongAI from "./pongAI.js";
 
 
 const routes = {
@@ -23,6 +23,7 @@ const routes = {
 	"/bracket": { title: "Bracket", render: bracket },
 	"/history": { title: "History", render: history },
 	"/tournament": { title: "Tournament", render: bracket },
+	"/pongAI": { title: "Pong AI", render: pongAI },
 };
 
 export function loadCSS(href) {

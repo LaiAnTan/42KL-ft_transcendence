@@ -18,7 +18,7 @@ class Pong(AsyncJsonWebsocketConsumer):
 	paddle_width = 2 
 	paddle_padding = 5
 	ball_start_dist = 5
-	ball_speed = 1.0
+	ball_speed = 1
 	ball_rampup = 0.02
 	points_to_win = 3
 

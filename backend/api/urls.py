@@ -1,6 +1,6 @@
 from django.urls import path
 from django.conf.urls.static import static
-from .views import views_User, views_Matchup, views_Versus, views_Tournament, authentication, views_GameRoom, alert
+from .views import views_User, views_Matchup, views_Versus, views_Tournament, authentication, views_GameRoom, views_AI, alert
 from django.conf import settings
 
 
@@ -45,5 +45,7 @@ urlpatterns = [
 	path('tournamentScore', views_GameRoom.tournamentScore),
 	path('tournamentClearScore', views_GameRoom.tournamentClearScore),
 	path('tournamentGetScore', views_GameRoom.tournamentGetScore),
+    path('startGameAI', views_AI.startGameAI),
+    # path('stopGameAI', views_AI.stopGameAI),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

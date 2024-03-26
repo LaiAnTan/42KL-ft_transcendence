@@ -17,9 +17,9 @@ def generateRoomCode(rooms):
 
 def joinRoom(rooms, client_id):
     for room_code, clients in rooms.items():
-        if client_id in clients:
+        if client_id in clients and client_id != 'AI':
             return room_code
-        if len(clients) < MAX_CLIENTS_PER_ROOM:
+        if len(clients) < MAX_CLIENTS_PER_ROOM and clients[0] != 'AI':
             clients.append(client_id)
             return room_code
     room_code = generateRoomCode(rooms)
@@ -30,7 +30,6 @@ def alreadyInRoom(client_id, rooms):
     for clients in rooms.values():
         if client_id in clients:
             return True
-
     return False
 
 @api_view(['GET'])
@@ -38,8 +37,9 @@ def matchmaking(request):
     client_id = request.GET.get('clientID')
     game_mode = request.GET.get('gameMode')
 
+    print("create a new room")
     if game_mode == 'pong':
-        if alreadyInRoom(client_id, dong_rooms):
+        if alreadyInRoom(client_id, dong_rooms) and client_id != 'AI':
             return Response({'error': 'Client in another game mode'}, status=400)
         room_code = joinRoom(pong_rooms, client_id)
     elif game_mode == 'dong':
