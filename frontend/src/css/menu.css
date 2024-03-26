@@ -55,6 +55,67 @@
 }
 
 @keyframes spin {
-    from {transform: rotate(0deg); }
-    to {transform: rotate(360deg); }
+	from {transform: rotate(0deg); }
+	to {transform: rotate(360deg); }
+}
+
+.friend-profile {
+	transition: background-color 0.2s, border-radius 0.2s;
+}
+.friend-profile:hover {
+	background-color: rgb(71, 71, 71);
+	border-radius: 10px;
+}
+
+.profile-container {
+	position: relative;
+	display: inline-block;
+}
+.profile-container:hover .unfriend-overlay {
+	opacity: 1;
+}
+
+.unfriend-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+	background-color: rgba(255, 0, 0, 0.5);
+	opacity: 0;
+	transition: opacity 0.2s ease;
+	border: none;
+	padding: 0;
+}
+
+.status-indicator {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	width: 15px;
+	height: 15px;
+	border-radius: 50%;
+}
+
+.modal-content {
+	background-color: rgba(80, 80, 80, 0.85);
+}
+
+.modal-body {
+	padding: 20px;
+}
+
+.close-modal {
+	background-color: transparent;
+	color: white;
+	font-size: 1.5rem;
+	line-height: 1;
+	width: 50px;
+	height: 50px;
+	padding: 0;
+}
+
+.close-modal:hover {
+	background-color: rgba(255, 255, 255, 0.1);
 }

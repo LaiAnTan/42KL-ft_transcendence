@@ -1,4 +1,4 @@
-import { navigate, router, loadCSS } from "./main.js";
+import { navigate, loadCSS } from "./main.js";
 
 function game() {
 	let config_palette = localStorage.getItem("palette");
@@ -10,7 +10,6 @@ function game() {
 	let player_1_username = " ";
 	let player_2_username = " ";
 	let is_animating = false;
-	let isMatchmaking = true;
 	var socket;
 	let id = sessionStorage.getItem('username');
 	var roomID;
@@ -28,20 +27,18 @@ function game() {
 		}
 	}
 
+	window.addEventListener("popstate", handlePopState);
+
 	function handlePopState(event) {
-		if (window.location.pathname !== "/dong") {
-			if (!isMatchmaking) {
-				const confirmed = confirm("Are you sure you want to leave the game?");
-				if (!confirmed) {
-					history.pushState(null, null, window.location.href);
-				}
+		if (window.location.pathname !== "/pongAI") {
+			const confirmed = confirm("Are you sure you want to leave the game?");
+			if (!confirmed) {
+				history.pushState(null, null, window.location.href);
 			}
-			fetch(`https://localhost:8000/api/exitRoom?clientID=${clientID}&gameMode=dong`, {
+			fetch(`https://localhost:8000/api/exitRoom?clientID=${clientID}&gameMode=pong`, {
 				method: "DELETE"
 			})
-			.then(() => {
-				window.location.reload();
-			})
+			.then(response => response.json())
 			.catch(error => {
 				console.error('Error exiting room:', error);
 			});
@@ -51,73 +48,8 @@ function game() {
 			window.removeEventListener("popstate", handlePopState);
 		}
 	}
-	window.addEventListener("popstate", handlePopState);
 
-
-	let app = document.querySelector('#app');
-	const new_div = document.createElement('div');
-	new_div.setAttribute('id', 'app');
-	new_div.className = 'w-100 h-100';
-	new_div.innerHTML = `
-<div class="w-100 h-100 p-5">
-	<div class="d-flex justify-content-between w-80 mx-auto pb-3">
-		<div class="d-flex flex-row player-text player-1-text-color justify-content-end align-items-end">
-			<div id=player1score class="player-score-text-size pr-2">${player_1_score.toString()}</div>
-			<div id=player1name class="player-username-text-size pb-2">${player_1_username}</div>
-		</div>
-		<div class="d-flex flex-row player-text player-2-text-color justify-content-end align-items-end">
-			<div id=player2name class="player-username-text-size pb-2">${player_2_username}</div>
-			<div id=player2score class="player-score-text-size pl-2">${player_2_score.toString()}</div>
-		</div>
-	</div>
-	<div class="game-container mx-auto">
-		<div class="game-box w-100">
-			<div id="dongball"></div>
-			<div id="paddle_left"></div>
-			<div id="paddle_right"></div>
-		</div>
-	</div>
-</div>
-
-<button id="matchmaking-trigger" data-toggle="modal" data-target="#matchmaking" type="button" style="display: none;" data-backdrop="static"></button>
-<div class="modal fade" id="matchmaking" tabindex="-1" role="dialog" aria-labelledby="matchmaking" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered" role="document">
-		<div class="modal-content" style="background-color: transparent;">
-			<div class="modal-body d-flex flex-column align-items-center justify-content-center text-center important-label">
-				<b id="countdown-text" style="font-size: 70px">MATCHMAKING...</b>
-				<p id="matchmaking-cancel">Press any key to cancel</p>
-			</div>
-		</div>
-	</div>
-</div>
-
-<button id="win-splash-trigger" data-toggle="modal" data-target="#win-splash" type="button" style="display: none;"></button>
-<button id="lose-splash-trigger" data-toggle="modal" data-target="#lose-splash" type="button" style="display: none;"></button>
-<div class="modal fade" id="lose-splash" tabindex="-1" role="dialog" aria-labelledby="lose-splash" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered" role="document">
-		<div class="modal-content" style="background-color: transparent;">
-			<div class="modal-body d-flex flex-column align-items-center justify-content-center text-center important-label">
-				<b style="font-size: 70px; text-shadow: 0 0 25px red">YOU GOT DONGED</b>
-				<p>Click anywhere to continue</p>
-			</div>
-		</div>
-	</div>
-</div>
-<div class="modal fade" id="win-splash" tabindex="-1" role="dialog" aria-labelledby="win-splash" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered" role="document">
-		<div class="modal-content" style="background-color: transparent;">
-			<div class="modal-body d-flex flex-column align-items-center justify-content-center text-center important-label">
-				<b style="font-size: 70px; text-shadow: 0 0 25px green">NICE DONG</b>
-				<p>Click anywhere to continue</p>
-			</div>
-		</div>
-	</div>
-</div>`;
-	app.outerHTML = new_div.outerHTML;
-
-	$('#matchmaking-trigger').click();
-
-	fetch("https://localhost:8000/api/matchmaking?clientID=" + clientID + "&gameMode=dong", {
+	fetch("https://localhost:8000/api/matchmaking?clientID=" + clientID + "&gameMode=pong", {
 		method: "GET"
 	})
 	.then(response => response.json())
@@ -126,31 +58,24 @@ function game() {
 			throw new Error(data.error);
 		}
 		roomID = data.roomID;
-		socket = new WebSocket(`wss://localhost:8001/dong?roomID=${roomID}&clientID=${clientID}`);
+		socket = new WebSocket(`wss://localhost:8001/pong?roomID=${roomID}&clientID=${clientID}`);
+
 		// Set up WebSocket event listeners
 		socket.onopen = function(event) {
 			console.log("WebSocket connection opened");
 			console.log("client", clientID, "joined room", roomID);
+			fetch(`https://localhost:8000/api/startGameAI?mode=pong`, {
+				method: "GET", })
+			.then(response => response.json())
+			.catch(error => {
+				console.error('Error starting AI:', error);
+			});
 		};
 		socket.onmessage = function(event) {
 			// console.log( "Received message:", event.data);
 			if (isJSON(event.data)) {
 				let endElement = document.getElementById("dongball");
 				let eventData = JSON.parse(event.data);
-				if (eventData.status == "ALL PLAYERS JOINED") {
-					isMatchmaking = false;
-					$('#matchmaking-cancel').html(`<b>${eventData.p1}</b>   VS   <b>${eventData.p2}</b>`);
-					$('#countdown-text').text("READY");
-					setTimeout(function() {
-						$('#countdown-text').text("2");
-					}, 750);
-					setTimeout(function() {
-						$('#countdown-text').text("1");
-					}, 1500);
-					setTimeout(function() {
-						$('#matchmaking').modal('hide');
-					}, 2150);
-				}
 				if (eventData.room_id && eventData.player_1_id && eventData.player_2_id && eventData.match_type) {
 					if (eventData.player_1_score !== eventData.player_2_score) {
 						const isClientWinner = (eventData.player_1_score > eventData.player_2_score && eventData.player_1_id === clientID) ||
@@ -158,22 +83,11 @@ function game() {
 
 						console.log("isClientWinner", isClientWinner);
 						if (isClientWinner) {
-							fetch('https://localhost:8000/api/addVersus', {
-								method: "POST",
-								headers: {
-									"Content-Type": "application/json"
-								},
-								body: JSON.stringify(eventData)
-							})
-							.then(response => response.json())
-							.catch(error => {
-								console.error('Error adding versus:', error);
-							});
 							$('#win-splash-trigger').click();
 						} else {
 							$('#lose-splash-trigger').click();
 						}
-						fetch(`https://localhost:8000/api/closeRoom?room_code=${eventData.room_id}&gameMode=dong`, {
+						fetch(`https://localhost:8000/api/closeRoom?room_code=${eventData.room_id}&gameMode=pong`, {
 							method: "DELETE" })
 						.then(response => response.json())
 						.catch(error => {
@@ -182,7 +96,7 @@ function game() {
 						if (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING) {
 							socket.close();
 						}
-						navigate("/vs-player");
+						navigate("/menu");
 						window.removeEventListener("popstate", handlePopState);
 					}
 				}
@@ -201,9 +115,6 @@ function game() {
 					tweenPaddlePosition(document.getElementById('paddle_left'), eventData.paddle_left_y, 2);
 					tweenPaddlePosition(document.getElementById('paddle_right'), eventData.paddle_right_y, 2);
 					if (eventData.hit != undefined) {
-						// if (eventData.hit == "HIT WALL") {
-						//     playWallSound();
-						// }
 						if (eventData.hit == "HIT LEFT") {
 							player_2_score += 1;
 							document.getElementById('player2score').textContent = player_2_score.toString();
@@ -313,10 +224,6 @@ function game() {
 	const pressedKeys = new Set();
 
 	document.addEventListener("keydown", (event) => {
-		if (isMatchmaking) {
-			history.back();
-		}
-
 		if (event.key === 'w' || event.key === 's') {
 			pressedKeys.add(event.key);
 	
@@ -423,7 +330,47 @@ function game() {
 		}
 	});
 
-	return ;
+	return `
+<div class="w-100 h-100 p-5">
+	<div class="d-flex justify-content-between w-80 mx-auto pb-3">
+		<div class="d-flex flex-row player-text player-1-text-color justify-content-end align-items-end">
+			<div id=player1score class="player-score-text-size pr-2">${player_1_score.toString()}</div>
+			<div id=player1name class="player-username-text-size pb-2">${player_1_username}</div>
+		</div>
+		<div class="d-flex flex-row player-text player-2-text-color justify-content-end align-items-end">
+			<div id=player2name class="player-username-text-size pb-2">${player_2_username}</div>
+			<div id=player2score class="player-score-text-size pl-2">${player_2_score.toString()}</div>
+		</div>
+	</div>
+	<div class="game-container mx-auto">
+		<div class="game-box w-100">
+			<div id="dongball"></div>
+			<div id="paddle_left"></div>
+			<div id="paddle_right"></div>
+		</div>
+	</div>
+</div>
+
+<button id="win-splash-trigger" data-toggle="modal" data-target="#win-splash" type="button" style="display: none;"></button>
+<button id="lose-splash-trigger" data-toggle="modal" data-target="#lose-splash" type="button" style="display: none;"></button>
+<div class="modal fade" id="lose-splash" tabindex="-1" role="dialog" aria-labelledby="lose-splash" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content" style="background-color: transparent;">
+		<div class="modal-body d-flex align-items-center justify-content-center text-center important-label">
+				<b style="font-size: 50px; color: red">YOU GOT PONGED</b>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="win-splash" tabindex="-1" role="dialog" aria-labelledby="win-splash" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content" style="background-color: transparent;">
+			<div class="modal-body d-flex align-items-center justify-content-center text-center important-label">
+				<b style="font-size: 50px; color: green">NICE PONG</b>
+			</div>
+		</div>
+	</div>
+</div>`;
 }
 
 export default game;

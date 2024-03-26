@@ -1,0 +1,86 @@
+.menu-header::after {
+	background: linear-gradient(to bottom, var(--color3), transparent);
+}
+
+.menu-header-title {
+	text-shadow: 0 0 25px var(--color3);
+}
+
+.menu-component:hover {
+	box-shadow: 0 0 40px var(--color3);
+}
+
+.menu-component-title {
+	color: var(--color3);
+}
+
+.menu-component-description {
+	margin: 0 !important;
+	padding: 0 !important;
+	color: var(--color3);
+}
+
+.wrapper {
+	display: flex;
+	flex-direction: row;
+	height: 85%;
+	justify-content: center;
+	align-items: center;
+}
+
+.col {
+	display: flex;
+	justify-content: center;
+}
+
+.row {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+.box {
+	width: 300px;
+	height: 100px;
+	margin: 20px;
+	color: black;
+	text-align: center;
+	font-size: large;
+	background-color: white;
+}
+
+.middle {
+	margin: 90px 108px;
+}
+
+.line {
+	border: 3px solid var(--color3);
+	border-left: hidden;
+	/* z-index: -1; */
+}
+
+.end {
+	position: absolute;
+	height: 280px;
+	width: 370px;
+	margin-right: 385px;
+}
+
+.start {
+	margin: 70px -80px 70px -290px;
+	width: 400px;
+	height: 140px;
+}
+
+.box-content {
+	height: 50%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+}
+
+.box-content-up {
+	border-bottom: 3px solid var(--color3);
+}

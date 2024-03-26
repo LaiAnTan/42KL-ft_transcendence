@@ -1,6 +1,6 @@
 from django.urls import path
 from django.conf.urls.static import static
-from .views import views_User, views_Matchup, views_Versus, views_Tournament, authentication, views_GameRoom, alert
+from .views import views_User, views_Matchup, views_Versus, views_Tournament, authentication, views_GameRoom, views_AI, alert
 from django.conf import settings
 
 
@@ -10,15 +10,21 @@ urlpatterns = [
     path('allUsers', views_User.getAllUsers),
     path('editUser', views_User.editUser),
     path('deleteUser', views_User.deleteUser),
-    path('uploadProfile',  views_User.uploadProfile),
+    path('uploadProfile', views_User.uploadProfile),
+	path('addFriend', views_User.addFriend),
+	path('removeFriend', views_User.removeFriend),
+	path('getFriends', views_User.getFriends),
+	path('setOnlineStatus', views_User.setOnlineStatus),
+	path('getOnlineStatus', views_User.getOnlineStatus),
     path('addMatchup', views_Matchup.addMatchup),
     path('getMatchup', views_Matchup.getMatchup),
     path('allMatchups', views_Matchup.getAllMatchups),
     path('addVersus', views_Versus.addVersus),
     path('getVersus', views_Versus.getVersus),
     path('allVersus', views_Versus.getAllVersus),
+	path('getStatistics', views_Versus.getStatistics),
     path('addTournament', views_Tournament.addTournament),
-    path('getTournament', views_Tournament.getTournament),
+    path('getTournaments', views_Tournament.getTournaments),
     path('allTournaments', views_Tournament.getAllTournament),
     path('authConfig/', authentication.get_auth_config),
     path('postCode', authentication.postCode),
@@ -31,7 +37,15 @@ urlpatterns = [
     path('alert', alert.alert),
     path('tournamentInit', views_GameRoom.tournamentInit),
     path('tournamentAssign', views_GameRoom.tournamentAssign),
-    path('tournamentAllRooms', views_GameRoom.tournamentAllRooms),
-    path('tournamentEnd', views_GameRoom.tournamentEnd)
+	path('tournamentResults', views_GameRoom.tournamentResults),
+    path('tournamentEnd', views_GameRoom.tournamentEnd),
+	path('tournamentLoser', views_GameRoom.tournamentLoser),
+	path('tournamentRoomID', views_GameRoom.tournamentRoomID),
+	path('tournamentLeave', views_GameRoom.tournamentLeave),
+	path('tournamentScore', views_GameRoom.tournamentScore),
+	path('tournamentClearScore', views_GameRoom.tournamentClearScore),
+	path('tournamentGetScore', views_GameRoom.tournamentGetScore),
+    path('startGameAI', views_AI.startGameAI),
+    # path('stopGameAI', views_AI.stopGameAI),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

@@ -35,6 +35,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+	"sslserver",
 	"daphne",
 	"channels",
 	'django.contrib.admin',
@@ -62,7 +63,7 @@ MIDDLEWARE = [
 # CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ALLOWED_ORIGINS = [
-	"http://localhost:8080",
+	"https://localhost",
 ]
 
 ROOT_URLCONF = 'backend.urls'

@@ -14,3 +14,49 @@
 	background-size: cover;
 	background-position: center;
 }
+
+.modal-content {
+	background-color: rgba(80, 80, 80, 0.85);
+}
+
+.modal-body {
+	padding: 20px;
+}
+
+.close-modal {
+	background-color: transparent;
+	color: white;
+	font-size: 1.5rem;
+	line-height: 1;
+	width: 50px;
+	height: 50px;
+	padding: 0;
+}
+
+.close-modal:hover {
+	background-color: rgba(255, 255, 255, 0.1);
+}
+
+.delete {
+	background-color: rgba(255, 0, 0, 0.75);
+}
+
+.delete:hover {
+	background-color: rgba(255, 0, 0, 1);
+}
+
+.save {
+	background-color: rgba(0, 255, 0, 0.5);
+}
+
+.save:hover {
+	background-color: rgba(0, 255, 0, 1);
+}
+
+.friend {
+	background-color: transparent;
+}
+
+.friend:hover {
+	background-color: rgba(0, 255, 0, 0.75);
+}

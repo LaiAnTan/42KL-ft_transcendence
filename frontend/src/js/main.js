@@ -1,5 +1,4 @@
 import home from "./home.js";
-import login from "./login.js";
 import menu from "./menu.js";
 import vsai from "./vs-ai.js";
 import vsplayer from "./vs-player.js";
@@ -7,12 +6,13 @@ import pong from "./pong.js";
 import dong from "./dong.js";
 import settings from "./settings.js";
 import dashboard from "./dashboard.js";
+import bracket from "./bracket.js";
 import history from "./history.js";
+import pongAI from "./pongAI.js";
 
 
 const routes = {
 	"/": { title: "Ding Dong", render: home },
-	"/login": { title: "Login with 42", render: login },
 	"/menu": { title: "Menu", render: menu },
 	"/vs-ai": { title: "VS AI", render: vsai },
 	"/vs-player": { title: "VS Player", render: vsplayer},
@@ -20,7 +20,10 @@ const routes = {
 	"/dong": { title: "Dong", render: dong },
 	"/settings": { title: "Settings", render: settings },
 	"/dashboard": { title: "Dashboard", render: dashboard },
-	"/history": { title: "History", render: history }
+	"/bracket": { title: "Bracket", render: bracket },
+	"/history": { title: "History", render: history },
+	"/tournament": { title: "Tournament", render: bracket },
+	"/pongAI": { title: "Pong AI", render: pongAI },
 };
 
 export function loadCSS(href) {
@@ -41,7 +44,9 @@ export function resetCSS() {
 
 function initRedirClicks(e) {
 	const parent = e.target.closest("[data-link]");
-	if (parent) {
+	const isProfileContainerClicked = $(e.target).closest('.profile-container').length > 0;
+
+	if (parent && !isProfileContainerClicked) {
 		e.preventDefault();
 		window.history.pushState("", "", parent.getAttribute("data-link"));
 		router();
@@ -62,10 +67,10 @@ export function router() {
 	let view = routes[location.pathname];
 
 	if (view) {
-		if (sessionStorage.getItem('username') === null && location.pathname !== '/' && location.pathname !== '/login' && !location.pathname.includes('/menu')) {
+		if (sessionStorage.getItem('username') === null && location.pathname !== '/' && !location.pathname.includes('/menu')) {
 			console.log(sessionStorage.getItem('username'));
-			window.history.replaceState("", "", "/login");
-			view = routes['/login'];
+			window.history.replaceState("", "", "/");
+			view = routes['/'];
 		}
 		document.title = view.title;
 		app.innerHTML = view.render();
@@ -76,8 +81,26 @@ export function router() {
 	}
 };
 
+function toggleOnlineStatus(event) {
+	try {
+		let current_user = sessionStorage.getItem('username');
+
+		$.ajax({
+			url: `https://localhost:8000/api/setOnlineStatus`,
+			type: 'POST',
+			contentType: 'application/json',
+			data: JSON.stringify({ "username": current_user ?? asd, "is_online": false }), // Let it throw exception if current_user is null
+		});
+
+	} catch (e) { } // Catch and void the exception
+	window.removeEventListener('beforeunload', toggleOnlineStatus);
+}
+
 window.addEventListener("click", initRedirClicks);
 window.addEventListener("popstate", router);
 window.addEventListener("DOMContentLoaded", router);
 
-localStorage.setItem('palette', 'electric-dream');
+window.addEventListener('beforeunload', toggleOnlineStatus);
+
+let color = localStorage.getItem('palette');
+localStorage.setItem('palette', color ?? 'default');

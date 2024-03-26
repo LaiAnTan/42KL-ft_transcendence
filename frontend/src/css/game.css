@@ -3,12 +3,19 @@
 	font-weight: bold;
 }
 
-.player-1-text-color {
+.dash {
+	font-family: 'Ubuntu', sans-serif;
+
+	font-size: 50px;
+}
+
+.p1-colour {
+	padding-left: 10px;
 	color: var(--color2);
 	text-shadow: 0 0 25px var(--color2);
 }
 
-.player-2-text-color {
+.p2-colour {
 	color: var(--color5);
 	text-shadow: 0 0 25px var(--color5);
 }
@@ -19,7 +26,9 @@
 }
 
 .player-username-text-size {
-	font-size: 25px;
+	color: rgba(255, 255, 255, 0.75);
+	font-size: 30px;
+	font-family: 'Aldrich', sans-serif;
 }
 
 .game-container {
@@ -34,7 +43,19 @@
 	aspect-ratio: 16/9;
 	max-width: 1300px;
 	border: 2px solid white;
+	border-radius: 10px;
 	box-shadow: #fff 0 0 25px;
+}
+
+.game-box::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+	top: 10px;
+	bottom: 10px;
+	width: 2px;
+	z-index: 3;
+    background: repeating-linear-gradient(to bottom, rgba(255, 255, 255, 0.5) 0, rgba(255, 255, 255, 0.5) 10px, transparent 10px, transparent 20px);
 }
 
 #dongball {
@@ -43,24 +64,35 @@
 	left: 50%;
 	top: 50%;
 	border-radius: 50%;
-	background-color: red;
+	background-color: white;
 	position: absolute;
+	z-index: 4;
 }
 
 #paddle_left {
 	width: 2%;
 	height: 25%;
-	background-color: #333;
+	background-color: var(--color2);
 	top: 37.5%;
 	left: 3%;
 	position: absolute;
+	border-radius: 10px;
+	border: 1px solid rgba(0, 0, 0, 0.5);
+	box-shadow: 0 0 10px var(--color2);
 }
 
 #paddle_right {
 	width: 2%;
 	height: 25%;
-	background-color: #333;
+	background-color: var(--color5);
 	top: 37.5%;
 	left: 95%;
 	position: absolute;
+	border-radius: 10px;
+	border: 1px solid rgba(0, 0, 0, 0.5);
+	box-shadow: 0 0 10px var(--color5);
+}
+
+.modal-backdrop {
+	opacity: 1 !important;
 }

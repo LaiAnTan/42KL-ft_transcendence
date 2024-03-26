@@ -7,6 +7,8 @@ from django.db import transaction
 from base.models import Tournament, User, Matchup
 from api.serializer import TournamentSerializer, MatchupSerializer, \
 	UserSerializer
+from django.http import JsonResponse
+from django.core.exceptions import ObjectDoesNotExist
 
 
 @api_view(['GET'])
@@ -22,51 +24,69 @@ def getAllTournament(_request):
 
 	return Response(serializer.data)
 
-
 @api_view(['GET'])
-def getTournament(request):
+def getTournaments(request):
 
 	"""
 	API endpoint that returns data of a tournament, queried from the database.
 	Data regarding matchups is also returned together.
 	"""
 
-	tournament_id = request.query_params.get('id')
+	username = request.query_params.get('username')
 
-	if tournament_id is None:
-		return Response({"Error": '"id" must be included in query\
+	if username is None:
+		return Response({"Error": '"username" must be included in query\
 parameters '},
 						status=status.HTTP_400_BAD_REQUEST)
-
+	
 	try:
+		user = User.objects.get(username=username)
+		tourney_history = user.tournament_history
 
-		tournament = Tournament.objects.get(pk=tournament_id)
-		tournament_serializer = TournamentSerializer(tournament)
-		matchups = Matchup.objects.filter(
-			id__in=tournament_serializer.data["matchup_ids"])
+		tourney_matches_played = len(tourney_history)
+		tourney_matches_won = 0
+		all_tourney_data = []
 
-	except (Tournament.DoesNotExist, Matchup.DoesNotExist):
+		for tourney_id in tourney_history:
+			tourney_data = {}
+			tourney = Tournament.objects.get(pk=tourney_id)
+			matchup_ids = tourney.matchup_ids
 
-		return Response({"Error": "Entries Not Found in Database"},
-						status=status.HTTP_400_BAD_REQUEST)
+			indiv_matches_won = 0
+			matches = []
+	
+			for matchup_id in matchup_ids:
+				matchup = Matchup.objects.get(pk=matchup_id)
+				matches.append(MatchupSerializer(matchup).data)
 
-	matchup_serializer = MatchupSerializer(matchups, many=True)
+				if matchup.player_1_id == user.username or matchup.player_2_id == user.username:
+					curr = 1 if matchup.player_1_id == user.username else 2
+					opp = 2 if curr == 1 else 1
+					if (getattr(matchup, f'player_{curr}_score') > getattr(matchup, f'player_{opp}_score')):
+						indiv_matches_won += 1
 
-	tournament_data = tournament_serializer.data
+			tourney_matches_won += 1 if indiv_matches_won == 3 else 0
+			tourney_data = {
+				'matches': matches,
+				'won': True if indiv_matches_won == 3 else False,
+				'date_played': tourney.date_played
+			}
+			all_tourney_data.append(tourney_data)
 
-	tournament_data.pop('matchup_ids', 0)
+		data = {
+			'games_played': tourney_matches_played,
+			'matches_won': tourney_matches_won,
+			'matches_lost': tourney_matches_played - tourney_matches_won,
+			'tournaments': all_tourney_data
+		}
 
-	matchup_data = matchup_serializer.data
+	except User.DoesNotExist:
+		return Response({"username": ""},
+						status=status.HTTP_200_OK)
+	except (ObjectDoesNotExist, ValueError):
+		return JsonResponse({"Error": "Entries Not Found in Database or Invalid ID provided"}, status=status.HTTP_400_BAD_REQUEST)
 
-	# 0 will never be returned
-	for matchup in matchup_data:
-		matchup["matchup_id"] = matchup.pop('id', 0)
-
-	# consolidate data
-	data = {**tournament_data,
-			"matchups": matchup_serializer.data}
-
-	return Response(data)
+	return JsonResponse(data, safe=False)
 
 
 # API endpoint abstraction that handles the updating of Versus, Matchup and
@@ -123,7 +143,7 @@ def addTournament(request):
 	# check if users exist in database
 	try:
 		for id in request.data['player_ids']:
-			users.append(User.objects.get(id=id))
+			users.append(User.objects.get(username=id))
 	except User.DoesNotExist:
 		return Response({"Error": "User Not Found in Database"},
 						status=status.HTTP_400_BAD_REQUEST)
