@@ -11,7 +11,8 @@
 }
 
 .menu-component-title {
-	color: var(--color2);
+	text-shadow: 0 0 25px var(--color2);
+	-webkit-text-stroke: 1px var(--color2);
 }
 
 .menu-component-description {
