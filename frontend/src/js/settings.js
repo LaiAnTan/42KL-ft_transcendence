@@ -18,7 +18,7 @@ export default () => {
 		<p class="text-center menu-header-title h-100 my-4" style="text-shadow: 0 0 25px var(--color5)">SETTINGS</p>
 	</div>
 	<div class="d-flex justify-content-center align-items-center important-label unselectable position-absolute mr-4" style="top: 0; right: 0; height: 110px; z-index: 1">
-		<p class="description scale-up cursor-pointer mr-4">SIGN OUT</p>
+		<p id="sign-out-button" class="description scale-up cursor-pointer mr-4">SIGN OUT</p>
 	</div>
 	<div class="d-flex justify-content-center unselectable" style="overflow-y: auto">
 		<div class="d-flex flex-column m-4 w-50" style="min-width: 400px; max-width: 650px">
@@ -258,6 +258,13 @@ export default () => {
 	</div>
 </div>`;
 	app.outerHTML = new_div.outerHTML;
+
+	$('#sign-out-button').click(function () {
+		sessionStorage.clear();
+		localStorage.clear();
+		window.history.pushState("", "", "/");
+		window.location.reload();
+	});
 
 	$('input[type="radio"]').on('click', function () {
 		let val = $(this).attr('id');

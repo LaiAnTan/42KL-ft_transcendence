@@ -24,7 +24,7 @@ urlpatterns = [
     path('allVersus', views_Versus.getAllVersus),
 	path('getStatistics', views_Versus.getStatistics),
     path('addTournament', views_Tournament.addTournament),
-    path('getTournament', views_Tournament.getTournament),
+    path('getTournaments', views_Tournament.getTournaments),
     path('allTournaments', views_Tournament.getAllTournament),
     path('authConfig/', authentication.get_auth_config),
     path('postCode', authentication.postCode),
