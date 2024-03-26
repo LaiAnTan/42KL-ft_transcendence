@@ -22,7 +22,7 @@ class GameAI:
     HALF_PADDLE_HEIGHT = 13.5
     PADDLE_HEIGHT = 25
     MAX_BOUNCES = 5
-    WS_POLL_SPEED = 0.2
+    WS_POLL_SPEED = 1
     PADDLE_MOVE_RATE = 0.005
 
     def __init__(self, mode="pong") -> None:
@@ -186,6 +186,10 @@ class GameAI:
         latest_message = None
         while True:
             latest_message = await self.ws.recv()
+
+            gameended = self.game_ended(json.loads(latest_message))
+            if gameended:
+                os.kill(os.getpid(), signal.SIGTERM)
 
             if time.time() - interval_start >= self.WS_POLL_SPEED:
                 if latest_message is not None:
