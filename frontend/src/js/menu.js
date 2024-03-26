@@ -20,7 +20,6 @@ export default () => {
 			});
 			if (response.ok) {
 				response.json().then(data => {
-					console.log(data);
 					sessionStorage.setItem('username', data.json.username);
 					sessionStorage.setItem('display_name', data.json.display_name);
 					sessionStorage.setItem('profile_pic', "https://localhost:8000/api" + data.json.profile_pic); 
