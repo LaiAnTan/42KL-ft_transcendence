@@ -41,8 +41,8 @@ class Dong(AsyncJsonWebsocketConsumer):
 			# Initialize the room with game-related variables
 			self.rooms[self.room_id] = {
 				'game_started': False,
-				'paddle_left': Paddle("1", height=25, width=2, x=self.paddle_padding, y=50),
-				'paddle_right': Paddle("2", height=25, width=2, x=self.game_width - self.paddle_padding, y=50),
+				# 'paddle_left': Paddle("1", height=25, width=2, x=self.paddle_padding, y=50),
+				# 'paddle_right': Paddle("2", height=25, width=2, x=self.game_width - self.paddle_padding, y=50),
 				'player_in_room': 0,
 				'players': [],
 				'sound': 0,
@@ -59,28 +59,34 @@ class Dong(AsyncJsonWebsocketConsumer):
 			return
 
 		if self.rooms[self.room_id]['player_in_room'] == 2:
-			self.rooms[self.room_id]["paddle_left"] = Paddle(self.rooms[self.room_id]['players'][0], height=25, width=2, x=self.paddle_padding, y=50)
-			self.rooms[self.room_id]["paddle_right"] = Paddle(self.rooms[self.room_id]['players'][1], height=25, width=2, x=self.game_width - self.paddle_padding, y=50)
 			await self.accept()
-			await self.channel_layer.group_send(
-				self.room_group_name, {
-					'type': 'send_game_data',
-					'message': {'status': 'ALL PLAYERS JOINED', 'p1': self.rooms[self.room_id]['players'][0], 'p2': self.rooms[self.room_id]['players'][1]}
-				}
-			)
-			asyncio.create_task(self.start_game_timer())
+			if not self.rooms[self.room_id]['game_started']:
+				await self.channel_layer.group_send(
+					self.room_group_name, {
+						'type': 'send_game_data',
+						'message': {'status': 'ALL PLAYERS JOINED', 'p1' : self.rooms[self.room_id]['players'][0], 'p2' : self.rooms[self.room_id]['players'][1]}
+					}
+				)
+				asyncio.create_task(self.start_game_timer())
 
 		else:
 			await self.accept()
 
 	async def start_game_timer(self):
+		room = self.rooms[self.room_id]
+		if not room['game_started']:
+			room["paddle_left"] = Paddle(room['players'][0], height=25, width=2, x=self.paddle_padding, y=50)
+			room["paddle_right"] = Paddle(room['players'][1], height=25, width=2, x=self.game_width - self.paddle_padding, y=50)
+			room['ball'] = Ball(size=3, y=self.game_height / 2, x=room['paddle_left'].x + self.ball_start_dist,
+				dx=self.ball_speed, dy=random.uniform(-2.0001, 1.9999))
+			room['game_started'] = True
 		await asyncio.sleep(3)
 		await self.run()
 
 	async def disconnect(self, close_code):
-		self.rooms[self.room_id]['player_in_room'] -= 1
-		self.rooms[self.room_id]['game_started'] = False
-		# self.rooms[self.room_id]['players'].remove(self.client_id)
+		if not self.rooms[self.room_id]['game_started']:
+			self.rooms[self.room_id]['player_in_room'] -= 1
+			self.rooms[self.room_id]['players'].remove(self.client_id)
 		if self.rooms[self.room_id]['player_in_room'] == 0:
 			del self.rooms[self.room_id]
 
@@ -139,9 +145,6 @@ class Dong(AsyncJsonWebsocketConsumer):
 
 	async def run(self):
 		room = self.rooms[self.room_id]
-		room['ball'] = Ball(size=3, y=self.game_height / 2, x=room['paddle_left'].x + self.ball_start_dist,
-			dx=self.ball_speed, dy=random.uniform(-3.0001, 2.9999))
-		room['game_started'] = True
 
 		while room['paddle_left'].score < self.points_to_win and room['paddle_right'].score < self.points_to_win:
 			await asyncio.sleep(1 / 60)
