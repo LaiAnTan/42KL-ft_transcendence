@@ -102,17 +102,29 @@ export default () => {
 					} else {
 						throw new Error('Something went wrong');
 					}
-				}).then(statistic => {
-					let win_rate = ((statistic.matches_won / statistic.games_played) * 100).toFixed(2);
-					if (isNaN(win_rate)) {
-						win_rate = 0;
-					}
-
-					let app = document.querySelector('#app');
-					const new_div = document.createElement('div');
-					new_div.setAttribute('id', 'app');
-					new_div.className = 'w-100 h-100';
-					new_div.innerHTML = `
+				}).then(matches => {
+					fetch(`https://localhost:8000/api/getTournaments?username=${params['username']}`, {
+						method: 'GET'
+					}).then(res => {
+						if (res.ok) {
+							return res.json();
+						} else {
+							throw new Error('Something went wrong');
+						}
+					}).then(tournies => {
+						let wins = matches.matches_won + tournies.matches_won
+						let losses = matches.matches_lost + tournies.matches_lost
+						let games_played = matches.games_played + tournies.games_played
+						let win_rate = ((wins / losses) * 100).toFixed(2);
+						if (isNaN(win_rate)) {
+							win_rate = 0;
+						}
+	
+						let app = document.querySelector('#app');
+						const new_div = document.createElement('div');
+						new_div.setAttribute('id', 'app');
+						new_div.className = 'w-100 h-100';
+						new_div.innerHTML = `
 <div class="d-flex position-absolute align-items-center unselectable ml-4" style="height: 8vh; z-index: 1">
 	<p data-link="/menu" class="description scale-up cursor-pointer">GO BACK</p>
 </div>
@@ -121,14 +133,14 @@ export default () => {
 		<div class="flex-grow-1" style="overflow-y: auto">
 			<div class="px-4 py-2">
 				<div class="important-label" style="text-shadow: 0 0 30px var(--color2)">Games Played</div>
-				${statistic.games_played == 0 ? '<p class="description mt-4">No games played yet.</p>' : 
+				${games_played == 0 ? '<p class="description mt-4">No games played yet.</p>' : 
 				`<div class="d-flex align-items-center border w-100 mt-2" style="height: 200px">
 					<svg id="graph1" style="width: 100%"></svg>
 				</div>`}
 			</div>
 			<div class="px-4 py-2">
 				<div class="important-label" style="text-shadow: 0 0 30px var(--color2)">Wins / Losses</div>
-				${statistic.games_played == 0 ? '<p class="description mt-4">No games played yet.</p>' : 
+				${games_played == 0 ? '<p class="description mt-4">No games played yet.</p>' : 
 				`<div class="d-flex align-items-center justify-content-center border w-100 mt-2" style="height: 350px">
 					<svg id="graph2"></svg>
 				</div>`}
@@ -157,35 +169,39 @@ export default () => {
 				<div class="d-table description w-100 pt-2 px-4">
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">Games Played</div>
-						<div class="d-table-cell pl-3">${statistic.games_played}</div>
+						<div class="d-table-cell pl-3">${games_played}</div>
 					</div>
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">* Pong</div>
-						<div class="d-table-cell pl-3">${statistic.pong_played}</div>
+						<div class="d-table-cell pl-3">${matches.pong_played}</div>
 					</div>
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">* Dong</div>
-						<div class="d-table-cell pl-3">${statistic.dong_played}</div>
+						<div class="d-table-cell pl-3">${matches.dong_played}</div>
+					</div>
+					<div class="d-table-row">
+						<div class="d-table-cell py-1">* Tournament</div>
+						<div class="d-table-cell pl-3">${tournies.games_played}</div>
 					</div>
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">Games Won</div>
-						<div class="d-table-cell pl-3">${statistic.matches_won}</div>
+						<div class="d-table-cell pl-3">${wins}</div>
 					</div>
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">Games Lost</div>
-						<div class="d-table-cell pl-3">${statistic.matches_lost}</div>
+						<div class="d-table-cell pl-3">${losses}</div>
 					</div>
 					<div class="d-table-row">
 						<div class="d-table-cell py-1">Win Rate</div>
 						<div class="d-table-cell pl-3">${win_rate}%</div>
 					</div>
-					<div class="d-table-row">
+					<div class="d-table-row" title="Excluding tournaments">
 						<div class="d-table-cell py-1">Current Streak</div>
-						<div class="d-table-cell pl-3">${statistic.current_streak}</div>
+						<div class="d-table-cell pl-3">${matches.current_streak}</div>
 					</div>
-					<div class="d-table-row">
+					<div class="d-table-row" title="Excluding tournaments">
 						<div class="d-table-cell py-1">Longest Streak</div>
-						<div class="d-table-cell pl-3">${statistic.longest_streak}</div>
+						<div class="d-table-cell pl-3">${matches.longest_streak}</div>
 					</div>
 				</div>
 			</div>
@@ -251,167 +267,169 @@ export default () => {
 		</div>` : ''}
 	</div>
 </div>`;
-					app.outerHTML = new_div.outerHTML;
-
-					const graph1Data = [
-						{ label: "Total", value: statistic.games_played },
-						{ label: "Pong", value: statistic.pong_played },
-						{ label: "Dong", value: statistic.dong_played }
-					];
-					const graph1Svg = d3.select('#graph1');
-					if (graph1Svg.node()) {
-						const graph1Width = graph1Svg.node().getBoundingClientRect().width;
-						const graph1Height = 30;
-						const graph1Padding = 10;
-						const maxBarValue = Math.max(...graph1Data.map(d => d.value));
-						const totalHeight = graph1Data.length * (graph1Height + graph1Padding); // Total height occupied by all bars and paddings
-						const startY = (graph1Svg.node().getBoundingClientRect().height - totalHeight) / 2; // Calculate the starting y-coordinate
-						const maxWidth = graph1Width * 0.8; // Maximum width for the bars, say 80% of the SVG width
-						graph1Svg.selectAll("g")
-							.data(graph1Data)
-							.enter()
-							.append("g")
-							.attr("transform", (d, i) => `translate(0, ${startY + i * (graph1Height + graph1Padding) + (graph1Height / 2)})`)
-							.append("rect")
-							.attr("x", 0)
-							.attr("y", -graph1Height / 2) // Center the bar vertically
-							.attr("width", d => (d.value / maxBarValue) * maxWidth)
-							.attr("height", graph1Height)
-							.attr("fill", "steelblue")
-							.append("title") // Append title element for tooltip
-							.text(d => `${d.label}: ${d.value}`);
-						graph1Svg.selectAll("text")
-							.data(graph1Data)
-							.enter()
-							.append("text")
-							.attr("x", d => ((d.value / maxBarValue) * maxWidth) + 5) // Adjusted x-coordinate calculation
-							.attr("y", (d, i) => startY + i * (graph1Height + graph1Padding) + graph1Height / 2)
-							.text(d => d.label)
-							.attr("alignment-baseline", "middle")
-							.attr("fill", "white")
-							.append("title") // Append title element for tooltip
-							.text(d => `${d.label}: ${d.value}`);
-					}
-					
-
-					const graph2Data = [
-						{ label: "Wins", value: statistic.matches_won },
-						{ label: "Losses", value: statistic.matches_lost }
-					];
-					const graph2Svg = d3.select('#graph2');
-					if (graph2Svg.node()) {
-						const graph2Width = 300;
-						const graph2Height = 300;
-						const graph2Radius = Math.min(graph2Width, graph2Height) / 2;
-						const pie = d3.pie()
-							.value(d => d.value)
-							.sort(null);
-						const g = graph2Svg
-							.attr('width', graph2Width)
-							.attr('height', graph2Height)
-							.append('g')
-							.attr('transform', `translate(${graph2Width / 2}, ${graph2Height / 2})`);
-						const arc = d3.arc()
-							.innerRadius(0)
-							.outerRadius(graph2Radius);
-						const color = d3.scaleOrdinal()
-							.domain(graph2Data.map(d => d.label))
-							.range(["#98abc5", "#8a89a6"]);
-						const arcs = g.selectAll('arc')
-							.data(pie(graph2Data))
-							.enter()
-							.append('g')
-							.attr('class', 'arc');
-						arcs.append('path')
-							.attr('d', arc)
-							.attr('fill', d => color(d.data.label));
-						arcs.filter(d => d.data.value !== 0) // Filter out data with value 0
-							.append('text')
-							.attr('transform', d => `translate(${arc.centroid(d)})`)
-							.attr('text-anchor', 'middle')
-							.attr('fill', 'white')
-							.attr('font-weight', 'bold')
-							.text(d => d.data.label);
-					}
-
-
-					$('#add-friend-button').click(function() {
-						console.log(current_user);
-						console.log(params['username']);
-						$.ajax({
-							url: `https://localhost:8000/api/addFriend`,
-							type: 'POST',
-							contentType: 'application/json',
-							data: JSON.stringify({ "username": current_user, "friend_username": params['username'] }),
-							success: function(response) {
-								alert("friend added");
-								window.history.replaceState("", "", "/menu");
-								router();
-							},
-							error: function(jqXHR, textStatus, errorThrown) {
-								alert("friend NOT added");
-								console.error('Error updating details:', jqXHR.responseJSON);
-							}
-						});
-					});
+						app.outerHTML = new_div.outerHTML;
 	
-					$('#close-account-button').click(function() {
-						$.ajax({
-							url: `https://localhost:8000/api/deleteUser?username=${params['username']}`,
-							type: 'DELETE',
-							success: function(response) {
-								$('#confirmation-modal').modal('hide');
-								window.history.replaceState("", "", "/");
-								router();
+						const graph1Data = [
+							{ label: "Total", value: games_played },
+							{ label: "Pong", value: matches.pong_played },
+							{ label: "Dong", value: matches.dong_played },
+							{ label: "Tournament", value: tournies.games_played }
+						];
+						const graph1Svg = d3.select('#graph1');
+						if (graph1Svg.node()) {
+							const graph1Width = graph1Svg.node().getBoundingClientRect().width;
+							const graph1Height = 30;
+							const graph1Padding = 10;
+							const maxBarValue = Math.max(...graph1Data.map(d => d.value));
+							const totalHeight = graph1Data.length * (graph1Height + graph1Padding); // Total height occupied by all bars and paddings
+							const startY = (graph1Svg.node().getBoundingClientRect().height - totalHeight) / 2; // Calculate the starting y-coordinate
+							const maxWidth = graph1Width * 0.8; // Maximum width for the bars, say 80% of the SVG width
+							graph1Svg.selectAll("g")
+								.data(graph1Data)
+								.enter()
+								.append("g")
+								.attr("transform", (d, i) => `translate(0, ${startY + i * (graph1Height + graph1Padding) + (graph1Height / 2)})`)
+								.append("rect")
+								.attr("x", 0)
+								.attr("y", -graph1Height / 2) // Center the bar vertically
+								.attr("width", d => (d.value / maxBarValue) * maxWidth)
+								.attr("height", graph1Height)
+								.attr("fill", "steelblue")
+								.append("title") // Append title element for tooltip
+								.text(d => `${d.label}: ${d.value}`);
+							graph1Svg.selectAll("text")
+								.data(graph1Data)
+								.enter()
+								.append("text")
+								.attr("x", d => ((d.value / maxBarValue) * maxWidth) + 5) // Adjusted x-coordinate calculation
+								.attr("y", (d, i) => startY + i * (graph1Height + graph1Padding) + graph1Height / 2)
+								.text(d => d.label)
+								.attr("alignment-baseline", "middle")
+								.attr("fill", "white")
+								.append("title") // Append title element for tooltip
+								.text(d => `${d.label}: ${d.value}`);
+						}
+						
 	
-								sessionStorage.removeItem('display_name');
-								sessionStorage.removeItem('profile_pic');
-							},
-							error: function(jqXHR, textStatus, errorThrown) {
-								alert("Failed to delete, keep on living!");
-								console.error('Error deleting account:', jqXHR.responseJSON);
-							}
-						});
-					});
-	
-					$('#update-button').click(function() {
-						var newDataVisibility = $('#toggle-data-visibility').is(':checked');
-						var newDisplayName = $('#new-display-name').val();
-						var newAvatar = $('#new-avatar')[0].files.length > 0 ? $('#new-avatar')[0].files[0] : null;
-						var form_data = new FormData();
-	
-						form_data.append("data_is_visible", newDataVisibility);
-						console.log(newDataVisibility)
-						form_data.append("display_name", newDisplayName);
-						if (newAvatar !== null) {
-							if (newAvatar.size / 1024 > 50) {
-								alert("Image size too large.");
-								return ;
-							}
-							form_data.append("profile_pic", newAvatar)
+						const graph2Data = [
+							{ label: "Wins", value: wins },
+							{ label: "Losses", value: losses }
+						];
+						const graph2Svg = d3.select('#graph2');
+						if (graph2Svg.node()) {
+							const graph2Width = 300;
+							const graph2Height = 300;
+							const graph2Radius = Math.min(graph2Width, graph2Height) / 2;
+							const pie = d3.pie()
+								.value(d => d.value)
+								.sort(null);
+							const g = graph2Svg
+								.attr('width', graph2Width)
+								.attr('height', graph2Height)
+								.append('g')
+								.attr('transform', `translate(${graph2Width / 2}, ${graph2Height / 2})`);
+							const arc = d3.arc()
+								.innerRadius(0)
+								.outerRadius(graph2Radius);
+							const color = d3.scaleOrdinal()
+								.domain(graph2Data.map(d => d.label))
+								.range(["#98abc5", "#8a89a6"]);
+							const arcs = g.selectAll('arc')
+								.data(pie(graph2Data))
+								.enter()
+								.append('g')
+								.attr('class', 'arc');
+							arcs.append('path')
+								.attr('d', arc)
+								.attr('fill', d => color(d.data.label));
+							arcs.filter(d => d.data.value !== 0) // Filter out data with value 0
+								.append('text')
+								.attr('transform', d => `translate(${arc.centroid(d)})`)
+								.attr('text-anchor', 'middle')
+								.attr('fill', 'white')
+								.attr('font-weight', 'bold')
+								.text(d => d.data.label);
 						}
 	
-						if (newDataVisibility == data.data_is_visible && newDisplayName == data.display_name && newAvatar == null)
-							return ;
 	
-						$.ajax({
-							url: `https://localhost:8000/api/editUser?username=${params['username']}`,
-							type: 'POST',
-							contentType: 'multipart/form-data',
-							data: form_data,
-							contentType: false,
-							processData: false,
-							success: function(response) {
-								alert("Details updated!");
-								sessionStorage.setItem('display_name', response.display_name);
-								sessionStorage.setItem('profile_pic', 'https://localhost:8000/api' + response.profile_pic);
-								window.history.replaceState("", "", `/dashboard?username=${params['username']}`);
-								router();
-							},
-							error: function(jqXHR, textStatus, errorThrown) {
-								alert("Failed to update, fucking noob");
-								console.error('Error updating details:', jqXHR.responseJSON);
+						$('#add-friend-button').click(function() {
+							console.log(current_user);
+							console.log(params['username']);
+							$.ajax({
+								url: `https://localhost:8000/api/addFriend`,
+								type: 'POST',
+								contentType: 'application/json',
+								data: JSON.stringify({ "username": current_user, "friend_username": params['username'] }),
+								success: function(response) {
+									alert("friend added");
+									window.history.replaceState("", "", "/menu");
+									router();
+								},
+								error: function(jqXHR, textStatus, errorThrown) {
+									alert("friend NOT added");
+									console.error('Error updating details:', jqXHR.responseJSON);
+								}
+							});
+						});
+		
+						$('#close-account-button').click(function() {
+							$.ajax({
+								url: `https://localhost:8000/api/deleteUser?username=${params['username']}`,
+								type: 'DELETE',
+								success: function(response) {
+									$('#confirmation-modal').modal('hide');
+									window.history.replaceState("", "", "/");
+									router();
+		
+									sessionStorage.removeItem('display_name');
+									sessionStorage.removeItem('profile_pic');
+								},
+								error: function(jqXHR, textStatus, errorThrown) {
+									alert("Failed to delete, keep on living!");
+									console.error('Error deleting account:', jqXHR.responseJSON);
+								}
+							});
+						});
+		
+						$('#update-button').click(function() {
+							var newDataVisibility = $('#toggle-data-visibility').is(':checked');
+							var newDisplayName = $('#new-display-name').val();
+							var newAvatar = $('#new-avatar')[0].files.length > 0 ? $('#new-avatar')[0].files[0] : null;
+							var form_data = new FormData();
+		
+							form_data.append("data_is_visible", newDataVisibility);
+							console.log(newDataVisibility)
+							form_data.append("display_name", newDisplayName);
+							if (newAvatar !== null) {
+								if (newAvatar.size / 1024 > 50) {
+									alert("Image size too large.");
+									return ;
+								}
+								form_data.append("profile_pic", newAvatar)
 							}
+		
+							if (newDataVisibility == data.data_is_visible && newDisplayName == data.display_name && newAvatar == null)
+								return ;
+		
+							$.ajax({
+								url: `https://localhost:8000/api/editUser?username=${params['username']}`,
+								type: 'POST',
+								contentType: 'multipart/form-data',
+								data: form_data,
+								contentType: false,
+								processData: false,
+								success: function(response) {
+									alert("Details updated!");
+									sessionStorage.setItem('display_name', response.display_name);
+									sessionStorage.setItem('profile_pic', 'https://localhost:8000/api' + response.profile_pic);
+									window.history.replaceState("", "", `/dashboard?username=${params['username']}`);
+									router();
+								},
+								error: function(jqXHR, textStatus, errorThrown) {
+									alert("Failed to update, fucking noob");
+									console.error('Error updating details:', jqXHR.responseJSON);
+								}
+							});
 						});
 					});
 				}).catch(err => {
