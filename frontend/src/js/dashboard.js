@@ -115,7 +115,7 @@ export default () => {
 						let wins = matches.matches_won + tournies.matches_won
 						let losses = matches.matches_lost + tournies.matches_lost
 						let games_played = matches.games_played + tournies.games_played
-						let win_rate = ((wins / losses) * 100).toFixed(2);
+						let win_rate = ((wins / games_played) * 100).toFixed(2);
 						if (isNaN(win_rate)) {
 							win_rate = 0;
 						}
