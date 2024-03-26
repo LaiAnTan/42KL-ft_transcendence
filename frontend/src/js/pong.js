@@ -54,21 +54,21 @@ function game() {
 		}
 	}
 	window.addEventListener("popstate", handlePopState);
-
 	let app = document.querySelector('#app');
 	const new_div = document.createElement('div');
 	new_div.setAttribute('id', 'app');
 	new_div.className = 'w-100 h-100';
 	new_div.innerHTML = `
 <div class="w-100 h-100 p-5">
-	<div class="d-flex justify-content-between w-80 mx-auto pb-3">
-		<div class="d-flex flex-row player-text justify-content-end align-items-end">
-			<div id="player1score" class="player-score-text-size p1-colour pr-2">${player_1_score.toString()}</div>
+	<div class="d-flex justify-content-center w-80 mx-auto pb-3">
+		<div class="d-flex flex-row player-text justify-content-between align-items-end w-100 mr-4">
 			<div id="player1name" class="player-username-text-size pb-2">${player_1_username}</div>
+			<div id="player1score" class="player-score-text-size p1-colour">${player_1_score.toString()}</div>
 		</div>
-		<div class="d-flex flex-row player-text justify-content-end align-items-end">
+		<div class="d-flex align-items-center description dash">-</div>
+		<div class="d-flex flex-row player-text justify-content-between align-items-end w-100 ml-4">
+			<div id="player2score" class="player-score-text-size p2-colour">${player_2_score.toString()}</div>
 			<div id="player2name" class="player-username-text-size pb-2">${player_2_username}</div>
-			<div id="player2score" class="player-score-text-size pl-2">${player_2_score.toString()}</div>
 		</div>
 	</div>
 	<div class="game-container mx-auto">
@@ -301,8 +301,8 @@ function game() {
 					}
 					if (endElement !== null) {
 						if (eventData.players && eventData.players.length > 0) {
-							document.getElementById('player1name').textContent = eventData.players[0].toString();
-							document.getElementById('player2name').textContent = eventData.players[1].toString();
+							document.getElementById('player1name').textContent = eventData.players[0].toString().toUpperCase();
+							document.getElementById('player2name').textContent = eventData.players[1].toString().toUpperCase();
 						}
 						if (eventData.sound == 1){
 							playWallSound();

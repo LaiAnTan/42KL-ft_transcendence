@@ -3,7 +3,14 @@
 	font-weight: bold;
 }
 
+.dash {
+	font-family: 'Ubuntu', sans-serif;
+
+	font-size: 50px;
+}
+
 .p1-colour {
+	padding-left: 10px;
 	color: var(--color2);
 	text-shadow: 0 0 25px var(--color2);
 }
@@ -19,7 +26,8 @@
 }
 
 .player-username-text-size {
-	font-size: 25px;
+	color: rgba(255, 255, 255, 0.75);
+	font-size: 30px;
 	font-family: 'Aldrich', sans-serif;
 }
 
@@ -56,7 +64,7 @@
 	left: 50%;
 	top: 50%;
 	border-radius: 50%;
-	background-color: red;
+	background-color: white;
 	position: absolute;
 	z-index: 4;
 }
