@@ -16,11 +16,10 @@ def generateRoomCode(rooms):
     return room_code
 
 def joinRoom(rooms, client_id):
-    # if client_id != 'AI':
     for room_code, clients in rooms.items():
-        if client_id in clients:
+        if client_id in clients and client_id != 'AI':
             return room_code
-        if len(clients) < MAX_CLIENTS_PER_ROOM:
+        if len(clients) < MAX_CLIENTS_PER_ROOM and clients[0] != 'AI':
             clients.append(client_id)
             return room_code
     room_code = generateRoomCode(rooms)
@@ -31,7 +30,6 @@ def alreadyInRoom(client_id, rooms):
     for clients in rooms.values():
         if client_id in clients:
             return True
-
     return False
 
 @api_view(['GET'])
