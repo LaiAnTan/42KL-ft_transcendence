@@ -110,14 +110,14 @@ export default () => {
 				let indiv_tourney_html_str = '';
 				let backgroundColor = data.won ? 'rgba(0, 255, 0, 0.3)' : 'rgba(255, 0, 0, 0.3)';
 
-				indiv_tourney_html_str.append(`
+				indiv_tourney_html_str += `
 				<div class="d-table-row description" style="background-color: ${backgroundColor}">
 					<div class="data-display d-table-cell">${formatDate(data.date_played)}</div>
 					<div class="data-display d-table-cell"></div>
 					<div class="data-display d-table-cell"></div>
 					<div class="data-display d-table-cell"></div>
 					<div class="data-display d-table-cell"></div>
-				</div>`);
+				</div>`;
 
 				data.matches.forEach(match => {
 					let p1 = match.player_1_id;
@@ -139,7 +139,7 @@ export default () => {
 	<div class="data-display d-table-cell">${s2}</div>
 	<div data-link="/dashboard?username=${p2}" class="data-display d-table-cell cursor-pointer" title="Visit ${p2}'s dashboard">${p2}</div>
 </div>`;
-					indiv_tourney_html_str.append(html_str);
+					indiv_tourney_html_str += (html_str);
 				});
 
 				data_html_tourney += indiv_tourney_html_str;

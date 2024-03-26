@@ -57,7 +57,7 @@ parameters '},
 	
 			for matchup_id in matchup_ids:
 				matchup = Matchup.objects.get(pk=matchup_id)
-				matches.append(matchup)
+				matches.append(MatchupSerializer(matchup).data)
 
 				if matchup.player_1_id == user.username or matchup.player_2_id == user.username:
 					curr = 1 if matchup.player_1_id == user.username else 2

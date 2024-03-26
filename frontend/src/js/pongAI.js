@@ -96,7 +96,7 @@ function game() {
 						if (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING) {
 							socket.close();
 						}
-						navigate("/vs-ai");
+						navigate("/menu");
 						window.removeEventListener("popstate", handlePopState);
 					}
 				}

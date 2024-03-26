@@ -129,7 +129,7 @@ export default () => {
 				<div class="menu-component-title">VS PLAYER</div>
 				<div class="menu-component-description">PLAY AGAINST OTHER PLAYERS</div>
 			</button>
-			<button type="button" data-link="/vs-ai" id="vs-ai" class="menu-component vs-ai cursor-pointer" style="background-color: transparent">
+			<button type="button" data-link="/pongAI" id="vs-ai" class="menu-component vs-ai cursor-pointer" style="background-color: transparent">
 				<div class="menu-component-title">VS AI</div>
 				<div class="menu-component-description">PLAY 1V1 AGAINST AN AI</div>
 			</button>
