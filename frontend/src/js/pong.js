@@ -62,13 +62,13 @@ function game() {
 	new_div.innerHTML = `
 <div class="w-100 h-100 p-5">
 	<div class="d-flex justify-content-between w-80 mx-auto pb-3">
-		<div class="d-flex flex-row player-text player-1-text-color justify-content-end align-items-end">
-			<div id=player1score class="player-score-text-size pr-2">${player_1_score.toString()}</div>
-			<div id=player1name class="player-username-text-size pb-2">${player_1_username}</div>
+		<div class="d-flex flex-row player-text justify-content-end align-items-end">
+			<div id="player1score" class="player-score-text-size p1-colour pr-2">${player_1_score.toString()}</div>
+			<div id="player1name" class="player-username-text-size pb-2">${player_1_username}</div>
 		</div>
-		<div class="d-flex flex-row player-text player-2-text-color justify-content-end align-items-end">
-			<div id=player2name class="player-username-text-size pb-2">${player_2_username}</div>
-			<div id=player2score class="player-score-text-size pl-2">${player_2_score.toString()}</div>
+		<div class="d-flex flex-row player-text justify-content-end align-items-end">
+			<div id="player2name" class="player-username-text-size pb-2">${player_2_username}</div>
+			<div id="player2score" class="player-score-text-size pl-2">${player_2_score.toString()}</div>
 		</div>
 	</div>
 	<div class="game-container mx-auto">
