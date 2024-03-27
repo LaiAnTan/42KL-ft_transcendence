@@ -10,6 +10,7 @@ function game() {
 	let player_1_username = " ";
 	let player_2_username = " ";
 	let is_animating = false;
+	let isMatchmaking = true;
 	var socket;
 	let id = sessionStorage.getItem('username');
 	var roomID;
@@ -31,14 +32,18 @@ function game() {
 
 	function handlePopState(event) {
 		if (window.location.pathname !== "/pongAI") {
-			const confirmed = confirm("Are you sure you want to leave the game?");
-			if (!confirmed) {
-				history.pushState(null, null, window.location.href);
+			if (!isMatchmaking) {
+				const confirmed = confirm("Are you sure you want to leave the game?");
+				if (!confirmed) {
+					history.pushState(null, null, window.location.href);
+				}
 			}
 			fetch(`https://localhost:8000/api/exitRoom?clientID=${clientID}&gameMode=pong`, {
 				method: "DELETE"
 			})
-			.then(response => response.json())
+			.then(() => {
+				window.location.reload();
+			})
 			.catch(error => {
 				console.error('Error exiting room:', error);
 			});
@@ -48,6 +53,70 @@ function game() {
 			window.removeEventListener("popstate", handlePopState);
 		}
 	}
+
+	let app = document.querySelector("#app");
+	const new_div = document.createElement("div");
+	new_div.setAttribute('id', 'app');
+	new_div.className = "w-100 h-100";
+	new_div.innerHTML = `
+<div class="w-100 h-100 p-5">
+	<div class="d-flex justify-content-center w-80 mx-auto pb-3">
+		<div class="d-flex flex-row player-text justify-content-between align-items-end w-100 mr-4">
+			<div id="player1name" class="player-username-text-size pb-2">${player_1_username}</div>
+			<div id="player1score" class="player-score-text-size p1-colour">${player_1_score.toString()}</div>
+		</div>
+		<div class="d-flex align-items-center description dash">-</div>
+		<div class="d-flex flex-row player-text justify-content-between align-items-end w-100 ml-4">
+			<div id="player2score" class="player-score-text-size p2-colour">${player_2_score.toString()}</div>
+			<div id="player2name" class="player-username-text-size pb-2">${player_2_username}</div>
+		</div>
+	</div>
+	<div class="game-container mx-auto">
+		<div class="game-box w-100">
+			<div id="dongball"></div>
+			<div id="paddle_left"></div>
+			<div id="paddle_right"></div>
+		</div>
+	</div>
+</div>
+
+<button id="matchmaking-trigger" data-toggle="modal" data-target="#matchmaking" type="button" style="display: none;" data-backdrop="static"></button>
+<div class="modal fade" id="matchmaking" tabindex="-1" role="dialog" aria-labelledby="matchmaking" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content" style="background-color: transparent;">
+			<div class="modal-body d-flex flex-column align-items-center justify-content-center text-center important-label">
+				<b id="countdown-text" style="font-size: 70px">LOADING...</b>
+				<p id="matchmaking-cancel">Press any key to cancel</p>
+			</div>
+		</div>
+	</div>
+</div>
+
+<button id="win-splash-trigger" data-toggle="modal" data-target="#win-splash" type="button" style="display: none;"></button>
+<button id="lose-splash-trigger" data-toggle="modal" data-target="#lose-splash" type="button" style="display: none;"></button>
+<div class="modal fade" id="lose-splash" tabindex="-1" role="dialog" aria-labelledby="lose-splash" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content" style="background-color: transparent;">
+			<div class="modal-body d-flex flex-column align-items-center justify-content-center text-center important-label">
+				<b style="font-size: 70px; text-shadow: 0 0 25px red">YOU GOT PONGED</b>
+				<p>Click anywhere to continue</p>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="win-splash" tabindex="-1" role="dialog" aria-labelledby="win-splash" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content" style="background-color: transparent;">
+			<div class="modal-body d-flex flex-column align-items-center justify-content-center text-center important-label">
+				<b style="font-size: 70px; text-shadow: 0 0 25px green">NICE PONG</b>
+				<p>Click anywhere to continue</p>
+			</div>
+		</div>
+	</div>
+</div>`;
+	app.outerHTML = new_div.outerHTML;
+
+	$('#matchmaking-trigger').click();
 
 	fetch("https://localhost:8000/api/matchmaking?clientID=" + clientID + "&gameMode=pong", {
 		method: "GET"
@@ -76,6 +145,24 @@ function game() {
 			if (isJSON(event.data)) {
 				let endElement = document.getElementById("dongball");
 				let eventData = JSON.parse(event.data);
+				if (eventData.status == "ALL PLAYERS JOINED") {
+					isMatchmaking = false;
+					$('#matchmaking-cancel').html(`<b>${eventData.p1}</b>   VS   <b>${eventData.p2}</b>`);
+					$('#countdown-text').text("READY");
+					setTimeout(function() {
+						$('#countdown-text').text("3");
+					}, 750);
+					setTimeout(function() {
+						$('#countdown-text').text("2");
+					}, 1500);
+					setTimeout(function() {
+						$('#countdown-text').text("1");
+					}, 2150);
+					setTimeout(function() {
+						$('#matchmaking').modal('hide');
+					}, 2900);
+				
+				}
 				if (eventData.room_id && eventData.player_1_id && eventData.player_2_id && eventData.match_type) {
 					if (eventData.player_1_score !== eventData.player_2_score) {
 						const isClientWinner = (eventData.player_1_score > eventData.player_2_score && eventData.player_1_id === clientID) ||
@@ -330,47 +417,6 @@ function game() {
 		}
 	});
 
-	return `
-<div class="w-100 h-100 p-5">
-	<div class="d-flex justify-content-between w-80 mx-auto pb-3">
-		<div class="d-flex flex-row player-text player-1-text-color justify-content-end align-items-end">
-			<div id=player1score class="player-score-text-size pr-2">${player_1_score.toString()}</div>
-			<div id=player1name class="player-username-text-size pb-2">${player_1_username}</div>
-		</div>
-		<div class="d-flex flex-row player-text player-2-text-color justify-content-end align-items-end">
-			<div id=player2name class="player-username-text-size pb-2">${player_2_username}</div>
-			<div id=player2score class="player-score-text-size pl-2">${player_2_score.toString()}</div>
-		</div>
-	</div>
-	<div class="game-container mx-auto">
-		<div class="game-box w-100">
-			<div id="dongball"></div>
-			<div id="paddle_left"></div>
-			<div id="paddle_right"></div>
-		</div>
-	</div>
-</div>
-
-<button id="win-splash-trigger" data-toggle="modal" data-target="#win-splash" type="button" style="display: none;"></button>
-<button id="lose-splash-trigger" data-toggle="modal" data-target="#lose-splash" type="button" style="display: none;"></button>
-<div class="modal fade" id="lose-splash" tabindex="-1" role="dialog" aria-labelledby="lose-splash" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered" role="document">
-		<div class="modal-content" style="background-color: transparent;">
-		<div class="modal-body d-flex align-items-center justify-content-center text-center important-label">
-				<b style="font-size: 50px; color: red">YOU GOT PONGED</b>
-			</div>
-		</div>
-	</div>
-</div>
-<div class="modal fade" id="win-splash" tabindex="-1" role="dialog" aria-labelledby="win-splash" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered" role="document">
-		<div class="modal-content" style="background-color: transparent;">
-			<div class="modal-body d-flex align-items-center justify-content-center text-center important-label">
-				<b style="font-size: 50px; color: green">NICE PONG</b>
-			</div>
-		</div>
-	</div>
-</div>`;
 }
 
 export default game;
