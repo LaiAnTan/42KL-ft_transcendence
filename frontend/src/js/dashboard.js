@@ -292,7 +292,8 @@ export default () => {
 								.attr("y", -graph1Height / 2) // Center the bar vertically
 								.attr("width", d => (d.value / maxBarValue) * maxWidth)
 								.attr("height", graph1Height)
-								.attr("fill", "steelblue")
+								.attr("fill", "var(--color1)")
+
 								.append("title") // Append title element for tooltip
 								.text(d => `${d.label}: ${d.value}`);
 							graph1Svg.selectAll("text")
@@ -331,7 +332,7 @@ export default () => {
 								.outerRadius(graph2Radius);
 							const color = d3.scaleOrdinal()
 								.domain(graph2Data.map(d => d.label))
-								.range(["#98abc5", "#8a89a6"]);
+								.range(["var(--color3)", "var(--color5)"]);
 							const arcs = g.selectAll('arc')
 								.data(pie(graph2Data))
 								.enter()
