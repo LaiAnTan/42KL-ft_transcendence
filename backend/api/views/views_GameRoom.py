@@ -19,7 +19,9 @@ def joinRoom(rooms, client_id):
     for room_code, clients in rooms.items():
         if client_id in clients and client_id != 'AI':
             return room_code
-        if len(clients) < MAX_CLIENTS_PER_ROOM and clients[0] != 'AI':
+        if len(clients) < MAX_CLIENTS_PER_ROOM:
+            if len(clients) > 1 and client_id == 'AI':
+                break
             clients.append(client_id)
             return room_code
     room_code = generateRoomCode(rooms)
