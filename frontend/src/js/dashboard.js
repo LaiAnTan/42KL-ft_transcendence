@@ -222,8 +222,12 @@ export default () => {
 					`<div class="d-table-row ">
 						<div class="d-table-cell py-1">Avatar</div>
 						<div class="d-table-cell input-container pl-3"><input id="new-avatar" type="file" accept="image/jpeg, image/png, image/jpg" /></div>
+					</div>
+					<div class="d-table-row">
+						<div class="d-table-cell py-1">Email</div>
+						<div class="d-table-cell pl-3">${data.email}</div>
 					</div>` : `` }
-					${(current_user == data.username) && (!data.data_is_visible) ? 
+					${(current_user != data.username) && (data.data_is_visible) ? 
 					`<div class="d-table-row">
 						<div class="d-table-cell py-1">Email</div>
 						<div class="d-table-cell pl-3">${data.email}</div>
