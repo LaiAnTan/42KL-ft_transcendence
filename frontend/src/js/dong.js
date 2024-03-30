@@ -11,6 +11,7 @@ function game() {
 	let player_2_username = " ";
 	let is_animating = false;
 	let isMatchmaking = true;
+	let isRunning = false;
 	var socket;
 	let id = sessionStorage.getItem('username');
 	var roomID;
@@ -138,6 +139,11 @@ function game() {
 			if (isJSON(event.data)) {
 				let endElement = document.getElementById("dongball");
 				let eventData = JSON.parse(event.data);
+
+				if (isRunning == false) {
+					$('#matchmaking').modal('hide');
+					isRunning = true;
+				}
 				if (eventData.status == "ALL PLAYERS JOINED") {
 					isMatchmaking = false;
 					$('#matchmaking-cancel').html(`<b>${eventData.p1}</b>   VS   <b>${eventData.p2}</b>`);
