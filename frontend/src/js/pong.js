@@ -122,6 +122,11 @@ function game() {
 	if (urlParams.has('tournamentID')) {
 		tournamentID = urlParams.get('tournamentID');
 
+		$('#matchmaking-trigger').on('click', function () {
+			$('#win-splash').modal('hide');
+			$('#lose-splash').modal('hide');
+		});
+
 		socket = new WebSocket(`wss://localhost:8001/pong?roomID=${tournamentID}&clientID=${clientID}`);
 		socket.onopen = function(event) {
 			console.log("WebSocket connection opened");
