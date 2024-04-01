@@ -185,6 +185,7 @@ class Dong(AsyncJsonWebsocketConsumer):
 			'paddle_right_y': room['paddle_right'].y,
 			'room_id': self.room_id,
 			'players': room['players'],
+			'scores': [room['paddle_left'].score, room['paddle_right'].score],
 			'sound': room['sound'],
 		}
 
