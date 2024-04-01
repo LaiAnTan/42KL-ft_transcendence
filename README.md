@@ -14,10 +14,10 @@ A game website which serves as the final project in the Core Programme of 42 Kua
 - Database monitoring
 
 ## Tech Stack
-Frontend: Vanilla JavaScript, Bootstrap
-Backend: Python, Django
-Database: PostgreSQL
-Monitoring: Prometheus, Grafana
+- Vanilla JavaScript, Bootstrap
+- Backend: Python, Django
+- Database: PostgreSQL
+- Monitoring: Prometheus, Grafana
 
 ## Dependencies
 - docker, docker-compose
