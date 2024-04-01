@@ -11,6 +11,7 @@ function game() {
 	let player_2_username = " ";
 	let is_animating = false;
 	let isMatchmaking = true;
+	var isRunning = false;
 	var socket;
 	let id = sessionStorage.getItem('username');
 	var roomID;
@@ -33,7 +34,7 @@ function game() {
 			if (!isMatchmaking) {
 				const confirmed = confirm("Are you sure you want to leave the game?");
 				if (!confirmed) {
-					history.pushState(null, null, window.location.href);
+					history.pushState(null, null, "/dong");
 				}
 			}
 			fetch(`https://localhost:8000/api/exitRoom?clientID=${clientID}&gameMode=dong`, {
@@ -80,7 +81,7 @@ function game() {
 	</div>
 </div>
 
-<button id="matchmaking-trigger" data-toggle="modal" data-target="#matchmaking" type="button" style="display: none;" data-backdrop="static"></button>
+<button id="matchmaking-trigger" data-toggle="modal" data-target="#matchmaking" type="button" style="display: none;"></button>
 <div class="modal fade" id="matchmaking" tabindex="-1" role="dialog" aria-labelledby="matchmaking" aria-hidden="true">
 	<div class="modal-dialog modal-dialog-centered" role="document">
 		<div class="modal-content" style="background-color: transparent;">
@@ -134,10 +135,25 @@ function game() {
 			console.log("client", clientID, "joined room", roomID);
 		};
 		socket.onmessage = function(event) {
-			// console.log( "Received message:", event.data);
 			if (isJSON(event.data)) {
 				let endElement = document.getElementById("dongball");
 				let eventData = JSON.parse(event.data);
+
+				try {
+					if (eventData.scores && isRunning == false) {
+						isRunning = true;
+						isMatchmaking = false;
+
+						setTimeout(function () {
+							player_1_score = eventData.scores[0];
+							player_2_score = eventData.scores[1];
+							document.getElementById('player1score').textContent = player_1_score.toString();
+							document.getElementById('player2score').textContent = player_2_score.toString();
+							$('#matchmaking').modal('hide');
+						}, 500);
+					}
+				} catch (e) { console.error(e); }
+
 				if (eventData.status == "ALL PLAYERS JOINED") {
 					isMatchmaking = false;
 					$('#matchmaking-cancel').html(`<b>${eventData.p1}</b>   VS   <b>${eventData.p2}</b>`);

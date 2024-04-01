@@ -5,6 +5,9 @@ KEY_FILE="key.pem"
 
 CERT_DIR="/etc/certs"
 
+# IP address of the backend server
+BACKEND_IP=$BACKEND_IP
+
 # Check if certificate and key exist
 if [ ! -f "$CERT_DIR/$CERT_FILE" ] || [ ! -f "$CERT_DIR/$KEY_FILE" ]; then
     # Generate SSL/TLS certificates

@@ -80,7 +80,7 @@ function game() {
 	</div>
 </div>
 
-<button id="matchmaking-trigger" data-toggle="modal" data-target="#matchmaking" type="button" style="display: none;" data-backdrop="static"></button>
+<button id="matchmaking-trigger" data-toggle="modal" data-target="#matchmaking" type="button" style="display: none;"></button>
 <div class="modal fade" id="matchmaking" tabindex="-1" role="dialog" aria-labelledby="matchmaking" aria-hidden="true">
 	<div class="modal-dialog modal-dialog-centered" role="document">
 		<div class="modal-content" style="background-color: transparent;">
